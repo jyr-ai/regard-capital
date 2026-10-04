@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { LogOut } from 'lucide-react'
 import { ErrorBoundary } from '../adapters/ui.js'
 import { useTheme } from './theme/index.js'
@@ -26,12 +26,24 @@ function usePath() {
 
 function Nav({ active, navigate }) {
   const t = useTheme()
+  const ref = useRef(null)
+
+  // Publish the nav height as --nav-h so embedded pages (the ADE dashboard has its own
+  // sticky bar) can sit below it. The nav wraps to two rows on narrow screens.
+  useEffect(() => {
+    const el = ref.current
+    const set = () => document.documentElement.style.setProperty('--nav-h', `${Math.round(el.getBoundingClientRect().height)}px`)
+    set()
+    const ro = new ResizeObserver(set)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
     window.location.assign('/login')
   }
   return (
-    <header style={{ position: 'sticky', top: 0, zIndex: Z.nav, background: t.navBg, borderBottom: `1px solid ${t.border}` }}>
+    <header ref={ref} style={{ position: 'sticky', top: 0, zIndex: Z.nav, background: t.navBg, borderBottom: `1px solid ${t.border}` }}>
       <div className="kente" style={{ height: 6 }} aria-hidden="true" />
       <div className="container" style={{ display: 'flex', alignItems: 'center', gap: 24, minHeight: 60, flexWrap: 'wrap' }}>
         <a

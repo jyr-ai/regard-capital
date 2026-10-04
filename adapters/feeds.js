@@ -7,15 +7,34 @@
 
 import { FEED_CATEGORIES, getAllFeeds, getCategoryFeed } from '../upstream/unredacted/server/services/rssFeed.js'
 import watchlist from '../config/watchlist.json' with { type: 'json' }
+import { adeWatchlist } from './ade.js'
 
 const gn = q => `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`
 
 const TICKERS_PER_SOURCE = 4
 
+// Legal suffixes make Google News phrase searches miss ("Broadcom Inc." vs "Broadcom").
+const SUFFIX = /[\s,]+(inc\.?|corp(oration)?\.?|co\.?|ltd\.?|plc|holdings?|group)$/i
+export const searchName = name => {
+  let n = name.trim()
+  while (SUFFIX.test(n)) n = n.replace(SUFFIX, '')
+  return n
+}
+
+// Union by ticker. Earlier lists win, so config/watchlist.json can override a name that
+// searches badly, and ADE's book (synced daily) adds the rest.
+export function mergeHoldings(...lists) {
+  const seen = new Map()
+  for (const h of lists.flat()) if (!seen.has(h.ticker)) seen.set(h.ticker, { ticker: h.ticker, name: searchName(h.name) })
+  return [...seen.values()]
+}
+
+const DEFAULT_HOLDINGS = mergeHoldings(watchlist.holdings, adeWatchlist)
+
 // `icon` is a lucide-react icon name; the design system bans emoji.
 // `holdings` is [{ ticker, name }]. News is searched by company name, since bare
 // tickers collide (AG matches every "Volkswagen AG" story).
-export function buildCategories(holdings = watchlist.holdings) {
+export function buildCategories(holdings = DEFAULT_HOLDINGS) {
   const holdingSources = []
   for (let i = 0; i < holdings.length; i += TICKERS_PER_SOURCE) {
     const group = holdings.slice(i, i + TICKERS_PER_SOURCE)
@@ -84,6 +103,17 @@ export function installCategories(holdings) {
 }
 
 installCategories()
+
+// Tickers a user added in the ADE System tab join the Watchlist news. The RSS engine caches each
+// category for 5 minutes, so news for a newly added ticker can take up to that long to appear.
+let addedKey = '[]'
+export function setAddedHoldings(added) {
+  const key = JSON.stringify(added)
+  if (key === addedKey) return false
+  addedKey = key
+  installCategories(mergeHoldings(watchlist.holdings, adeWatchlist, added))
+  return true
+}
 
 export const categoryKeys = () => Object.keys(FEED_CATEGORIES)
 

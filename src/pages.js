@@ -5,10 +5,10 @@ import { lazy } from 'react'
 // `phase` marks pages whose upstream source is not wired in yet.
 export const PAGES = [
   { id: 'monitor', path: '/', label: 'Monitor', icon: 'Radio', component: lazy(() => import('./pages/Monitor.jsx')) },
-  { id: 'ade', path: '/book', label: 'ADE Book', icon: 'BookOpen', phase: 2, source: 'ADE-INVESTMENTS' },
+  { id: 'ade', path: '/ade', aliases: ['/book'], label: 'ADE System', icon: 'BookOpen', component: lazy(() => import('./pages/AdeSystem.jsx')) },
   { id: 'rankings', path: '/rankings', label: 'Rankings', icon: 'ListOrdered', phase: 3, source: 'Jians_finance' },
   { id: 'dd', path: '/diligence', label: 'Due Diligence', icon: 'ScanSearch', phase: 3, source: 'Jians_finance' },
   { id: 'portfolio', path: '/portfolio', label: 'Portfolio', icon: 'Upload', phase: 4, source: 'facai' },
 ]
 
-export const pageForPath = pathname => PAGES.find(p => p.path === pathname) || PAGES[0]
+export const pageForPath = pathname => PAGES.find(p => p.path === pathname || p.aliases?.includes(pathname)) || PAGES[0]

@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 const ROOT = path.dirname(new URL(import.meta.url).pathname)
@@ -29,6 +29,12 @@ export default defineConfig({
     proxy: { '/api': 'http://127.0.0.1:3001' },
   },
   build: {
-    chunkSizeWarningLimit: 900,
+    chunkSizeWarningLimit: 1200,
+  },
+  test: {
+    // React's production build has no act(); a shell with NODE_ENV=production must not break the view tests.
+    env: { NODE_ENV: 'test' },
+    // upstream/ is mirrored code, not ours to test; our contract tests live in sync/contracts/.
+    exclude: ['node_modules/**', 'upstream/**', 'dist/**'],
   },
 })
