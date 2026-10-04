@@ -1,0 +1,105 @@
+name: sync-upstream
+
+# Pulls each enabled upstream repo into upstream/<name>/ and opens or updates one
+# rolling PR per repo (branch sync/<name>). The PR auto-merges only when the
+# required `ci` check passes, so a breaking upstream change stays as a red PR and
+# production keeps the last good commit.
+#
+# Secrets:
+#   SYNC_BOT_TOKEN       fine-grained PAT (jyr-ai): Contents read on the upstream repos,
+#                        Contents + Pull requests write on regard-capital. PRs opened with
+#                        GITHUB_TOKEN do not trigger `ci`, so auto-merge would never fire.
+#   UPSTREAM_READ_TOKEN  read token for upstream clones; defaults to SYNC_BOT_TOKEN.
+#   ADE_READ_TOKEN       only if adayo22-byte/ADE-INVESTMENTS is private (manifest tokenEnv).
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'One repo name from sync/manifest.json (blank = all enabled)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      repos: ${{ steps.pick.outputs.repos }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: pick
+        env:
+          REPO_INPUT: ${{ inputs.repo }}
+        run: |
+          node -e '
+            const m = require("./sync/manifest.json")
+            const want = process.env.REPO_INPUT
+            if (want && !(want in m.repos)) { console.error(`unknown repo: ${want}`); process.exit(1) }
+            const repos = want ? [want] : Object.keys(m.repos).filter(k => m.repos[k].enabled)
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, `repos=${JSON.stringify(repos)}\n`)
+          '
+
+  sync:
+    needs: plan
+    if: needs.plan.outputs.repos != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJson(needs.plan.outputs.repos) }}
+    env:
+      GH_TOKEN: ${{ secrets.SYNC_BOT_TOKEN }}
+      UPSTREAM_READ_TOKEN: ${{ secrets.UPSTREAM_READ_TOKEN || secrets.SYNC_BOT_TOKEN }}
+      ADE_READ_TOKEN: ${{ secrets.ADE_READ_TOKEN }}
+      BRANCH: sync/${{ matrix.repo }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_BOT_TOKEN }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Pull ${{ matrix.repo }}
+        id: pull
+        run: |
+          node sync/pull.mjs --repo "${{ matrix.repo }}" | tee pull.log
+          if git diff --quiet -- upstream upstream.lock.json && [ -z "$(git ls-files --others --exclude-standard upstream)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update the sync PR
+        if: steps.pull.outputs.changed == 'true'
+        run: |
+          SHA=$(node -e 'console.log(require("./upstream.lock.json")["${{ matrix.repo }}"].sha.slice(0,7))')
+          git config user.name  "regard-sync-bot"
+          git config user.email "regard-sync-bot@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add upstream upstream.lock.json
+          git commit -m "sync(${{ matrix.repo }}): upstream @ ${SHA}" -m "$(cat pull.log)"
+          git push --force origin "$BRANCH"
+          if ! gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
+            gh pr create --head "$BRANCH" --base main \
+              --title "sync(${{ matrix.repo }}): upstream @ ${SHA}" \
+              --body "Automated upstream sync. Auto-merges when \`ci\` (contract tests, lint, build) passes. If CI is red, upstream changed something this app depends on: fix the adapter or contract on this branch, or leave it and production stays on the last good commit."
+          else
+            gh pr edit "$BRANCH" --title "sync(${{ matrix.repo }}): upstream @ ${SHA}"
+          fi
+          gh pr merge "$BRANCH" --auto --squash
+
+      - name: Report a sync that could not even be applied
+        if: failure() && steps.pull.outcome == 'failure'
+        run: |
+          TITLE="upstream sync failed: ${{ matrix.repo }}"
+          BODY="sync/pull.mjs failed for \`${{ matrix.repo }}\` (a whitelisted file was removed/renamed or a guarded transform no longer matches). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          NUM=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number')
+          if [ -n "$NUM" ]; then gh issue comment "$NUM" --body "$BODY"; else gh issue create --title "$TITLE" --body "$BODY" --label upstream-broke || gh issue create --title "$TITLE" --body "$BODY"; fi

@@ -1,0 +1,28 @@
+# CLAUDE.md
+
+Regard Capital merges four upstream repos into one Vercel app. Read README.md first.
+
+## Rules
+- **Never edit anything under `upstream/`.** Only `node sync/pull.mjs` writes there. To change what is mirrored, edit `sync/manifest.json` (include/exclude/transforms) and re-sync. `npm run sync:check` fails on hand edits.
+- **Never modify the upstream repos** (UNREDACTED, ADE-INVESTMENTS, Jians_finance, facai). They are read-only sources.
+- **Import upstream code only from `adapters/`.** ESLint blocks `upstream/` imports elsewhere.
+- **Every adapter dependency on upstream needs a contract test** in `sync/contracts/<repo>.test.js`. That test is what keeps a breaking upstream change out of production.
+- Vendored UNREDACTED components import `../theme/*.js`. `vite.config.js` (themeShim) points those imports at `src/theme/`. Keep every token name and `DARK_THEME` key that upstream defines, or the contract test fails.
+
+## Commands
+```bash
+npm run dev:all        # web :3000 + api :3001
+npm test               # vitest: contracts, sync engine, server
+npm run lint
+npm run build
+npm run sync:check     # upstream/ matches upstream.lock.json
+node sync/pull.mjs --repo <name> [--sha <sha> | --from <local checkout>]
+```
+
+## Design system
+Afrofuturismo Digital, dark only. Tokens live in `src/theme/tokens.js` and `src/theme/dark.js`.
+- Sahara Gold `#E6A817` is the text accent.
+- Royal Purple and Electric Violet are fills only, because they fail contrast as text.
+- `UP` / `DOWN` are the gain and loss colours.
+- No emoji in the UI (lucide-react icons only), no 3-equal-column layouts.
+- Motion only on page and card entrances; never pulse prices or tables.

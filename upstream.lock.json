@@ -1,0 +1,24 @@
+{
+  "unredacted": {
+    "url": "https://github.com/jyr-ai/UNREDACTED",
+    "ref": "main",
+    "sha": "0bef975bd8eaf79bee8061d93e9d46384e51aec7",
+    "syncedAt": "2026-10-04T05:11:55.858Z",
+    "files": {
+      "LICENSE": "d6cf11fc1d7fbb85c0b9fce21eb4022ea3b1cea00e57acf2f3aaa8c7694a0dc7",
+      "server/routes/liveStreams.js": "ccea82996604c6e40e30580b53b4aad2673d879a56af1403941c0cd7e4575b8b",
+      "server/services/rssFeed.js": "529a135e1c7894f5a78d6f32c85df6e2d939e251bcabb9848646a1fc739d4b23",
+      "src/components/ErrorBoundary.jsx": "d18453a314ce7a8f15172fe2379dbeaa92e1a03d010760483f60e5f28bff8ca9",
+      "src/components/LiveNewsPanel.jsx": "525d385f6885564a0f82e20d905242804f373c4278c84f426ad34230129be101",
+      "src/components/ui/Band.jsx": "31e4e85d495ee9f62d70cba92e0d33fe004aa912ff6435280c3fa38cb365c7ca",
+      "src/components/ui/Card.jsx": "8d2bcf29871a7f788a30112bf8b7264f11b029556431170e1143033b4b174146",
+      "src/components/ui/CardTitle.jsx": "a3a0fe33c82646439c7b9f0689b4a8b206d49070c7abdde322d755dbfc1236f2",
+      "src/components/ui/ChartTooltip.jsx": "1df4e7420346a103f992417d660a9479512a6ee05893c18272dd617c580902c2",
+      "src/components/ui/Legend.jsx": "17886effc689f17ee0f36fd7b92833b4e27e897b6d01fe36bede7793efe1b44f",
+      "src/components/ui/SourceFooter.jsx": "05f4efe2feab93ab646381e2f6d0211eb3b7971118eaa85a0e203ad23d579d7f",
+      "src/theme/dark.js": "d3215778fe07469e744248f479c1f394563945fe14583587a803f2dcbafb9088",
+      "src/theme/index.js": "a9c89e4024e9329e9dd1d61db37994dabde436971da09d6c4abd4fc8468e3366",
+      "src/theme/tokens.js": "f6c0a8ae3a081cdbed5789a9c166812929328a22c01f0ded0ea0e5422bb5180b"
+    }
+  }
+}
