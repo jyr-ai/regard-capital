@@ -2024,7 +2024,7 @@ export default function App(){
  const items=allItems[activeTicker];
  const price=prices[activeTicker];
  const sig=useMemo(()=>computeSignal(stock,items,price,eps),[activeTicker,items,price,eps]);
- const gaugeAngle=((sig.score+100)/200)*180-90;
+ const gaugeAngle=180-180*(()=>{const s=Math.max(-100,Math.min(100,sig.score));const P=[[-100,0],[39,0.333],[69,0.5],[85,0.667],[100,1]];for(let i=1;i<P.length;i++){if(s<=P[i][0]){const a=P[i-1],b=P[i];return a[1]+(s-a[0])/(b[0]-a[0])*(b[1]-a[1]);}}return 1;})();
 
  // Risk-adjusted conviction: penalize raw score based on activeRisks probability × severity weight
  const riskAdj=useMemo(()=>{
