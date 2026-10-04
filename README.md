@@ -62,6 +62,18 @@ GET /api/ade/live → the ADE System page → adapters/ade-overlay.js writes sna
 - **Storage:** Upstash Redis when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are set. Without them it falls back to server memory, which resets on every cold start (the page says so).
 - **Yahoo has no official API.** These are the unofficial endpoints the yfinance library uses; they can change or rate-limit without notice. A failed ticker is reported on the page and keeps its previous snapshot.
 
+### Is the pipeline actually working? (diagnostics)
+
+```bash
+npm run diagnose                      # real Yahoo (and Upstash if its env vars are set): refresh, then check every stage
+npm run diagnose -- --no-refresh      # check only what the store already holds
+curl -H "Authorization: Bearer $CRON_SECRET" https://<your-app>/api/cron/diagnose   # 200 ok/degraded, 503 down: point an uptime monitor at it
+```
+
+The same report is on the ADE System page under **Data pipeline**. Stages: Yahoo candles, Yahoo crumb + fundamentals, Yahoo option chains, indicator/score build, store round-trip, environment, last refresh, and per-ticker snapshot freshness and field coverage (individual gaps are named, e.g. `TSM.consensus`). On Vercel an in-memory store or a missing secret is a **failure**; locally it is a warning.
+
+Every dashboard field is classified in `server/ade/provenance.js` as live, computed, generated, Claude-drafted, stale (ADE's published value), not shown, or placeholder. A test fails if a field exists that is not classified, or if the overlay touches a field that is not live or computed, so made-up data cannot slip in unlabelled. The only placeholder left is `fwdPE = 0` for an added ticker whose forward P/E Yahoo does not report. A failed cron refresh answers 502, so it shows as failed in Vercel's cron log; a refresh where most tickers failed is retried on the next page load (at most every 5 minutes) instead of counting as fresh for a day.
+
 Only code consumed verbatim updates automatically. Code rewritten in `adapters/` is frozen by design, and an upstream change that touches it shows up as a red PR.
 
 ## Local development

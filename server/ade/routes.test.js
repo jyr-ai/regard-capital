@@ -100,6 +100,30 @@ describe('cron: GET /api/cron/refresh-ade', () => {
   })
 })
 
+describe('diagnose endpoints', () => {
+  it('GET /api/ade/diagnose needs a session and returns the stage report', async () => {
+    await request(app).get('/api/ade/diagnose').expect(401)
+    const res = await authed(request(app).get('/api/ade/diagnose')).expect(200)
+    expect(res.body.stages.length).toBeGreaterThan(5)
+    expect(['ok', 'degraded', 'down']).toContain(res.body.status)
+  })
+
+  it('GET /api/cron/diagnose needs the bearer secret and is 503 when the pipeline is down', async () => {
+    await request(app).get('/api/cron/diagnose').expect(401)
+    await authed(request(app).get('/api/cron/diagnose')).expect(401)
+    setAdeService(createAdeService({ store: createStore({ url: '', token: '' }), yahoo: fakeYahoo({ unknown: ['AAPL', 'MU'] }), adeTickers: BOOK }))
+    await request(app).get('/api/cron/diagnose').set('Authorization', 'Bearer cron-secret').expect(503)
+  })
+})
+
+describe('cron refresh failure is visible', () => {
+  it('answers 502 when most tickers failed, so Vercel shows the run as failed', async () => {
+    setAdeService(createAdeService({ store: createStore({ url: '', token: '' }), yahoo: fakeYahoo({ unknown: ['MU'] }), adeTickers: BOOK }))
+    const res = await request(app).get('/api/cron/refresh-ade').set('Authorization', 'Bearer cron-secret').expect(502)
+    expect(res.body.ok).toBe(false)
+  })
+})
+
 describe('adding is rate limited', () => {
   it('429s after 12 adds in 10 minutes', async () => {
     let last

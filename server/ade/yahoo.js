@@ -25,15 +25,20 @@ export function normalizeSymbol(input) {
 export function createYahoo({ fetchImpl = fetch, now = () => Date.now() } = {}) {
   let session = null // { crumb, cookie, at }
 
+  const once = (url, headers) => fetchImpl(url, { headers: { 'User-Agent': UA, Accept: '*/*', ...headers }, signal: AbortSignal.timeout(TIMEOUT_MS) })
+  const refused = res => res.status === 429 || res.status === 403 || res.status >= 500
+  const swapHost = url => url.replace(/query([12])\.finance\.yahoo\.com/, (_, n) => `query${n === '1' ? '2' : '1'}.finance.yahoo.com`)
+
+  // Yahoo rate-limits per host and sometimes refuses datacenter IPs on one of them: try the sibling
+  // host straight away, then back off once and retry the original.
   async function get(url, { headers = {}, retries = 1 } = {}) {
-    for (let attempt = 0; ; attempt++) {
-      const res = await fetchImpl(url, { headers: { 'User-Agent': UA, Accept: '*/*', ...headers }, signal: AbortSignal.timeout(TIMEOUT_MS) })
-      if (res.status === 429 && attempt < retries) {
-        await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
-        continue
-      }
-      return res
+    let res = await once(url, headers)
+    if (refused(res) && swapHost(url) !== url) res = await once(swapHost(url), headers)
+    for (let attempt = 0; refused(res) && res.status === 429 && attempt < retries; attempt++) {
+      await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
+      res = await once(url, headers)
     }
+    return res
   }
 
   async function getSession(force = false) {

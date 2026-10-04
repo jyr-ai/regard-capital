@@ -80,6 +80,28 @@ describe('summary and the crumb', () => {
   })
 })
 
+describe('host fallback', () => {
+  const ok = { chart: { result: [{ meta: { symbol: 'MU' }, timestamp: [1], indicators: { quote: [{ open: [1], high: [2], low: [0.5], close: [1.5], volume: [10] }] } }] } }
+
+  it.each([429, 403, 503])('tries the sibling host straight away when one answers %i', async status => {
+    const urls = []
+    const fetchImpl = async u => { urls.push(String(u)); return String(u).includes('query1') ? json({}, status) : json(ok) }
+    const { candles } = await createYahoo({ fetchImpl }).chart('MU')
+    expect(candles).toHaveLength(1)
+    expect(urls.map(u => new URL(u).hostname)).toEqual(['query1.finance.yahoo.com', 'query2.finance.yahoo.com'])
+  })
+
+  it('gives up with a clear error when both hosts refuse', async () => {
+    await expect(createYahoo({ fetchImpl: async () => json({}, 403) }).chart('MU')).rejects.toMatchObject({ name: 'YahooError', status: 403 })
+  })
+
+  it('does not retry a plain 404 on the other host', async () => {
+    const urls = []
+    await expect(createYahoo({ fetchImpl: async u => { urls.push(u); return json({}, 404) } }).chart('NOPE')).rejects.toMatchObject({ status: 404 })
+    expect(urls).toHaveLength(1)
+  })
+})
+
 describe('raw', () => {
   it('unwraps { raw, fmt } and passes plain values through', () => {
     expect(raw({ raw: 5, fmt: '5' })).toBe(5)

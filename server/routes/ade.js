@@ -32,6 +32,14 @@ router.get('/live', async (_req, res) => {
   }
 })
 
+router.get('/diagnose', async (_req, res) => {
+  try {
+    res.json(await getAdeService().diagnose())
+  } catch (err) {
+    fail(res, err)
+  }
+})
+
 router.get('/search', async (req, res) => {
   const q = String(req.query.q ?? '').trim()
   if (q.length < 1 || q.length > 40) return res.json({ results: [] })
@@ -76,7 +84,21 @@ cronRouter.get('/refresh-ade', async (req, res) => {
   const secret = process.env.CRON_SECRET
   if (!secret || req.headers.authorization !== `Bearer ${secret}`) return res.status(401).json({ error: 'unauthorized' })
   try {
-    res.json(await getAdeService().refreshAll())
+    const meta = await getAdeService().refreshAll()
+    // A non-2xx makes the failed run visible in Vercel's cron log instead of passing silently.
+    res.status(meta.ok ? 200 : 502).json(meta)
+  } catch (err) {
+    fail(res, err)
+  }
+})
+
+// Same checks as /api/ade/diagnose, for an uptime monitor: Authorization: Bearer $CRON_SECRET.
+cronRouter.get('/diagnose', async (req, res) => {
+  const secret = process.env.CRON_SECRET
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) return res.status(401).json({ error: 'unauthorized' })
+  try {
+    const report = await getAdeService().diagnose()
+    res.status(report.status === 'down' ? 503 : 200).json(report)
   } catch (err) {
     fail(res, err)
   }

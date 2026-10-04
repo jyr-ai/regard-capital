@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { BookOpen, Plus, RefreshCw, X } from 'lucide-react'
 import { BANDS, adeAsOf } from '../../adapters/ade.js'
 import { ErrorBoundary } from '../../adapters/ui.js'
+import PipelineStatus from '../components/PipelineStatus.jsx'
 import { useTheme } from '../theme/index.js'
 import { FONT_MONO, RADIUS } from '../theme/tokens.js'
 
@@ -156,6 +157,7 @@ export default function AdeSystem() {
               {names ? ` · ${names} NAMES` : ''}
             </div>
             <h1 className="rise" style={{ '--i': 1, margin: '4px 0 0', fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 700, lineHeight: 1.05 }}>ADE System</h1>
+            <PipelineStatus live={data} />
             <ul className="rise" aria-label="Verdicts by band" style={{ '--i': 2, display: 'flex', flexWrap: 'wrap', gap: 8, margin: '14px 0 0', padding: 0, listStyle: 'none' }}>
               {BANDS.map(b => (
                 <li key={b} style={{ display: 'flex', alignItems: 'baseline', gap: 6, padding: '4px 12px', background: t.card, border: `1px solid ${t.border}`, borderRadius: 999, fontSize: 14 }}>

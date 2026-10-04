@@ -36,7 +36,7 @@
       "url": "https://github.com/adayo22-byte/ADE-INVESTMENTS",
       "ref": "main",
       "enabled": true,
-      "$comment": "Public repo (no token needed), used with the owner's permission. S and LC are exported so the app can overlay live Yahoo data (adapters/ade-live.js); TD (the dashboard's 'today') is the real clock so ADE's own staleness flags stay honest. Colour map: sync/transforms/ade-colors.json. Cosmetic transforms are optional: if upstream changes the matched text, sync warns and leaves it. The last four transforms make ADE's Options view null-safe: upstream calls pcRatio.toFixed and skew.toFixed unguarded while its published data has them null, so the tab crashes for every ticker.",
+      "$comment": "Public repo (no token needed), used with the owner's permission. S and LC are exported so the app can overlay live Yahoo data (adapters/ade-live.js); TD (the dashboard's 'today') is the real clock so ADE's own staleness flags stay honest. Colour map: sync/transforms/ade-colors.json. Cosmetic transforms are optional: if upstream changes the matched text, sync warns and leaves it. The last four transforms make ADE's Options view null-safe: upstream calls pcRatio.toFixed and skew.toFixed unguarded while its published data has them null, so the tab crashes for every ticker. The rateSens transform shows n/a for a ticker with no rate sensitivity (user-added tickers: Yahoo has no such field).",
       "derive": "ade",
       "include": [
         "src/ade-portfolio-v6.jsx",
@@ -143,6 +143,13 @@
           "file": "src/ade-portfolio-v6.jsx",
           "find": "v:`${stock.options.ivPctl}%`",
           "replace": "v:stock.options.ivPctl==null?\"n/a\":`${stock.options.ivPctl}%`",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "Rate sensitivity: {stock.rateSens>0.5?\"HIGH\":stock.rateSens>0.2?\"MED\":\"LOW\"} ({(stock.rateSens*100).toFixed(0)}%)",
+          "replace": "Rate sensitivity: {stock.rateSens==null?\"n/a\":`${stock.rateSens>0.5?\"HIGH\":stock.rateSens>0.2?\"MED\":\"LOW\"} (${(stock.rateSens*100).toFixed(0)}%)`}",
           "count": 1,
           "optional": true
         }

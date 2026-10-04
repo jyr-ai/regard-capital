@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "sync": "node sync/pull.mjs",
-    "sync:check": "node sync/pull.mjs --check"
+    "sync:check": "node sync/pull.mjs --check",
+    "diagnose": "node scripts/diagnose.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

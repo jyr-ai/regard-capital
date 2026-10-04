@@ -5624,7 +5624,7 @@ portfolioView==="snapshot"&&<>
  <span style={{...M,fontSize:8,color:"#B8AE92"}}>CPI {MACRO.cpi}% (↓{MACRO.cpiPrior}%)</span>
  <span style={{...M,fontSize:8,color:"#B8AE92"}}>VIX {MACRO.vix}</span>
  <span style={{...M,fontSize:8,color:"#B8AE92"}}>Fed: {MACRO.rateOutlook}</span>
- <span style={{...M,fontSize:8,color:stock.rateSens>0.5?"#E6A817":"#9A8F82"}}>Rate sensitivity: {stock.rateSens>0.5?"HIGH":stock.rateSens>0.2?"MED":"LOW"} ({(stock.rateSens*100).toFixed(0)}%)</span>
+ <span style={{...M,fontSize:8,color:stock.rateSens>0.5?"#E6A817":"#9A8F82"}}>Rate sensitivity: {stock.rateSens==null?"n/a":`${stock.rateSens>0.5?"HIGH":stock.rateSens>0.2?"MED":"LOW"} (${(stock.rateSens*100).toFixed(0)}%)`}</span>
  </div>
  {/* Asymmetry with real support */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:16,marginBottom:12}}>

@@ -8,11 +8,13 @@
 import { adeWatchlist } from '../../adapters/ade.js'
 import { buildBlock, buildSnapshot } from './build.js'
 import { buildOptions, ivStats, recordIV } from './options.js'
+import { runDiagnostics } from './diagnose.js'
 import { raw } from './yahoo.js'
 import { YahooError, normalizeSymbol } from './yahoo.js'
 
 export const MAX_ADDED = 25
-const STALE_MS = 20 * 60 * 60 * 1000 // refresh on read when the last full refresh is older than this
+const STALE_MS = 20 * 60 * 60 * 1000 // refresh on read when the last successful refresh is older than this
+const RETRY_MS = 5 * 60 * 1000 // after a failed refresh, retry on read at most this often (do not hammer Yahoo)
 
 export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, prose = null, now = () => new Date() }) {
   const snapKey = sym => `ade:snap:${sym}`
@@ -66,7 +68,9 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
         try { await fetchSnapshot(sym) } catch (e) { failed.push({ symbol: sym, error: e.message }) }
       }))
     }
-    const meta = { refreshedAt: now().toISOString(), count: symbols.length, failed }
+    // `ok` means most tickers refreshed. A refresh where Yahoo refused us (blocked IP, outage) must not
+    // count as fresh, or the page would show "live" data and not retry for a day.
+    const meta = { refreshedAt: now().toISOString(), count: symbols.length, failed, ok: failed.length * 2 <= symbols.length }
     await store.set('ade:meta', meta)
     return meta
   }
@@ -75,7 +79,8 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
   // added ones. Refreshes inline when nothing has been refreshed in a while.
   async function live() {
     let meta = await store.get('ade:meta')
-    if (!meta || now() - new Date(meta.refreshedAt) > STALE_MS) meta = await refreshAll()
+    const age = meta ? now() - new Date(meta.refreshedAt) : Infinity
+    if (!meta || (meta.ok !== false ? age > STALE_MS : age > RETRY_MS)) meta = await refreshAll()
     const addedList = await added()
     const overlay = {}
     for (const { ticker } of adeTickers) {
@@ -88,7 +93,7 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
       const extra = await store.get(`ade:prose:${sym}`)
       if (snap) blocks[sym] = { block: buildBlock(snap, extra, { today: now() }), snapshot: snap }
     }
-    return { refreshedAt: meta.refreshedAt, failed: meta.failed, store: store.kind, overlay, added: blocks }
+    return { refreshedAt: meta.refreshedAt, ok: meta.ok !== false, failed: meta.failed, store: store.kind, overlay, added: blocks }
   }
 
   async function addTicker(input) {
@@ -137,9 +142,15 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
     return out
   }
 
+  // Published (ADE) prices, to sanity-check the live ones against.
+  async function diagnose({ live = true, probe } = {}) {
+    const { adeVerdicts } = await import('../../adapters/ade.js')
+    return runDiagnostics({ yahoo, store, adeTickers, published: adeVerdicts, now: now(), live, probe })
+  }
+
   async function search(q) {
     return yahoo.search(q)
   }
 
-  return { live, refreshAll, addTicker, removeTicker, addedHoldings, added, search }
+  return { live, refreshAll, addTicker, removeTicker, addedHoldings, added, search, diagnose }
 }

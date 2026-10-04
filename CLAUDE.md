@@ -11,6 +11,7 @@ Regard Capital merges four upstream repos into one Vercel app. Read README.md fi
 - **`derived/` is generated** by `sync/derive/<repo>.mjs` during sync and hashed into `upstream.lock.json`. Never edit it by hand; change the derive module and re-sync.
 - **ADE is recoloured at sync time** via `sync/transforms/ade-colors.json`. A colour ADE adds is a `WARN` in the sync PR, not a failure: add it to the map. Every `text`/`accent` target must stay AA (4.5:1) on every `surface` target (the contract test enforces it) and stay 6-digit hex.
 - **ADE's numbers are live; its text is not.** `adapters/ade-overlay.js` writes Yahoo snapshots into ADE's `S`/`LC` (exported by sync transforms). `sync/contracts/ade-views.test.jsx` renders every ADE view for every ticker in three situations and must stay green: it is what catches a crash in a view the default render never opens.
+- **Every field in an ADE block is classified in `server/ade/provenance.js`.** Add new fields there (live/computed/stale/placeholder...). Never default a missing value to a plausible number: omit it, show n/a (add a guard transform if the dashboard crashes), or classify it `placeholder` with a note.
 - `server/ade/score.js` is a port of ADE's `rank.py`; `server/ade/score.test.js` checks it against rank.py itself. Do not edit one without the other.
 - Yahoo has no official API. All Yahoo calls live in `server/ade/yahoo.js` (injectable fetch); tests never hit the network.
 - ADE's health audit depends on the clock; the contract test pins it with `sync/contracts/freeze-date.cjs`. Do not assert on a grade produced with the real clock.
@@ -22,6 +23,7 @@ npm test               # vitest: contracts, sync engine, server
 npm run lint
 npm run build
 npm run sync:check     # upstream/ matches upstream.lock.json
+npm run diagnose       # live pipeline check against real Yahoo (see README)
 node sync/pull.mjs --repo <name> [--sha <sha> | --from <local checkout>]   # python3 needed by the ADE contract tests
 ```
 
