@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 const M={fontFamily:"'JetBrains Mono',ui-monospace,monospace"};
-const TD=new Date(2026,9,1);
+const TD=new Date();
 const BANNER_DATE="2026-10-01";
 const db=(a,b)=>Math.max(0,Math.floor((b-a)/864e5));
 const CC={a:"#7E91E8",r:"#B266FF",m:"#E6A817",e:"#3DBFA8",p:"#3DBFA8",v:"#E8643A",t:"#FFBF00",s:"#B266FF",g:"#E08A4A",c:"#D9A05B",x:"#7E91E8",k:"#E8643A"};
@@ -9,7 +9,7 @@ const n=(i,h,d,s,dt,se,ca,w,ty)=>({id:i,on:true,headline:h,detail:d,source:s,dat
 const pb=(h,b,c,t,a)=>({h,bias:b,color:c,thesis:t,action:a});
 const G="#3DBFA8",Y="#FFBF00",P="#B266FF",R="#E8643A";
 
-const S={
+export const S={
 MU:{name:"Micron Technology",price:1097.39,avgPT:1534,highPT:2000,ptDate:"Oct 1, 2026",ptVerified:true,lowPT:300,high52:1255.0,low52:165.5,fwdPE:6.1,mktCap:"$1.17T",ytd:248,yr1:550,consensus:"Strong Buy",earningsDate:"Dec 2026 (Q1 FY27)",epsEst:31.43,epsEstDate:"Sep 21, 2026",sector:"Semiconductors",support:[{lvl:1070.6,label:"Volume node \u2014 2.4% below"},{lvl:940.69,label:"Volume node \u2014 14.3% below"},{lvl:902.6,label:"Swing low 2026-09-14 \u2014 held 0x"}],supportDate:"Oct 1, 2026",brokenSup:[],
 supportVerified:true,
 supportAnchor:"$1,070.60 (2.4%) / $940.69 (14.3%) / $902.60 (17.8%, held 0x) \u2014 observed levels, nearest first, Oct 1, 2026",techVerified:true,techDate:"Oct 1, 2026",supportNote:"Nearest observed support $1,070.60, 2.4% below $1,097.39. Observed swing lows and volume nodes, Oct 1, 2026.",rateSens:0.15,
@@ -1931,7 +1931,7 @@ pb("1 YEAR","NET $351.00 \u2014 TWELVE MONTHS: consensus $334 implies -5%; stree
 // ═══════════════════════════════════════════════
 // LAST CLOSE PRICES — Feb 20-21, 2026
 // ═══════════════════════════════════════════════
-const LC={ASML:1808.49,TSLA:354.11,CRWD:266.09,MRVL:268.08,HOOD:111.15,SHOP:149.09,SOFI:15.84,NOW:137.76,SNPS:490.54,MU:1097.39,NVDA:230.86,AMD:615.73,PWR:662.6,VRT:246.12,AVGO:343.64,TSM:459.2,ANET:204.49,VST:139.75,LRCX:340.1,AMZN:248.23,NBIS:232.28,OKTA:212.63,NFLX:71.36,NET:351.0};
+export const LC={ASML:1808.49,TSLA:354.11,CRWD:266.09,MRVL:268.08,HOOD:111.15,SHOP:149.09,SOFI:15.84,NOW:137.76,SNPS:490.54,MU:1097.39,NVDA:230.86,AMD:615.73,PWR:662.6,VRT:246.12,AVGO:343.64,TSM:459.2,ANET:204.49,VST:139.75,LRCX:340.1,AMZN:248.23,NBIS:232.28,OKTA:212.63,NFLX:71.36,NET:351.0};
 
 // ═══════════════════════════════════════════════
 // MACRO REGIME — updated each refresh
@@ -5765,9 +5765,9 @@ portfolioView==="snapshot"&&<>
  {/* ROW 1: Core metrics */}
  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:8}}>
  {[
- {l:"IV Rank",v:`${stock.options.ivRank}%`,c:stock.options.ivRank>60?Y:"#7E91E8",sub:"12m range position"},
- {l:"IV Percentile",v:`${stock.options.ivPctl}%`,c:stock.options.ivPctl>70?R:stock.options.ivPctl>40?Y:G,sub:`IV higher ${stock.options.ivPctl}% of days`},
- {l:"Put/Call Ratio",v:stock.options.pcRatio.toFixed(2),c:stock.options.pcRatio<0.7?G:stock.options.pcRatio>1?R:Y,sub:stock.options.pcRatio>1?"Bearish hedging":stock.options.pcRatio<0.7?"Bullish flow":"Neutral"}
+ {l:"IV Rank",v:stock.options.ivRank==null?"n/a":`${stock.options.ivRank}%`,c:stock.options.ivRank>60?Y:"#7E91E8",sub:"12m range position"},
+ {l:"IV Percentile",v:stock.options.ivPctl==null?"n/a":`${stock.options.ivPctl}%`,c:stock.options.ivPctl>70?R:stock.options.ivPctl>40?Y:G,sub:`IV higher ${stock.options.ivPctl}% of days`},
+ {l:"Put/Call Ratio",v:(stock.options.pcRatio==null?"n/a":stock.options.pcRatio.toFixed(2)),c:stock.options.pcRatio<0.7?G:stock.options.pcRatio>1?R:Y,sub:stock.options.pcRatio>1?"Bearish hedging":stock.options.pcRatio<0.7?"Bullish flow":"Neutral"}
  ].map((o,i)=>(
  <div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
  <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:3}}>{o.l}</div>
@@ -5782,7 +5782,7 @@ portfolioView==="snapshot"&&<>
  const skew=stock.options.skew;
  return[
  {l:"Implied Move",v:`±${stock.options.impliedMove}%`,c:P,sub:`Mkt pricing $${(price*stock.options.impliedMove/100).toFixed(0)} swing at earnings`,icon:"⚡"},
- {l:"Skew",v:`${skew>0?"+":""}${skew.toFixed(1)}%`,c:skew>1?G:skew<-1?R:Y,sub:skew>1?"Calls bid > puts (bullish)":skew<-1?"Puts bid > calls (bearish)":"Balanced call/put demand",icon:skew>0?"📈":"📉"},
+ {l:"Skew",v:skew==null?"n/a":`${skew>0?"+":""}${skew.toFixed(1)}%`,c:skew>1?G:skew<-1?R:Y,sub:skew>1?"Calls bid > puts (bullish)":skew<-1?"Puts bid > calls (bearish)":"Balanced call/put demand",icon:skew>0?"📈":"📉"},
  {l:"Max Pain",v:`$${stock.options.maxPain}`,c:P,sub:`${mpDist>0?"+":""}${mpDist.toFixed(1)}% from here — ${Math.abs(mpDist)<3?"strong magnet":Math.abs(mpDist)<8?"moderate pull":"weak pull"}`,icon:"🧲"}
  ];})().map((o,i)=>(
  <div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
@@ -5848,9 +5848,9 @@ portfolioView==="snapshot"&&<>
  <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
  {[
  {l:"Signal",v:`${sig.score>0?"+":""}${sig.score}`,c:sig.color,reason:sig.score>30?"Strong":sig.score>0?"Mild":"Weak/Negative"},
- {l:"IV Rank",v:`${stock.options.ivRank}%`,c:stock.options.ivRank>60?Y:"#7E91E8",reason:stock.options.ivRank>65?"Expensive (sell)":stock.options.ivRank<40?"Cheap (buy)":"Moderate"},
+ {l:"IV Rank",v:stock.options.ivRank==null?"n/a":`${stock.options.ivRank}%`,c:stock.options.ivRank>60?Y:"#7E91E8",reason:stock.options.ivRank>65?"Expensive (sell)":stock.options.ivRank<40?"Cheap (buy)":"Moderate"},
  {l:"Skew",v:`${stock.options.skew>0?"+":""}${stock.options.skew}`,c:stock.options.skew>1?G:stock.options.skew<-1?R:Y,reason:stock.options.skew>1?"Call demand":stock.options.skew<-1?"Put demand":"Balanced"},
- {l:"P/C",v:stock.options.pcRatio.toFixed(2),c:stock.options.pcRatio>1?R:stock.options.pcRatio<0.7?G:Y,reason:stock.options.pcRatio>1?"Bearish":stock.options.pcRatio<0.7?"Bullish":"Neutral"}
+ {l:"P/C",v:(stock.options.pcRatio==null?"n/a":stock.options.pcRatio.toFixed(2)),c:stock.options.pcRatio>1?R:stock.options.pcRatio<0.7?G:Y,reason:stock.options.pcRatio>1?"Bearish":stock.options.pcRatio<0.7?"Bullish":"Neutral"}
  ].map((f,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"6px 10px",textAlign:"center"}}>
  <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:1}}>{f.l}</div>
  <div style={{...M,fontSize:13,fontWeight:700,color:f.c}}>{f.v}</div>

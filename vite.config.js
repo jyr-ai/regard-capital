@@ -32,6 +32,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
   },
   test: {
+    // React's production build has no act(); a shell with NODE_ENV=production must not break the view tests.
+    env: { NODE_ENV: 'test' },
     // upstream/ is mirrored code, not ours to test; our contract tests live in sync/contracts/.
     exclude: ['node_modules/**', 'upstream/**', 'dist/**'],
   },

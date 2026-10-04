@@ -15,7 +15,7 @@ const src = fs.readFileSync(FILE, 'utf8')
 const derived = name => JSON.parse(fs.readFileSync(path.join(ROOT, 'derived/ade', name), 'utf8'))
 
 const run = (cmd, args, env = {}) =>
-  spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', timeout: 90_000, env: { ...process.env, ...env } })
+  spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', timeout: 90_000, env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', ...env } })
 
 describe('dashboard file', () => {
   it('still exports a default App component', () => {
@@ -23,8 +23,8 @@ describe('dashboard file', () => {
   })
 
   it('still has the constants the derive step reads', () => {
-    expect(src).toMatch(/\nconst S=\{/)
-    expect(src).toMatch(/\nconst LC=\{/)
+    expect(src).toMatch(/\nexport const S=\{/) // exported by a sync transform, for the live overlay
+    expect(src).toMatch(/\nexport const LC=\{/)
     expect(src).toMatch(/\nconst BANNER_DATE="\d{4}-\d{2}-\d{2}"/)
   })
 

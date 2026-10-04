@@ -104,6 +104,17 @@ export function installCategories(holdings) {
 
 installCategories()
 
+// Tickers a user added in the ADE System tab join the Watchlist news. The RSS engine caches each
+// category for 5 minutes, so news for a newly added ticker can take up to that long to appear.
+let addedKey = '[]'
+export function setAddedHoldings(added) {
+  const key = JSON.stringify(added)
+  if (key === addedKey) return false
+  addedKey = key
+  installCategories(mergeHoldings(watchlist.holdings, adeWatchlist, added))
+  return true
+}
+
 export const categoryKeys = () => Object.keys(FEED_CATEGORIES)
 
 export function listCategories() {

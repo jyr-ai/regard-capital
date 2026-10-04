@@ -5,8 +5,9 @@
 
 import { COOKIE_NAME, readCookie, verifySession } from './server/lib/session.js'
 
+// /api/cron/* is called by Vercel Cron with `Authorization: Bearer $CRON_SECRET`; the route checks it.
 const PUBLIC_PATHS = new Set(['/login', '/api/auth/login', '/api/health', '/favicon.svg'])
-const PUBLIC_PREFIXES = ['/assets/']
+const PUBLIC_PREFIXES = ['/assets/', '/api/cron/']
 
 export default async function middleware(request) {
   const url = new URL(request.url)

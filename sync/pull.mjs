@@ -108,6 +108,16 @@ export function applyTransforms(destDir, transforms = [], baseDir = ROOT) {
         warnings.push(`unmapped colour ${colour} (${n} use${n === 1 ? '' : 's'}) in ${t.file}: add it to ${t.map}`)
       }
       text = res.text
+    } else if (t.type === 'regex') {
+      const re = new RegExp(t.find, `${t.flags ?? ''}g`)
+      const hits = [...text.matchAll(re)].length
+      if (hits !== t.count) {
+        const msg = `transform on ${t.file} expected ${t.count} match(es) of /${t.find}/, found ${hits}`
+        if (!t.optional) throw new Error(msg)
+        warnings.push(`${msg} (optional, left unchanged)`)
+        continue
+      }
+      text = text.replace(re, t.replace)
     } else {
       const hits = text.split(t.find).length - 1
       if (hits !== t.count) {
@@ -169,7 +179,7 @@ export function check(lock) {
   const problems = []
   for (const [name, entry] of Object.entries(lock)) {
     const dest = path.join(UPSTREAM, name)
-    const onDisk = fs.existsSync(dest) ? fg.sync('**', { cwd: dest, dot: true, onlyFiles: true }) : []
+    const onDisk = fs.existsSync(dest) ? fg.sync('**', { cwd: dest, dot: true, onlyFiles: true, ignore: ['**/__pycache__/**'] }) : []
     for (const f of onDisk) if (!(f in entry.files)) problems.push(`${name}/${f}: not in lock (hand-added?)`)
     for (const [f, hash] of Object.entries(entry.files)) {
       const p = path.join(dest, f)

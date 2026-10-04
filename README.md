@@ -5,7 +5,7 @@ A private research desk on Vercel that combines four upstream projects:
 | Page | Source | Status |
 |---|---|---|
 | **Monitor** (landing): market, Fed, hard-asset, SEC and watchlist news plus live TV. The watchlist is ADE's tickers plus `config/watchlist.json` | [UNREDACTED](https://github.com/jyr-ai/UNREDACTED) RSS engine + LiveNewsPanel | live |
-| **ADE Book**: ADE's 9-view dashboard, recoloured, plus its skills and docs in a "How this is scored" drawer | [ADE-INVESTMENTS](https://github.com/adayo22-byte/ADE-INVESTMENTS) (used with the owner's permission) | live |
+| **ADE System**: ADE's 9-view dashboard, recoloured and refreshed daily from Yahoo Finance; add any ticker and it is scored by ADE's rules; skills and docs in a "How this is scored" drawer | [ADE-INVESTMENTS](https://github.com/adayo22-byte/ADE-INVESTMENTS) (used with the owner's permission) | live |
 | **Rankings** and **Due Diligence**: Fisher 15-pt, Buffett-Munger, Lynch, 4-investor vote, swing-biotech | [Jians_finance](https://github.com/jyr-ai/Jians_finance) | phase 3 |
 | **Portfolio**: Schwab/Fidelity CSV upload → recommended actions | [facai](https://github.com/jyr-ai/facai) (Fidelity parser + advisor prompts); Schwab parser is new | phase 4 |
 
@@ -40,6 +40,27 @@ ADE is a single 6.7k-line JSX file with its data hardcoded inline, rewritten ups
 - **Contract tests** (`sync/contracts/ade.test.js`) run ADE's own `render_check.cjs`, `healthcheck.cjs` and `scrub_positions.py --check` on the file we ship. The health audit scores freshness against the clock, so the test pins the clock to the dashboard's own date; otherwise the same file grades B, then C+, then F as days pass.
 - **Derived data.** `sync/derive/ade.mjs` reads each ticker's embedded verdict (score and band) and the ticker list into `derived/ade/*.json`, hashed into the lock like mirrored files. ADE's `rank.py` is not used because it needs `data/tickers.json`, which ADE git-ignores. The dashboard embeds the TOOL score only, so the DEFENDED score is not available as data.
 - The dashboard is desktop-first. On a phone its panels scroll sideways inside themselves.
+- **Upstream bug fixed at sync.** ADE's Options view calls `pcRatio.toFixed` and `skew.toFixed` unguarded while its published data has them null, so the tab crashes for every ticker. Four optional transforms make it null-safe ("n/a"), and live data fills the values in.
+
+### Live data (Yahoo Finance)
+
+ADE publishes its numbers as hardcoded text. The app overlays live data on top, and a user can add tickers that ADE does not cover.
+
+```
+Vercel cron, weekdays 21:30 UTC   GET /api/cron/refresh-ade   (Authorization: Bearer $CRON_SECRET)
+  → server/ade/service.js: for each ADE ticker + each added ticker
+      Yahoo chart (2y daily) → server/ade/indicators.js   MAs, RSI, MACD, swing lows, volume nodes, fibs, pivots
+      Yahoo quoteSummary     → targets, consensus, forward P/E, market cap, margins, next earnings
+      Yahoo option chains    → server/ade/options.js      max pain, ATM IV, put/call, skew, implied move
+      → score.js (ADE's formula, tested against rank.py) → snapshot in Redis (ade:snap:<SYM>)
+GET /api/ade/live → the ADE System page → adapters/ade-overlay.js writes snapshots into ADE's S and LC
+```
+
+- **What is live:** price, 52-week range, YTD/1Y, analyst targets, consensus, forward P/E, market cap, support ladder and broken levels, moving averages, RSI/MACD, volume, fibs, pivots, options, and the verdict score. **What is not:** ADE's written text (news, playbooks, risk cards, narrative). It keeps the numbers it was written with and the page says so.
+- **Adding a ticker:** the box on the ADE System tab validates it with Yahoo, scores it with ADE's rules, appends it as a tab in the dashboard, and adds it to the Monitor watchlist (its news can take up to 5 minutes to appear, because the RSS engine caches each category for 5 minutes). If `ANTHROPIC_API_KEY` is set, Claude drafts the qualitative panels (story, drivers, risks, falsifier) from the Yahoo numbers; it is told not to state events it cannot know, and the result is marked unverified. Without the key, the panels hold a placeholder.
+- **IV rank and percentile** need a year of implied-vol history that Yahoo does not provide. The refresh records one ATM IV per ticker per day and shows "n/a" until 20 days have accumulated.
+- **Storage:** Upstash Redis when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are set. Without them it falls back to server memory, which resets on every cold start (the page says so).
+- **Yahoo has no official API.** These are the unofficial endpoints the yfinance library uses; they can change or rate-limit without notice. A failed ticker is reported on the page and keeps its previous snapshot.
 
 Only code consumed verbatim updates automatically. Code rewritten in `adapters/` is frozen by design, and an upstream change that touches it shows up as a red PR.
 
@@ -55,7 +76,11 @@ node sync/pull.mjs --repo ade --from ../ADE-INVESTMENTS   # sync from a local ch
 
 ## Deploying (one-time setup)
 
-1. Vercel: import this repo. Environment variables: `APP_PASSWORD` and `SESSION_SECRET` (`openssl rand -hex 32`). `YOUTUBE_API_KEY` is optional.
+1. Vercel: import this repo. Environment variables:
+   - `APP_PASSWORD` and `SESSION_SECRET` (`openssl rand -hex 32`).
+   - `CRON_SECRET` (any long random string; Vercel Cron sends it as a bearer token to the daily refresh).
+   - Add the **Upstash Redis** integration (Storage tab). It sets the two `UPSTASH_REDIS_REST_*` variables for you.
+   - Optional: `ANTHROPIC_API_KEY` (narratives for added tickers), `YOUTUBE_API_KEY`.
 2. GitHub secrets:
    - `SYNC_BOT_TOKEN`: a fine-grained personal access token for jyr-ai. It needs Contents read on UNREDACTED, Jians_finance and facai, plus Contents and Pull requests write on regard-capital. The default `GITHUB_TOKEN` cannot be used here, because PRs it opens do not trigger CI. ADE-INVESTMENTS is public and needs no token.
 3. GitHub settings:

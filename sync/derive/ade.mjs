@@ -24,7 +24,7 @@ const DASH = ' \\u2014'
 // Lower-case keys (`pattern:{name:`, `self:{name:`) are nested objects, not tickers.
 export function tickerBlocks(src) {
   const sStart = src.indexOf('const S={')
-  const sEnd = src.indexOf('\nconst LC=', sStart)
+  const sEnd = src.search(/\n(?:export )?const LC=/)
   if (sStart < 0 || sEnd < 0) throw new Error('ADE: could not find `const S={` .. `const LC=` in the dashboard')
   const body = src.slice(sStart, sEnd)
   const starts = [...body.matchAll(/\n([A-Z][A-Z0-9_]{0,9}):\{name:"([^"]*)"/g)]
@@ -45,7 +45,7 @@ export function derive(adeDir) {
   const blocks = tickerBlocks(src)
 
   const lc = {}
-  const lcMatch = src.match(/\nconst LC=\{([^}]*)\}/)
+  const lcMatch = src.match(/\n(?:export )?const LC=\{([^}]*)\}/)
   if (lcMatch) for (const m of lcMatch[1].matchAll(/([A-Z][A-Z0-9_]*):(-?[\d.]+)/g)) lc[m[1]] = Number(m[2])
 
   const asOf = (src.match(/\nconst BANNER_DATE="(\d{4}-\d{2}-\d{2})"/) || [])[1] || null
