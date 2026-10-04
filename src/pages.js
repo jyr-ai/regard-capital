@@ -5,7 +5,7 @@ import { lazy } from 'react'
 // `phase` marks pages whose upstream source is not wired in yet.
 export const PAGES = [
   { id: 'monitor', path: '/', label: 'Monitor', icon: 'Radio', component: lazy(() => import('./pages/Monitor.jsx')) },
-  { id: 'ade', path: '/book', label: 'ADE Book', icon: 'BookOpen', phase: 2, source: 'ADE-INVESTMENTS' },
+  { id: 'ade', path: '/book', label: 'ADE Book', icon: 'BookOpen', component: lazy(() => import('./pages/AdeBook.jsx')) },
   { id: 'rankings', path: '/rankings', label: 'Rankings', icon: 'ListOrdered', phase: 3, source: 'Jians_finance' },
   { id: 'dd', path: '/diligence', label: 'Due Diligence', icon: 'ScanSearch', phase: 3, source: 'Jians_finance' },
   { id: 'portfolio', path: '/portfolio', label: 'Portfolio', icon: 'Upload', phase: 4, source: 'facai' },

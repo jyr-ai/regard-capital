@@ -1,0 +1,42 @@
+{
+  "$comment": "Recolours ADE's dashboard into the Afrofuturismo Digital palette. Keys are ADE's source colours (lower-case #rrggbb), `to` is what they become. Targets MUST stay 6-digit hex: ADE builds tints at runtime (color+\"22\"), and literal #rrggbbaa values keep their alpha suffix. `role` drives sync/contracts/ade.test.js: every text/accent target must reach WCAG AA (4.5:1) on every surface target. A colour ADE adds later is NOT recoloured: sync prints a WARN and the sync PR lists it, so it can be mapped here.",
+  "colors": {
+    "#04070c": { "to": "#0D0D0D", "role": "surface", "note": "page background" },
+    "#06080d": { "to": "#0A090B", "role": "surface" },
+    "#080d18": { "to": "#0A090B", "role": "surface" },
+    "#0a0f1a": { "to": "#17131A", "role": "surface", "note": "panels, header bar" },
+    "#0d1220": { "to": "#1E1924", "role": "surface" },
+    "#0f1525": { "to": "#1E1924", "role": "surface" },
+    "#111723": { "to": "#1E1924", "role": "surface" },
+    "#151d30": { "to": "#241C2B", "role": "surface", "note": "bar tracks, active buttons" },
+    "#0f0a1a": { "to": "#1B1224", "role": "surface", "note": "purple-tinted panel" },
+    "#1a0a2e": { "to": "#24103A", "role": "surface", "note": "purple band" },
+    "#1a0a0e": { "to": "#24120E", "role": "surface", "note": "red-tinted panel" },
+
+    "#1a2338": { "to": "#2C2433", "role": "border" },
+    "#253050": { "to": "#3A3042", "role": "border" },
+    "#2a3548": { "to": "#3A3042", "role": "border" },
+
+    "#556678": { "to": "#9A8F82", "role": "text", "note": "dimmest text (146 uses)" },
+    "#8899ad": { "to": "#B8AE92", "role": "text", "note": "secondary text" },
+    "#8899aa": { "to": "#B8AE92", "role": "text" },
+    "#c8d0da": { "to": "#D6CDB6", "role": "text" },
+    "#c8d5e2": { "to": "#D6CDB6", "role": "text" },
+    "#e2e8f0": { "to": "#E8E1D0", "role": "text" },
+    "#f1f5f9": { "to": "#F4EEDF", "role": "text", "note": "primary text" },
+
+    "#00d4ff": { "to": "#E6A817", "role": "accent", "note": "UI accent -> Sahara Gold" },
+    "#22d3ee": { "to": "#E6A817", "role": "accent" },
+    "#4da6ff": { "to": "#7E91E8", "role": "accent", "note": "analyst category -> cosmic indigo (derived, not in the palette)" },
+    "#a87cff": { "to": "#B266FF", "role": "accent", "note": "STRONG BUY / purple categories" },
+    "#00e89a": { "to": "#3DBFA8", "role": "accent", "note": "BUY / gain -> UP" },
+    "#00d492": { "to": "#3DBFA8", "role": "accent" },
+    "#26d975": { "to": "#3DBFA8", "role": "accent" },
+    "#ffb833": { "to": "#FFBF00", "role": "accent", "note": "HOLD / caution -> Warm Amber" },
+    "#ff4567": { "to": "#E8643A", "role": "accent", "note": "TRIM / loss -> DOWN" },
+    "#ff8c42": { "to": "#E08A4A", "role": "accent" },
+    "#f7931a": { "to": "#D9A05B", "role": "accent", "note": "crypto category" },
+    "#ff8c8c": { "to": "#F29A85", "role": "accent" },
+    "#ff8c66": { "to": "#EE8A64", "role": "accent" }
+  }
+}

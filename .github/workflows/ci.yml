@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'  # ADE's privacy scrub runs in the contract tests
       - run: npm ci
       - name: upstream/ matches upstream.lock.json (no hand edits)
         run: npm run sync:check

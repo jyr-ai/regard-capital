@@ -6,7 +6,7 @@
   "functions": {
     "api/[...path].js": {
       "maxDuration": 30,
-      "includeFiles": "{upstream,adapters,config}/**"
+      "includeFiles": "{upstream/unredacted,adapters,config,derived}/**"
     }
   },
   "rewrites": [

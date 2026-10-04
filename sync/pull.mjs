@@ -5,11 +5,13 @@
 //   node sync/pull.mjs --repo ade              one repo
 //   node sync/pull.mjs --repo ade --sha <sha>  one repo at an exact commit
 //   node sync/pull.mjs --repo ade --from ../ADE-INVESTMENTS   use a local checkout
-//   node sync/pull.mjs --check                 fail if upstream/ differs from upstream.lock.json
+//   node sync/pull.mjs --check                 fail if upstream/ or derived/ differ from upstream.lock.json
 //
-// Fails (exit 1) when an include pattern matches nothing or a transform does not
+// Fails (exit 1) when an include pattern matches nothing or a strict transform does not
 // match exactly `count` times. That failure is what keeps a sync PR red instead of
-// letting a renamed upstream file reach production.
+// letting a renamed upstream file reach production. Cosmetic transforms are marked
+// `optional`: when they no longer match, or a colour has no mapping, sync prints a
+// `WARN` line (the sync workflow copies those into the PR body) and leaves the text as-is.
 
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -23,6 +25,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const MANIFEST = path.join(ROOT, 'sync/manifest.json')
 const LOCK = path.join(ROOT, 'upstream.lock.json')
 const UPSTREAM = path.join(ROOT, 'upstream')
+const DERIVED = path.join(ROOT, 'derived')
 
 function parseArgs(argv) {
   const args = { repo: null, sha: null, from: null, check: false }
@@ -42,8 +45,9 @@ const readJson = (p, fallback) => (fs.existsSync(p) ? JSON.parse(fs.readFileSync
 const sha256 = buf => createHash('sha256').update(buf).digest('hex')
 const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
 
-// cfg.tokenEnv names the env var holding a read token for that repo (repos owned by
-// another account, like ADE, need their own); default UPSTREAM_READ_TOKEN.
+// cfg.tokenEnv names the env var holding a read token for that repo (a private repo
+// owned by another account needs its own); default UPSTREAM_READ_TOKEN. Public repos
+// clone without any token.
 function authedUrl(url, tokenEnv = 'UPSTREAM_READ_TOKEN') {
   const token = process.env[tokenEnv]
   return token ? url.replace('https://', `https://x-access-token:${token}@`) : url
@@ -69,24 +73,78 @@ export function listFiles(srcDir, cfg) {
   return [...files].sort()
 }
 
-export function applyTransforms(destDir, transforms = []) {
+// #rrggbb with an optional 2-digit alpha suffix. ADE writes literal #rrggbbaa values and
+// also builds tints at runtime (color+"22"), so targets must stay 6-digit and the
+// suffix is carried over untouched.
+const HEX = /#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?(?![0-9a-fA-F])/g
+
+export function applyColorMap(text, colors) {
+  const unmapped = new Map()
+  const out = text.replace(HEX, (whole, rgb, alpha = '') => {
+    const key = `#${rgb.toLowerCase()}`
+    const hit = colors[key]
+    if (!hit) {
+      unmapped.set(key, (unmapped.get(key) || 0) + 1)
+      return whole
+    }
+    return hit.to + alpha
+  })
+  return { text: out, unmapped }
+}
+
+// Returns a list of warning strings. Strict find/replace transforms throw on a count
+// mismatch; `optional` ones and colour maps warn instead.
+export function applyTransforms(destDir, transforms = [], baseDir = ROOT) {
+  const warnings = []
   for (const t of transforms) {
     const file = path.join(destDir, t.file)
     if (!fs.existsSync(file)) throw new Error(`transform target missing: ${t.file}`)
-    const text = fs.readFileSync(file, 'utf8')
-    const hits = text.split(t.find).length - 1
-    if (hits !== t.count) {
-      throw new Error(`transform on ${t.file} expected ${t.count} match(es) of ${JSON.stringify(t.find)}, found ${hits}`)
+    let text = fs.readFileSync(file, 'utf8')
+
+    if (t.type === 'colorMap') {
+      const { colors } = readJson(path.join(baseDir, t.map))
+      const res = applyColorMap(text, colors)
+      for (const [colour, n] of [...res.unmapped].sort((a, b) => b[1] - a[1])) {
+        warnings.push(`unmapped colour ${colour} (${n} use${n === 1 ? '' : 's'}) in ${t.file}: add it to ${t.map}`)
+      }
+      text = res.text
+    } else {
+      const hits = text.split(t.find).length - 1
+      if (hits !== t.count) {
+        const msg = `transform on ${t.file} expected ${t.count} match(es) of ${JSON.stringify(t.find)}, found ${hits}`
+        if (!t.optional) throw new Error(msg)
+        warnings.push(`${msg} (optional, left unchanged)`)
+        continue
+      }
+      text = text.split(t.find).join(t.replace)
     }
-    fs.writeFileSync(file, text.split(t.find).join(t.replace))
+    fs.writeFileSync(file, text)
   }
+  return warnings
 }
 
 export function hashTree(destDir, files) {
   return Object.fromEntries(files.map(f => [f, sha256(fs.readFileSync(path.join(destDir, f)))]))
 }
 
-function syncRepo(name, cfg, { sha, from }) {
+// A derive module (sync/derive/<name>.mjs) turns the synced tree into small JSON files
+// the app imports. Output goes to derived/<repo>/ and is hashed into the lock.
+async function runDerive(name, cfg, srcDir) {
+  if (!cfg.derive) return {}
+  const mod = await import(pathToFileURL(path.join(ROOT, 'sync/derive', `${cfg.derive}.mjs`)).href)
+  const outDir = path.join(DERIVED, name)
+  fs.rmSync(outDir, { recursive: true, force: true })
+  const written = {}
+  for (const [rel, text] of Object.entries(mod.derive(srcDir))) {
+    const target = path.join(outDir, rel)
+    fs.mkdirSync(path.dirname(target), { recursive: true })
+    fs.writeFileSync(target, text)
+    written[`derived/${name}/${rel}`] = sha256(text)
+  }
+  return written
+}
+
+async function syncRepo(name, cfg, { sha, from }) {
   const src = from ? { dir: from, sha: git(from, 'rev-parse', 'HEAD'), temp: false } : checkoutRemote(name, cfg, sha)
   try {
     const files = listFiles(src.dir, cfg)
@@ -96,14 +154,17 @@ function syncRepo(name, cfg, { sha, from }) {
       fs.mkdirSync(path.dirname(path.join(dest, f)), { recursive: true })
       fs.copyFileSync(path.join(src.dir, f), path.join(dest, f))
     }
-    applyTransforms(dest, cfg.transforms)
-    return { url: cfg.url, ref: cfg.ref, sha: src.sha, syncedAt: new Date().toISOString(), files: hashTree(dest, files) }
+    const warnings = applyTransforms(dest, cfg.transforms)
+    const entry = { url: cfg.url, ref: cfg.ref, sha: src.sha, syncedAt: new Date().toISOString(), files: hashTree(dest, files) }
+    const derived = await runDerive(name, cfg, dest)
+    if (Object.keys(derived).length) entry.derived = derived
+    return { entry, warnings }
   } finally {
     if (src.temp) fs.rmSync(src.dir, { recursive: true, force: true })
   }
 }
 
-// Every mirrored file must hash to what the lock recorded, and nothing extra may exist.
+// Every mirrored and derived file must hash to what the lock recorded, and nothing extra may exist.
 export function check(lock) {
   const problems = []
   for (const [name, entry] of Object.entries(lock)) {
@@ -115,11 +176,21 @@ export function check(lock) {
       if (!fs.existsSync(p)) problems.push(`${name}/${f}: missing`)
       else if (sha256(fs.readFileSync(p)) !== hash) problems.push(`${name}/${f}: edited by hand`)
     }
+
+    const derivedDir = path.join(DERIVED, name)
+    const derivedOnDisk = fs.existsSync(derivedDir) ? fg.sync('**', { cwd: derivedDir, dot: true, onlyFiles: true }) : []
+    const recorded = entry.derived || {}
+    for (const f of derivedOnDisk) if (!(`derived/${name}/${f}` in recorded)) problems.push(`derived/${name}/${f}: not in lock`)
+    for (const [rel, hash] of Object.entries(recorded)) {
+      const p = path.join(ROOT, rel)
+      if (!fs.existsSync(p)) problems.push(`${rel}: missing`)
+      else if (sha256(fs.readFileSync(p)) !== hash) problems.push(`${rel}: edited by hand or stale`)
+    }
   }
   return problems
 }
 
-function main() {
+async function main() {
   const args = parseArgs(process.argv.slice(2))
   const manifest = readJson(MANIFEST)
   const lock = readJson(LOCK, {})
@@ -127,7 +198,7 @@ function main() {
   if (args.check) {
     const problems = check(lock)
     if (problems.length) {
-      console.error('upstream/ does not match upstream.lock.json:\n  ' + problems.join('\n  '))
+      console.error('upstream/ or derived/ does not match upstream.lock.json:\n  ' + problems.join('\n  '))
       process.exit(1)
     }
     console.log(`upstream/ matches lock (${Object.keys(lock).join(', ') || 'empty'})`)
@@ -139,13 +210,14 @@ function main() {
     const cfg = manifest.repos[name]
     if (!cfg) throw new Error(`unknown repo: ${name}`)
     const prev = lock[name]
-    const next = syncRepo(name, cfg, args)
+    const { entry, warnings } = await syncRepo(name, cfg, args)
     // Unchanged content keeps its old entry, so a no-op sync leaves no diff to commit.
-    const same = prev && prev.sha === next.sha && JSON.stringify(prev.files) === JSON.stringify(next.files)
-    lock[name] = same ? prev : next
-    const before = prev?.sha
-    const after = next.sha
-    console.log(`${name}: ${before ? before.slice(0, 7) : 'none'} -> ${after.slice(0, 7)} (${Object.keys(lock[name].files).length} files)`)
+    const same = prev && prev.sha === entry.sha
+      && JSON.stringify(prev.files) === JSON.stringify(entry.files)
+      && JSON.stringify(prev.derived || {}) === JSON.stringify(entry.derived || {})
+    lock[name] = same ? prev : entry
+    console.log(`${name}: ${prev ? prev.sha.slice(0, 7) : 'none'} -> ${entry.sha.slice(0, 7)} (${Object.keys(entry.files).length} files)`)
+    for (const w of warnings) console.log(`WARN ${name}: ${w}`)
   }
 
   const sorted = Object.fromEntries(Object.keys(lock).sort().map(k => [k, lock[k]]))
@@ -153,10 +225,8 @@ function main() {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  try {
-    main()
-  } catch (err) {
+  main().catch(err => {
     console.error(`sync failed: ${err.message}`)
     process.exit(1)
-  }
+  })
 }

@@ -8,6 +8,9 @@ Regard Capital merges four upstream repos into one Vercel app. Read README.md fi
 - **Import upstream code only from `adapters/`.** ESLint blocks `upstream/` imports elsewhere.
 - **Every adapter dependency on upstream needs a contract test** in `sync/contracts/<repo>.test.js`. That test is what keeps a breaking upstream change out of production.
 - Vendored UNREDACTED components import `../theme/*.js`. `vite.config.js` (themeShim) points those imports at `src/theme/`. Keep every token name and `DARK_THEME` key that upstream defines, or the contract test fails.
+- **`derived/` is generated** by `sync/derive/<repo>.mjs` during sync and hashed into `upstream.lock.json`. Never edit it by hand; change the derive module and re-sync.
+- **ADE is recoloured at sync time** via `sync/transforms/ade-colors.json`. A colour ADE adds is a `WARN` in the sync PR, not a failure: add it to the map. Every `text`/`accent` target must stay AA (4.5:1) on every `surface` target (the contract test enforces it) and stay 6-digit hex.
+- ADE's health audit depends on the clock; the contract test pins it with `sync/contracts/freeze-date.cjs`. Do not assert on a grade produced with the real clock.
 
 ## Commands
 ```bash
@@ -16,7 +19,7 @@ npm test               # vitest: contracts, sync engine, server
 npm run lint
 npm run build
 npm run sync:check     # upstream/ matches upstream.lock.json
-node sync/pull.mjs --repo <name> [--sha <sha> | --from <local checkout>]
+node sync/pull.mjs --repo <name> [--sha <sha> | --from <local checkout>]   # python3 needed by the ADE contract tests
 ```
 
 ## Design system

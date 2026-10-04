@@ -29,6 +29,10 @@ export default [
     rules: { 'no-restricted-imports': ['error', NO_UPSTREAM] },
   },
   {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', ecmaVersion: 'latest', globals: { ...globals.node } },
+  },
+  {
     files: ['**/*.test.js'],
     languageOptions: { globals: { ...globals.node } },
   },

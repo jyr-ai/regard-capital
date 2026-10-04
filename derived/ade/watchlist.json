@@ -1,0 +1,98 @@
+[
+  {
+    "ticker": "MU",
+    "name": "Micron Technology"
+  },
+  {
+    "ticker": "NVDA",
+    "name": "NVIDIA Corporation"
+  },
+  {
+    "ticker": "AMD",
+    "name": "Advanced Micro Devices"
+  },
+  {
+    "ticker": "TSM",
+    "name": "Taiwan Semiconductor"
+  },
+  {
+    "ticker": "AVGO",
+    "name": "Broadcom Inc."
+  },
+  {
+    "ticker": "AMZN",
+    "name": "Amazon.com Inc."
+  },
+  {
+    "ticker": "HOOD",
+    "name": "Robinhood Markets"
+  },
+  {
+    "ticker": "SOFI",
+    "name": "SoFi Technologies"
+  },
+  {
+    "ticker": "MRVL",
+    "name": "Marvell Technology"
+  },
+  {
+    "ticker": "SHOP",
+    "name": "Shopify Inc."
+  },
+  {
+    "ticker": "NFLX",
+    "name": "Netflix Inc."
+  },
+  {
+    "ticker": "VST",
+    "name": "Vistra Corp."
+  },
+  {
+    "ticker": "CRWD",
+    "name": "CrowdStrike Holdings"
+  },
+  {
+    "ticker": "VRT",
+    "name": "Vertiv Holdings"
+  },
+  {
+    "ticker": "PWR",
+    "name": "Quanta Services"
+  },
+  {
+    "ticker": "ANET",
+    "name": "Arista Networks"
+  },
+  {
+    "ticker": "TSLA",
+    "name": "Tesla Inc"
+  },
+  {
+    "ticker": "LRCX",
+    "name": "Lam Research"
+  },
+  {
+    "ticker": "ASML",
+    "name": "ASML Holding"
+  },
+  {
+    "ticker": "NOW",
+    "name": "ServiceNow Inc."
+  },
+  {
+    "ticker": "SNPS",
+    "name": "Synopsys Inc."
+  },
+  {
+    "ticker": "NBIS",
+    "name": "Nebius Group"
+  },
+  {
+    "ticker": "OKTA",
+    "name": "Okta"
+  },
+  {
+    "ticker": "NET",
+    "name": "Cloudflare"
+  }
+]

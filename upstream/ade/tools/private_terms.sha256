@@ -1,0 +1,6 @@
+# SHA-256 of private broker/account terms (lowercase words, single-spaced).
+# Regenerate: python3 -c "import sys;sys.path.insert(0,'tools');from scrub_positions import term_hash;print(term_hash('TERM'))"
+a929c5789c0b24603ed0180c0a64ce9616335e0be903f2a51bebb2f2dbfc0a4c
+82b27a132bde0cd0e79cbe8e86983fadb9cf51853f4eb237423771b699117e32
+fbe07820c2dc7b0caf4d2ca96dc2b6748f798670c6666aa21406a17b3f0f8054
+764f28a90a1770245e21e4320f6293fb1ebb9a2bc77ce84c5c89df05a8cf0143

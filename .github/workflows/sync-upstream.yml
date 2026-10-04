@@ -10,7 +10,9 @@ name: sync-upstream
 #                        Contents + Pull requests write on regard-capital. PRs opened with
 #                        GITHUB_TOKEN do not trigger `ci`, so auto-merge would never fire.
 #   UPSTREAM_READ_TOKEN  read token for upstream clones; defaults to SYNC_BOT_TOKEN.
-#   ADE_READ_TOKEN       only if adayo22-byte/ADE-INVESTMENTS is private (manifest tokenEnv).
+#
+# ADE-INVESTMENTS is public and needs no token. If it goes private, add
+# "tokenEnv": "ADE_READ_TOKEN" to its manifest entry and create that secret.
 
 on:
   schedule:
@@ -54,7 +56,6 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.SYNC_BOT_TOKEN }}
       UPSTREAM_READ_TOKEN: ${{ secrets.UPSTREAM_READ_TOKEN || secrets.SYNC_BOT_TOKEN }}
-      ADE_READ_TOKEN: ${{ secrets.ADE_READ_TOKEN }}
       BRANCH: sync/${{ matrix.repo }}
     steps:
       - uses: actions/checkout@v4
@@ -69,9 +70,10 @@ jobs:
 
       - name: Pull ${{ matrix.repo }}
         id: pull
+        shell: bash  # adds -o pipefail: without it, a failing pull.mjs piped into tee would look like success
         run: |
           node sync/pull.mjs --repo "${{ matrix.repo }}" | tee pull.log
-          if git diff --quiet -- upstream upstream.lock.json && [ -z "$(git ls-files --others --exclude-standard upstream)" ]; then
+          if git diff --quiet -- upstream derived upstream.lock.json && [ -z "$(git ls-files --others --exclude-standard upstream derived)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -81,18 +83,26 @@ jobs:
         if: steps.pull.outputs.changed == 'true'
         run: |
           SHA=$(node -e 'console.log(require("./upstream.lock.json")["${{ matrix.repo }}"].sha.slice(0,7))')
+          {
+            echo "Automated upstream sync of **${{ matrix.repo }}** at \`${SHA}\`."
+            echo
+            if grep -q '^WARN' pull.log; then
+              echo "### Needs attention (does not block the merge)"
+              grep '^WARN' pull.log | sed 's/^WARN /- /'
+              echo
+            fi
+            echo "Auto-merges when \`ci\` (lock check, lint, contract tests, build) passes. If CI is red, upstream changed something this app depends on: fix the adapter or contract on this branch, or leave it and production stays on the last good commit."
+          } > body.md
           git config user.name  "regard-sync-bot"
           git config user.email "regard-sync-bot@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          git add upstream upstream.lock.json
+          git add upstream derived upstream.lock.json
           git commit -m "sync(${{ matrix.repo }}): upstream @ ${SHA}" -m "$(cat pull.log)"
           git push --force origin "$BRANCH"
           if ! gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
-            gh pr create --head "$BRANCH" --base main \
-              --title "sync(${{ matrix.repo }}): upstream @ ${SHA}" \
-              --body "Automated upstream sync. Auto-merges when \`ci\` (contract tests, lint, build) passes. If CI is red, upstream changed something this app depends on: fix the adapter or contract on this branch, or leave it and production stays on the last good commit."
+            gh pr create --head "$BRANCH" --base main --title "sync(${{ matrix.repo }}): upstream @ ${SHA}" --body-file body.md
           else
-            gh pr edit "$BRANCH" --title "sync(${{ matrix.repo }}): upstream @ ${SHA}"
+            gh pr edit "$BRANCH" --title "sync(${{ matrix.repo }}): upstream @ ${SHA}" --body-file body.md
           fi
           gh pr merge "$BRANCH" --auto --squash
 

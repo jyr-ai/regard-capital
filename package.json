@@ -23,9 +23,14 @@
     "lucide-react": "^0.468.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-markdown": "^9.1.0",
+    "remark-gfm": "^4.0.1",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
     "@eslint/js": "^9.39.1",
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.1.0",

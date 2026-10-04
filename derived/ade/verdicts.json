@@ -1,0 +1,245 @@
+{
+  "asOf": "2026-10-01",
+  "tickers": {
+    "MU": {
+      "name": "Micron Technology",
+      "sector": "Semiconductors",
+      "price": 1097.39,
+      "avgPT": 1534,
+      "upsidePct": 39.8,
+      "score": 77,
+      "band": "BUY",
+      "nearestSupport": 1070.6
+    },
+    "NVDA": {
+      "name": "NVIDIA Corporation",
+      "sector": "Semiconductors",
+      "price": 230.86,
+      "avgPT": 328,
+      "upsidePct": 42.1,
+      "score": 71,
+      "band": "BUY",
+      "nearestSupport": 207.25
+    },
+    "AMD": {
+      "name": "Advanced Micro Devices",
+      "sector": "Semiconductors",
+      "price": 615.73,
+      "avgPT": 604,
+      "upsidePct": -1.9,
+      "score": 16,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 437.23
+    },
+    "TSM": {
+      "name": "Taiwan Semiconductor",
+      "sector": "Semiconductors",
+      "price": 459.2,
+      "avgPT": 552,
+      "upsidePct": 20.2,
+      "score": 47,
+      "band": "HOLD",
+      "nearestSupport": 421.68
+    },
+    "AVGO": {
+      "name": "Broadcom Inc.",
+      "sector": "Semiconductors",
+      "price": 343.64,
+      "avgPT": 514,
+      "upsidePct": 49.6,
+      "score": 88,
+      "band": "STRONG BUY",
+      "nearestSupport": 342
+    },
+    "AMZN": {
+      "name": "Amazon.com Inc.",
+      "sector": "Tech / Cloud",
+      "price": 248.23,
+      "avgPT": 328,
+      "upsidePct": 32.1,
+      "score": 74,
+      "band": "BUY",
+      "nearestSupport": 246.57
+    },
+    "HOOD": {
+      "name": "Robinhood Markets",
+      "sector": "Fintech",
+      "price": 111.15,
+      "avgPT": 131,
+      "upsidePct": 17.9,
+      "score": 50,
+      "band": "HOLD",
+      "nearestSupport": 106.16
+    },
+    "SOFI": {
+      "name": "SoFi Technologies",
+      "sector": "Fintech",
+      "price": 15.84,
+      "avgPT": 20,
+      "upsidePct": 26.3,
+      "score": 73,
+      "band": "BUY",
+      "nearestSupport": 15.65
+    },
+    "MRVL": {
+      "name": "Marvell Technology",
+      "sector": "Semiconductors",
+      "price": 268.08,
+      "avgPT": 285,
+      "upsidePct": 6.3,
+      "score": 25,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 200.62
+    },
+    "SHOP": {
+      "name": "Shopify Inc.",
+      "sector": "E-Commerce / AI",
+      "price": 149.09,
+      "avgPT": 172,
+      "upsidePct": 15.4,
+      "score": 61,
+      "band": "HOLD",
+      "nearestSupport": 146.93
+    },
+    "NFLX": {
+      "name": "Netflix Inc.",
+      "sector": "Streaming / Media",
+      "price": 71.36,
+      "avgPT": 94,
+      "upsidePct": 31.7,
+      "score": 71,
+      "band": "BUY",
+      "nearestSupport": 70.86
+    },
+    "VST": {
+      "name": "Vistra Corp.",
+      "sector": "Energy / Nuclear",
+      "price": 139.75,
+      "avgPT": 217,
+      "upsidePct": 55.3,
+      "score": 81,
+      "band": "BUY",
+      "nearestSupport": 138.53
+    },
+    "CRWD": {
+      "name": "CrowdStrike Holdings",
+      "sector": "Cybersecurity",
+      "price": 266.09,
+      "avgPT": 244,
+      "upsidePct": -8.3,
+      "score": 10,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 181.24
+    },
+    "VRT": {
+      "name": "Vertiv Holdings",
+      "sector": "AI Infrastructure",
+      "price": 246.12,
+      "avgPT": 341,
+      "upsidePct": 38.6,
+      "score": 81,
+      "band": "BUY",
+      "nearestSupport": 242.84
+    },
+    "PWR": {
+      "name": "Quanta Services",
+      "sector": "AI Infrastructure",
+      "price": 662.6,
+      "avgPT": 800,
+      "upsidePct": 20.7,
+      "score": 74,
+      "band": "BUY",
+      "nearestSupport": 642.11
+    },
+    "ANET": {
+      "name": "Arista Networks",
+      "sector": "AI Networking",
+      "price": 204.49,
+      "avgPT": 241,
+      "upsidePct": 17.9,
+      "score": 43,
+      "band": "HOLD",
+      "nearestSupport": 181.27
+    },
+    "TSLA": {
+      "name": "Tesla Inc",
+      "sector": "Auto/Energy",
+      "price": 354.11,
+      "avgPT": 390,
+      "upsidePct": 10.1,
+      "score": 39,
+      "band": "HOLD",
+      "nearestSupport": 337.24
+    },
+    "LRCX": {
+      "name": "Lam Research",
+      "sector": "Semi Equipment",
+      "price": 340.1,
+      "avgPT": 371,
+      "upsidePct": 9.1,
+      "score": 35,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 312.34
+    },
+    "ASML": {
+      "name": "ASML Holding",
+      "sector": "Semi Equipment - Lithography Monopoly",
+      "price": 1808.49,
+      "avgPT": 2117,
+      "upsidePct": 17.1,
+      "score": 62,
+      "band": "HOLD",
+      "nearestSupport": 1750.48
+    },
+    "NOW": {
+      "name": "ServiceNow Inc.",
+      "sector": "Enterprise AI / SaaS",
+      "price": 137.76,
+      "avgPT": 146,
+      "upsidePct": 6,
+      "score": 19,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 105.56
+    },
+    "SNPS": {
+      "name": "Synopsys Inc.",
+      "sector": "EDA / Semiconductor Design",
+      "price": 490.54,
+      "avgPT": 563,
+      "upsidePct": 14.8,
+      "score": 37,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 458.98
+    },
+    "NBIS": {
+      "name": "Nebius Group",
+      "sector": "AI Infrastructure",
+      "price": 232.28,
+      "avgPT": 280,
+      "upsidePct": 20.5,
+      "score": 58,
+      "band": "HOLD",
+      "nearestSupport": 219.51
+    },
+    "OKTA": {
+      "name": "Okta",
+      "sector": "Cybersecurity / Identity",
+      "price": 212.63,
+      "avgPT": 183,
+      "upsidePct": -13.9,
+      "score": 7,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 129.02
+    },
+    "NET": {
+      "name": "Cloudflare",
+      "sector": "Cloud Infrastructure",
+      "price": 351,
+      "avgPT": 334,
+      "upsidePct": -4.8,
+      "score": 17,
+      "band": "TRIM/AVOID",
+      "nearestSupport": 269.3
+    }
+  }
+}

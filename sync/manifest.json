@@ -35,9 +35,9 @@
     "ade": {
       "url": "https://github.com/adayo22-byte/ADE-INVESTMENTS",
       "ref": "main",
-      "tokenEnv": "ADE_READ_TOKEN",
-      "enabled": false,
-      "$enabled": "Phase 2. Waiting on the repo owner's permission (no LICENSE upstream).",
+      "enabled": true,
+      "$comment": "Public repo (no token needed), used with the owner's permission. Colour map: sync/transforms/ade-colors.json. Cosmetic transforms are optional: if upstream changes the matched text, sync warns and leaves it.",
+      "derive": "ade",
       "include": [
         "src/ade-portfolio-v6.jsx",
         ".claude/skills/ade-*/**",
@@ -50,7 +50,55 @@
         "tools/private_terms.sha256"
       ],
       "exclude": [],
-      "transforms": []
+      "transforms": [
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "colorMap",
+          "map": "sync/transforms/ade-colors.json"
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "'IBM Plex Mono',monospace",
+          "replace": "'JetBrains Mono',ui-monospace,monospace",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "'Instrument Sans',sans-serif",
+          "replace": "'Josefin Sans',system-ui,sans-serif",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Instrument+Sans:wght@400;500;600;700",
+          "replace": "family=JetBrains+Mono:wght@300;400;500;600;700&family=Josefin+Sans:wght@400;500;600;700",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "rgba(77,166,255,0.08)",
+          "replace": "rgba(126,145,232,0.08)",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "minHeight:\"100vh\"",
+          "replace": "minHeight:\"calc(100dvh - var(--nav-h, 66px))\"",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "position:\"sticky\",top:0,zIndex:200",
+          "replace": "position:\"sticky\",top:\"var(--nav-h, 66px)\",zIndex:90",
+          "count": 1,
+          "optional": true
+        }
+      ]
     },
     "jians": {
       "url": "https://github.com/jyr-ai/Jians_finance",
