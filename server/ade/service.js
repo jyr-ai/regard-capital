@@ -4,9 +4,14 @@
 //   ade:tickers        string[]                  tickers the user added
 //   ade:snap:<SYM>     snapshot (build.js)       latest Yahoo snapshot, refreshed daily
 //   ade:meta           { refreshedAt, failed[] } last full refresh
+//   ade:macro          macro.js output           index/rate/CPI strip, refreshed with the tickers
+//
+// Optional extras, injected so tests never touch the network: `nasdaq` (consensus EPS, the forward
+// P/E fallback) and `fetchImpl` (NY Fed + BLS for the macro strip). Without them those are skipped.
 
 import { adeWatchlist } from '../../adapters/ade.js'
 import { buildBlock, buildSnapshot } from './build.js'
+import { buildMacro } from './macro.js'
 import { buildOptions, ivStats, recordIV } from './options.js'
 import { runDiagnostics } from './diagnose.js'
 import { raw } from './yahoo.js'
@@ -16,7 +21,7 @@ export const MAX_ADDED = 25
 const STALE_MS = 20 * 60 * 60 * 1000 // refresh on read when the last successful refresh is older than this
 const RETRY_MS = 5 * 60 * 1000 // after a failed refresh, retry on read at most this often (do not hammer Yahoo)
 
-export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, prose = null, now = () => new Date() }) {
+export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, prose = null, nasdaq = null, fetchImpl = null, now = () => new Date() }) {
   const snapKey = sym => `ade:snap:${sym}`
 
   async function added() {
@@ -34,10 +39,26 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
     }
   }
 
+  // Yahoo carries the yield (^TNX) like any other symbol; one 2-year series serves every ticker in a refresh.
+  let yields = { at: 0, pending: null }
+  function yieldCandles() {
+    if (!yields.pending || now() - yields.at >= 10 * 60_000) {
+      yields = { at: +now(), pending: yahoo.chart('^TNX').then(c => c.candles, () => null) } // the promise is shared by concurrent tickers
+    }
+    return yields.pending
+  }
+
+  // Consensus EPS matters only when Yahoo has no forward EPS, so ask Nasdaq only then.
+  async function nasdaqFor(sym, summary) {
+    const ks = summary?.defaultKeyStatistics
+    if (!nasdaq || raw(summary?.summaryDetail?.forwardPE) != null || raw(ks?.forwardPE) != null || raw(ks?.forwardEps) != null) return null
+    return nasdaq.yearlyEps(sym).catch(() => null)
+  }
+
   async function gather(sym) {
     const [chart, summary] = await Promise.all([yahoo.chart(sym), yahoo.summary(sym).catch(() => null)])
-    const options = await optionsFor(sym, summary)
-    return { chart, summary, options }
+    const [options, est, rates] = await Promise.all([optionsFor(sym, summary), nasdaqFor(sym, summary), yieldCandles()])
+    return { chart, summary, options, nasdaq: est, yields: rates }
   }
 
   // Fold today's ATM IV into the symbol's history and derive IV rank/percentile from it.
@@ -53,15 +74,27 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
     const g = await gather(sym)
     const { chart, summary } = g
     const options = await withIvHistory(sym, g.options)
-    const snap = buildSnapshot({ symbol: sym, candles: chart.candles, meta: chart.meta, summary, options }, { now: now() })
+    const snap = buildSnapshot({ symbol: sym, candles: chart.candles, meta: chart.meta, summary, options, nasdaq: g.nasdaq, yields: g.yields }, { now: now() })
     await store.set(snapKey(sym), snap)
     return snap
+  }
+
+  // The macro strip. A failure keeps yesterday's strip (marked by its own date) rather than blanking it.
+  async function refreshMacro() {
+    if (!fetchImpl) return null
+    try {
+      const m = await buildMacro({ yahoo, fetchImpl, now: now() })
+      if (m.sources.some(x => x.ok)) await store.set('ade:macro', m)
+      return m
+    } catch { return null }
   }
 
   // Refresh every ADE ticker and every added ticker. One failure never stops the rest.
   async function refreshAll() {
     const symbols = [...new Set([...adeTickers.map(t => t.ticker), ...(await added())])]
     const failed = []
+    yields = { at: 0, pending: null } // a refresh starts from a fresh yield series
+    await refreshMacro()
     const CONCURRENCY = 5
     for (let i = 0; i < symbols.length; i += CONCURRENCY) {
       await Promise.all(symbols.slice(i, i + CONCURRENCY).map(async sym => {
@@ -93,7 +126,8 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
       const extra = await store.get(`ade:prose:${sym}`)
       if (snap) blocks[sym] = { block: buildBlock(snap, extra, { today: now() }), snapshot: snap }
     }
-    return { refreshedAt: meta.refreshedAt, ok: meta.ok !== false, failed: meta.failed, store: store.kind, overlay, added: blocks }
+    const macro = (await store.get('ade:macro')) ?? null
+    return { refreshedAt: meta.refreshedAt, ok: meta.ok !== false, failed: meta.failed, store: store.kind, overlay, added: blocks, macro }
   }
 
   async function addTicker(input) {
@@ -108,7 +142,7 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
     const options = await withIvHistory(sym, g.options)
     const type = chart.meta?.instrumentType
     if (type && type !== 'EQUITY' && type !== 'ETF') throw new YahooError(`${sym} is a ${type.toLowerCase()}; ADE scores stocks and ETFs`, { status: 422 })
-    const snap = buildSnapshot({ symbol: sym, candles: chart.candles, meta: chart.meta, summary, options }, { now: now() })
+    const snap = buildSnapshot({ symbol: sym, candles: chart.candles, meta: chart.meta, summary, options, nasdaq: g.nasdaq, yields: g.yields }, { now: now() })
 
     let drafted = null
     let proseNote = null
@@ -144,8 +178,8 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, pros
 
   // Published (ADE) prices, to sanity-check the live ones against.
   async function diagnose({ live = true, probe } = {}) {
-    const { adeVerdicts } = await import('../../adapters/ade.js')
-    return runDiagnostics({ yahoo, store, adeTickers, published: adeVerdicts, now: now(), live, probe })
+    const { adeVerdicts, adeAsOf } = await import('../../adapters/ade.js')
+    return runDiagnostics({ yahoo, store, adeTickers, published: adeVerdicts, adeAsOf, nasdaq, now: now(), live, probe })
   }
 
   async function search(q) {

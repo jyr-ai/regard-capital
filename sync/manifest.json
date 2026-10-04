@@ -65,6 +65,12 @@
         },
         {
           "file": "src/ade-portfolio-v6.jsx",
+          "find": "\nconst MACRO={",
+          "replace": "\nexport const MACRO={",
+          "count": 1
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
           "type": "regex",
           "find": "const TD=new Date\\([^)]*\\);",
           "replace": "const TD=new Date();",
@@ -149,9 +155,137 @@
         {
           "file": "src/ade-portfolio-v6.jsx",
           "find": "Rate sensitivity: {stock.rateSens>0.5?\"HIGH\":stock.rateSens>0.2?\"MED\":\"LOW\"} ({(stock.rateSens*100).toFixed(0)}%)",
-          "replace": "Rate sensitivity: {stock.rateSens==null?\"n/a\":`${stock.rateSens>0.5?\"HIGH\":stock.rateSens>0.2?\"MED\":\"LOW\"} (${(stock.rateSens*100).toFixed(0)}%)`}",
+          "replace": "Rate sensitivity: {stock.rateNote||\"n/a\"}",
           "count": 1,
           "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "regex",
+          "find": "(animation:\"pulse 2s ease-in-out infinite\"\\}\\}/>\\n)\\s*REFRESHED[^\\n]*\\n",
+          "replace": "$1 {(globalThis.__ADE_LIVE__||{}).banner||\"\"}\n",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "{l:\"Fwd P/E\",v:`${stock.fwdPE}x`,c:\"#7E91E8\"}",
+          "replace": "{l:\"Fwd P/E\",v:stock.fwdPE>0?`${stock.fwdPE}x`:(stock.fwdPENote||\"n/a\"),c:\"#7E91E8\"}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "{l:\"Fwd P/E\",v:`${stock.fwdPE}x`,c:stock.fwdPE<20?G:stock.fwdPE<35?Y:R}",
+          "replace": "{l:\"Fwd P/E\",v:stock.fwdPE>0?`${stock.fwdPE}x`:(stock.fwdPENote||\"n/a\"),c:stock.fwdPE>0?(stock.fwdPE<20?G:stock.fwdPE<35?Y:R):\"#9A8F82\"}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "color:stock.rateSens>0.5?\"#E6A817\":\"#9A8F82\"",
+          "replace": "color:stock.rateNote&&stock.rateNote.startsWith(\"HIGH\")?\"#E6A817\":\"#9A8F82\"",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "CPI {MACRO.cpi}% (↓{MACRO.cpiPrior}%)",
+          "replace": "CPI {MACRO.cpi==null?\"n/a\":MACRO.cpi+\"%\"}{MACRO.cpiPrior==null?\"\":` (prior ${MACRO.cpiPrior}%)`}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "CPI {MACRO.cpi}% • Fed:",
+          "replace": "CPI {MACRO.cpi==null?\"n/a\":MACRO.cpi+\"%\"} • Fed:",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "regex",
+          "find": "v:(`\\$\\{stock\\.fund\\.metrics\\.(\\w+)[^`]*`),c:",
+          "replace": "v:stock.fund.metrics.$2==null?\"n/a\":$1,c:",
+          "count": 7,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "regex",
+          "find": "<strong style=\\{\\{color:\"#B8AE92\"\\}\\}>WHAT'S TRUSTED:</strong>[^\\n]*\\n",
+          "replace": "{(globalThis.__ADE_LIVE__||{}).legend||\"\"}\n",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "regex",
+          "find": " signals — [A-Z][a-z]{2} \\d{1,2}, \\d{4} — Not investment advice",
+          "replace": " signals — ADE text from {(globalThis.__ADE_LIVE__||{}).adeDate||\"n/a\"}; numbers live — Not investment advice",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "[\"snapshot\",\"market\",\"exit\"].map(v=>",
+          "replace": "[\"snapshot\",\"market\"].map(v=>",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "{tickers.length} positions • Signal-weighted overview",
+          "replace": "{tickers.length} tickers • Signal-weighted overview",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "sub:`IV higher ${stock.options.ivPctl}% of days`",
+          "replace": "sub:stock.options.ivPctl==null?\"needs 20 daily IV readings\":`IV higher ${stock.options.ivPctl}% of days`",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": ">KEY INVESTMENT THEMES</div>",
+          "replace": ">KEY INVESTMENT THEMES · written by ADE, {(globalThis.__ADE_LIVE__||{}).adeDate||\"\"}, not refreshed here</div>",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "{l:\"Implied Move\",v:`±${stock.options.impliedMove}%`,c:P,sub:`Mkt pricing $${(price*stock.options.impliedMove/100).toFixed(0)} swing at earnings`,icon:\"⚡\"}",
+          "replace": "{l:\"Implied Move\",v:stock.options.impliedMove==null?\"n/a\":`±${stock.options.impliedMove}%`,c:P,sub:stock.options.impliedMove==null?\"no earnings straddle priced yet\":`Mkt pricing $${(price*stock.options.impliedMove/100).toFixed(0)} swing at earnings`,icon:\"⚡\"}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "type": "fontScale",
+          "sizes": {
+            "5": 10,
+            "6": 11,
+            "7": 12,
+            "8": 13,
+            "9": 14,
+            "10": 15,
+            "11": 16,
+            "12": 17,
+            "13": 18,
+            "14": 19,
+            "16": 20,
+            "18": 22,
+            "20": 24,
+            "22": 26,
+            "24": 28,
+            "26": 30,
+            "28": 32,
+            "30": 34,
+            "36": 40
+          },
+          "gridFactor": 1.5
         }
       ]
     },

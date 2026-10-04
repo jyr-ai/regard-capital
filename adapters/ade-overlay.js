@@ -2,8 +2,9 @@
 // Pure functions over plain objects, so they are unit-tested without rendering anything.
 //
 // What is overlaid on ADE's own tickers: price, 52w range, YTD/1Y, analyst targets and
-// consensus, forward P/E, market cap, the support ladder and broken levels, moving averages,
-// RSI/MACD, volume, fibs and pivots, and the verdict. What is NOT: ADE's written text (news,
+// consensus, forward P/E, rate sensitivity, next earnings date and EPS estimate, market cap, the
+// support ladder and broken levels, moving averages, RSI/MACD, volume, fibs and pivots, and the
+// verdict; plus the macro strip (overlayMacro). What is NOT: ADE's written text (news,
 // playbooks, risk cards, narrative). That text keeps the numbers it was written with, so it can
 // disagree with the live figures until ADE's owner refreshes it. The dashboard shows a banner.
 
@@ -18,6 +19,31 @@ function stamp(asOf) {
 const alignOf = (price, ma) =>
   ma.d50 && ma.d200 && price > ma.d50 && price > ma.d200 && ma.d50 > ma.d200 ? 'bullish'
     : ma.d50 && ma.d200 && price < ma.d50 && price < ma.d200 ? 'bearish' : 'mixed'
+
+// "Nov 18, 2026 (TBC)" -> "Nov 18"; ADE writes catalyst dates this short way ("Nov 18", "Jul 22 \u2713").
+const shortDate = str => { const m = /([A-Z][a-z]{2}) (\d{1,2})\b/.exec(String(str ?? '')); return m ? `${m[1]} ${Number(m[2])}` : null }
+
+// Yahoo's next earnings date. It must still be ahead. It replaces ADE's when ADE's has no day ("Dec 2026"),
+// is in the past or is marked TBC, or when Yahoo has the date confirmed. An estimate from Yahoo never overrides a
+// date ADE wrote down, since Yahoo's estimates can be a week off. ADE's own catalyst entry for the same
+// day moves with it, so the header and the calendar agree.
+export function overlayEarnings(block, snap, date) {
+  if (!snap.earningsDate) return
+  const asOf = new Date(new Date(snap.asOf).toDateString())
+  if (new Date(snap.earningsDate) < asOf) return
+  // The consensus EPS is for the same upcoming report whichever date is right.
+  if (snap.epsEst != null) { block.epsEst = snap.epsEst; block.epsEstDate = date }
+  const old = String(block.earningsDate ?? '')
+  const oldDay = /[A-Z][a-z]{2} \d{1,2},? \d{4}/.exec(old)
+  const adeUsable = oldDay && new Date(oldDay[0]) >= asOf && !/TBC/i.test(old)
+  if (adeUsable && snap.earningsEstimate) return
+  const next = `${snap.earningsDate}${snap.earningsEstimate ? ' (TBC)' : ''}`
+  const from = shortDate(old), to = shortDate(snap.earningsDate)
+  if (from && to && from !== to) {
+    for (const c of block.catalysts ?? []) if (shortDate(c.d) === from && c.i === 'high' && /earn|\bQ[1-4]\b/i.test(c.e) && !String(c.d).includes('\u2713')) c.d = to
+  }
+  block.earningsDate = next
+}
 
 export function overlayTicker(block, snap) {
   const date = stamp(snap.asOf)
@@ -34,8 +60,14 @@ export function overlayTicker(block, snap) {
     block.ptVerified = true
   }
   set(block, 'consensus', snap.consensus)
-  set(block, 'fwdPE', snap.fwdPE)
+  // Forward P/E and rate sensitivity: null is an answer ("n/a"), not a gap to fill with ADE's old number.
+  block.fwdPE = snap.fwdPE ?? null
+  block.fwdPENote = snap.fwdPENote ?? (snap.fwdPE == null ? 'n/a' : null)
+  block.rateSens = snap.rateSens ?? null
+  block.rateCorr = snap.rateCorr ?? null
+  block.rateNote = snap.rateNote ?? null
   set(block, 'mktCap', snap.mktCap)
+  overlayEarnings(block, snap, date)
 
   block.support = snap.support.map(({ lvl, label }) => ({ lvl, label }))
   block.brokenSup = snap.brokenSup
@@ -71,9 +103,42 @@ export function overlayTicker(block, snap) {
   return block
 }
 
+const MACRO_FIELDS = ['spy', 'vix', 'dxy', 'oil', 'btc', 'gold', 'tnx', 'cpi', 'cpiPrior', 'fedFunds', 'rateOutlook', 'regime', 'color', 'note', 'macroDate']
+
+// ADE's MACRO strip (S&P, VIX, dollar, oil, gold, bitcoin, CPI, Fed funds, regime and its note) is hand-typed
+// text. Replace it field by field with the live strip; a field the sources could not give becomes null,
+// which the dashboard shows as n/a, never ADE's old number. No live strip at all leaves ADE's untouched.
+export function overlayMacro(MACRO, live) {
+  if (!live) return false
+  for (const k of MACRO_FIELDS) MACRO[k] = live[k] ?? null
+  MACRO.regime ??= 'NO DATA'
+  MACRO.color ??= '#9A8F82'
+  MACRO.note ??= 'Live macro data was unavailable on the last refresh.'
+  MACRO.macroDate ??= ''
+  MACRO.rateOutlook ??= 'n/a'
+  return true
+}
+
+// The line the dashboard prints above every ticker. It replaces ADE's hand-written "REFRESHED <date>" banner,
+// which describes one day's numbers and is wrong the day after.
+export function liveBanner({ refreshedAt, macroLive, adeAsOf, now = new Date() }) {
+  const t = new Date(refreshedAt)
+  const when = Number.isNaN(+t) ? 'recently' : t.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+  const days = adeAsOf ? Math.max(0, Math.round((now - new Date(`${adeAsOf}T12:00:00Z`)) / 864e5)) : null
+  const written = adeAsOf ? `ADE's written analysis (news, theses, risk cards) is from ${new Date(`${adeAsOf}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}${days > 0 ? `, ${days} day${days === 1 ? '' : 's'} ago` : ''}` : "ADE's written analysis is as ADE last published it"
+  return `LIVE · Yahoo Finance · refreshed ${when}. Prices, targets, support, indicators, options and scores update every weekday after the US close${macroLive ? '; so does the macro strip' : ''}. ${written}.`
+}
+
+// Replaces ADE's "WHAT'S TRUSTED / WHAT'S ESTIMATED" footer, which describes the owner's brokerage
+// screenshots and estimated technicals: neither is true of this app.
+export const LEGEND = 'LIVE from Yahoo Finance, refreshed every weekday after the US close: prices, 52-week range, analyst targets and consensus, '
+  + 'forward P/E (Nasdaq consensus when Yahoo has none), market cap, next earnings date, support levels, moving averages, RSI and MACD, volume, '
+  + 'options (max pain, implied volatility, put/call, skew, implied move), rate sensitivity, verdict scores and the macro strip. IV rank and percentile fill in after 20 daily readings. '
+  + 'WRITTEN BY ADE, NOT REFRESHED HERE: news, theses, playbooks, risk cards, peer tables, catalysts, fundamentals stories and market themes. They change when ADE publishes.'
+
 // S and LC are ADE's module-level objects (exported by a sync transform). Idempotent: tickers
 // injected by an earlier call that are no longer in `live.added` are removed first.
-export function applyLive(S, LC, live) {
+export function applyLive(S, LC, live, { MACRO = null, adeAsOf = null, now = new Date() } = {}) {
   for (const k of Object.keys(S)) if (S[k].userAdded && !(k in live.added)) { delete S[k]; delete LC[k] }
   const overlaid = []
   const missing = []
@@ -90,5 +155,12 @@ export function applyLive(S, LC, live) {
     LC[sym] = snapshot.price
     injected.push(sym)
   }
-  return { overlaid, missing, injected }
+  const macro = MACRO ? overlayMacro(MACRO, live.macro) : false
+  // Read by the dashboard through a sync transform (globalThis, so the app does not import a name ADE could rename).
+  globalThis.__ADE_LIVE__ = {
+    banner: liveBanner({ refreshedAt: live.refreshedAt, macroLive: macro, adeAsOf, now }),
+    legend: LEGEND,
+    adeDate: adeAsOf ? new Date(`${adeAsOf}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null,
+  }
+  return { overlaid, missing, injected, macro }
 }

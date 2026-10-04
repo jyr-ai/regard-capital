@@ -63,6 +63,61 @@ async function liveFor(symbols, { options = true } = {}) {
 
 const BOOK = () => Object.keys(adeData.S).filter(k => !adeData.S[k].userAdded)
 
+const MACRO_LIVE = { spy: 7723, vix: 15.31, dxy: 101.93, oil: 91.11, btc: 85426, gold: 4162, tnx: 5.28, cpi: 3.4, cpiPrior: 3.36, fedFunds: 3.88,
+  rateOutlook: 'target range 3.75-4.00%, effective 3.88% (NY Fed, 2026-10-01)', regime: 'RISK-ON', color: '#3DBFA8',
+  note: 'Oct 2, 2026 closes, Yahoo Finance: S&P 500 7,723 (+0.73%); VIX 15.3.', macroDate: 'Oct 2, 2026' }
+
+// What a user would see as a bug: a field that prints as text from a missing value.
+const BROKEN_TEXT = /undefined|NaN|null%|nullx|\bnull\b(?!\s+pending)/
+
+function textOf(ticker, tabs) {
+  const view = render(React.createElement(Boundary, null, React.createElement(App)))
+  const out = {}
+  fireEvent.click(screen.getAllByText(ticker, { exact: true })[0])
+  for (const tab of tabs) {
+    fireEvent.click(screen.queryAllByText(tab, { exact: true })[0])
+    out[tab] = view.container.textContent
+  }
+  // The portfolio dashboard's market view carries the macro note.
+  fireEvent.click(screen.getAllByText('ADE', { exact: true })[0])
+  fireEvent.click(screen.queryAllByText('market', { exact: false }).find(e => e.tagName === 'BUTTON'))
+  out.MARKET = view.container.textContent
+  view.unmount()
+  return out
+}
+
+describe('missing live values show as n/a', () => {
+  it('prints no undefined/NaN/null for a loss-making ticker with no yield history and a half-empty macro strip', async () => {
+    const live = await liveFor(BOOK())
+    for (const snap of Object.values(live.overlay)) Object.assign(snap, { fwdPE: null, fwdPENote: 'n/a, loss-making (forward EPS -$3.49)', rateSens: undefined, rateCorr: undefined, rateNote: undefined })
+    applyLive({ ...live, refreshedAt: NOW.toISOString(), macro: { ...MACRO_LIVE, cpi: null, cpiPrior: null, fedFunds: null, rateOutlook: null } })
+    const text = textOf('MU', ['INTEL', 'FUNDAMENTALS', 'RISK/REWARD', 'OPTIONS'])
+    delete text.MARKET
+    for (const [tab, t] of Object.entries(text)) {
+      const at = t.search(BROKEN_TEXT)
+      if (at >= 0) throw new Error(`${tab} prints broken text: ...${t.slice(Math.max(0, at - 90), at + 50)}...`)
+    }
+    expect(text.INTEL).toContain('n/a, loss-making (forward EPS -$3.49)')
+    expect(text['RISK/REWARD']).toMatch(/Rate sensitivity: n\/a/)
+    expect(text['RISK/REWARD']).toMatch(/CPI n\/a/)
+  }, 60_000)
+
+  it('shows the live macro strip and the live banner, and none of ADE\'s hand-written macro text', async () => {
+    applyLive({ ...(await liveFor(BOOK())), refreshedAt: NOW.toISOString(), macro: MACRO_LIVE })
+    const text = textOf('NVDA', ['INTEL', 'RISK/REWARD'])
+    expect(text['RISK/REWARD']).toContain('RISK-ON')
+    expect(text['RISK/REWARD']).toContain('CPI 3.4% (prior 3.36%)')
+    expect(text['RISK/REWARD']).toContain('Fed: target range 3.75-4.00%')
+    expect(text.MARKET).toContain('S&P 500 7,723')
+    // the Exit Map needs the owner's share counts, which ADE scrubs from its repo: it would show WEIGHT NaN%
+    expect(text.MARKET).not.toMatch(/EXIT MAP|NaN%/i)
+    expect(text.INTEL).toContain('LIVE · Yahoo Finance · refreshed')
+    expect(text.INTEL).toContain('WRITTEN BY ADE, NOT REFRESHED HERE')
+    expect(text.INTEL).toMatch(/numbers live — Not investment advice/)
+    for (const t of Object.values(text)) expect(t).not.toMatch(/BOTH CATALYSTS PAID|REFRESHED Sep 3|Fed hiked 25bp|brokerage screenshots|all estimated based on rally/i)
+  }, 60_000)
+})
+
 describe('every ADE view renders', () => {
   it('for every ticker, with the data ADE published', () => {
     expect(BOOK().length).toBeGreaterThanOrEqual(10)

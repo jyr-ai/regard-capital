@@ -7,7 +7,7 @@ import { buildBlock, buildSnapshot } from '../server/ade/build.js'
 import { buildOptions } from '../server/ade/options.js'
 import { scoreSetup } from '../server/ade/score.js'
 import App, { adeData, applyLive } from './ade-app.js'
-import { overlayTicker } from './ade-overlay.js'
+import { liveBanner, overlayMacro, overlayTicker } from './ade-overlay.js'
 
 async function snapshot(sym) {
   const y = fakeYahoo()
@@ -51,10 +51,66 @@ describe('overlayTicker on a real ADE block', () => {
 
   it('keeps ADE\'s value when Yahoo has no data for a field', async () => {
     const block = structuredClone(adeData.S.MU)
-    const snap = { ...(await snapshot('MU')), avgPT: null, fwdPE: null, consensus: null, ytd: null }
-    const before = { avgPT: block.avgPT, fwdPE: block.fwdPE, consensus: block.consensus, ytd: block.ytd }
+    const snap = { ...(await snapshot('MU')), avgPT: null, consensus: null, ytd: null }
+    const before = { avgPT: block.avgPT, consensus: block.consensus, ytd: block.ytd }
     overlayTicker(block, snap)
-    expect({ avgPT: block.avgPT, fwdPE: block.fwdPE, consensus: block.consensus, ytd: block.ytd }).toEqual(before)
+    expect({ avgPT: block.avgPT, consensus: block.consensus, ytd: block.ytd }).toEqual(before)
+  })
+
+  it('shows a forward P/E Yahoo and Nasdaq cannot give as n/a, never as ADE\'s old number', async () => {
+    const block = structuredClone(adeData.S.MU)
+    expect(block.fwdPE).toBeGreaterThan(0)
+    overlayTicker(block, { ...(await snapshot('MU')), fwdPE: null, fwdPENote: 'n/a, loss-making (forward EPS -$3.49)' })
+    expect(block.fwdPE).toBeNull()
+    expect(block.fwdPENote).toBe('n/a, loss-making (forward EPS -$3.49)')
+  })
+
+  it('replaces ADE\'s hand-typed rate sensitivity with the measured one, and hides it when there is none', async () => {
+    const block = structuredClone(adeData.S.MU)
+    const rate = { rateSens: 0.21, rateCorr: -0.21, rateNote: 'HIGH (\u22120.21 vs 10Y yield; falls when yields rise; 2y daily)' }
+    overlayTicker(block, { ...(await snapshot('MU')), ...rate })
+    expect(block).toMatchObject(rate)
+    overlayTicker(block, await snapshot('MU')) // a snapshot without yield history
+    expect(block.rateNote).toBeNull()
+    expect(block.rateSens).toBeNull()
+  })
+
+  describe('next earnings date', () => {
+    const withDate = async (ticker, ade, yahoo) => {
+      const block = structuredClone(adeData.S[ticker])
+      block.earningsDate = ade
+      const snap = { ...(await snapshot(ticker)), asOf: '2026-10-05T12:00:00Z', ...yahoo }
+      overlayTicker(block, snap)
+      return block
+    }
+
+    it('takes a confirmed Yahoo date over ADE\'s, and ADE\'s earnings entry in the catalyst calendar moves with it', async () => {
+      const block = structuredClone(adeData.S.NVDA)
+      block.earningsDate = 'Nov 18, 2026'
+      block.catalysts = [{ d: 'Nov 18', e: 'NVDA Q3 FY27 \u2014 guided $108B', i: 'high' }, { d: 'May 20 \u2713', e: 'Q1 earnings', i: 'high' }, { d: 'Nov 18', e: 'Rubin ramp', i: 'med' }]
+      overlayTicker(block, { ...(await snapshot('NVDA')), asOf: '2026-10-05T12:00:00Z', earningsDate: 'Nov 17, 2026', earningsEstimate: false, epsEst: 2.47 })
+      expect(block).toMatchObject({ earningsDate: 'Nov 17, 2026', epsEst: 2.47, epsEstDate: 'Oct 5, 2026' })
+      expect(block.catalysts.map(c => c.d)).toEqual(['Nov 17', 'May 20 \u2713', 'Nov 18']) // only the earnings entry; a confirmed past one stays
+    })
+
+    it('does not let a Yahoo ESTIMATE override a date ADE wrote down, but still takes the EPS estimate', async () => {
+      const block = await withDate('HOOD', 'Nov 4, 2026', { earningsDate: 'Oct 27, 2026', earningsEstimate: true, epsEst: 0.64 })
+      expect(block.earningsDate).toBe('Nov 4, 2026')
+      expect(block.epsEst).toBe(0.64)
+    })
+
+    it('uses a Yahoo estimate, marked TBC the way ADE does, when ADE has no day, a past day, or its own TBC', async () => {
+      for (const ade of ['Dec 2026 (Q1 FY27)', 'Sep 24, 2026', 'Nov 5, 2026 (TBC)', undefined]) {
+        const block = await withDate('NET', ade, { earningsDate: 'Oct 29, 2026', earningsEstimate: true })
+        expect(block.earningsDate, String(ade)).toBe('Oct 29, 2026 (TBC)')
+      }
+    })
+
+    it('ignores a Yahoo date that is already past (Yahoo still shows last quarter\'s report until the next is announced)', async () => {
+      const block = await withDate('SNPS', 'Dec 2, 2026', { earningsDate: 'Aug 26, 2026', earningsEstimate: false, epsEst: 4.1 })
+      expect(block.earningsDate).toBe('Dec 2, 2026')
+      expect(block.epsEst).toBe(adeData.S.SNPS.epsEst)
+    })
   })
 
   it('writes a verdict whose score is ADE\'s formula applied to the new numbers', async () => {
@@ -95,5 +151,51 @@ describe('applyLive on ADE\'s real data, rendered', () => {
     applyLive({ overlay: {}, added: {} })
     expect(adeData.S.NET2).toBeUndefined()
     expect(adeData.LC.NET2).toBeUndefined()
+  })
+})
+
+describe('macro strip', () => {
+  const live = { spy: 7723, vix: 15.31, dxy: 101.93, oil: 91.11, btc: 85426, gold: 4162, tnx: 5.28, cpi: 3.4, cpiPrior: 3.36, fedFunds: 3.88,
+    rateOutlook: 'target range 3.75-4.00%', regime: 'RISK-ON', color: '#3DBFA8', note: 'Oct 2, 2026 closes, Yahoo Finance: S&P 500 7,723.', macroDate: 'Oct 2, 2026' }
+
+  it('replaces every hand-typed field, including the regime and note ADE wrote', () => {
+    const macro = structuredClone(adeData.MACRO)
+    expect(macro.regime).toMatch(/PAID/) // ADE's own marketing line
+    expect(overlayMacro(macro, live)).toBe(true)
+    expect(macro).toMatchObject(live)
+  })
+
+  it('shows a field the sources could not give as null (n/a), not as ADE\'s old number', () => {
+    const macro = structuredClone(adeData.MACRO)
+    overlayMacro(macro, { ...live, cpi: null, cpiPrior: null, fedFunds: null, rateOutlook: null })
+    expect(macro.cpi).toBeNull()
+    expect(macro.fedFunds).toBeNull()
+    expect(macro.rateOutlook).toBe('n/a')
+  })
+
+  it('leaves ADE\'s strip alone when there is no live strip at all', () => {
+    const macro = structuredClone(adeData.MACRO)
+    expect(overlayMacro(macro, null)).toBe(false)
+    expect(macro).toEqual(adeData.MACRO)
+  })
+})
+
+describe('liveBanner', () => {
+  const now = new Date('2026-10-04T20:00:00Z')
+  it('says the numbers are live and how old ADE\'s writing is', () => {
+    const text = liveBanner({ refreshedAt: '2026-10-04T19:38:00Z', macroLive: true, adeAsOf: '2026-10-01', now })
+    expect(text).toMatch(/^LIVE · Yahoo Finance · refreshed Oct 4/)
+    expect(text).toMatch(/macro strip/)
+    expect(text).toMatch(/from Oct 1, 2026, 3 days ago/)
+  })
+  it('does not claim a live macro strip when there is none', () => {
+    expect(liveBanner({ refreshedAt: '2026-10-04T19:38:00Z', macroLive: false, adeAsOf: '2026-10-04', now })).not.toMatch(/macro/)
+  })
+  it('is what the dashboard prints in place of ADE\'s hand-written REFRESHED banner', () => {
+    applyLive({ overlay: {}, added: {}, refreshedAt: '2026-10-04T19:38:00Z', macro: null })
+    expect(globalThis.__ADE_LIVE__.banner).toMatch(/^LIVE · Yahoo Finance/)
+    const html = renderToString(React.createElement(App))
+    expect(html).toContain('LIVE · Yahoo Finance')
+    expect(html).not.toMatch(/REFRESHED Sep 3/)
   })
 })

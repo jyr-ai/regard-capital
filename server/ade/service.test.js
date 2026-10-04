@@ -9,6 +9,77 @@ beforeEach(() => { clearMemoryStore(); store = createStore({ url: '', token: '' 
 
 const make = (opts = {}, yahoo = fakeYahoo()) => ({ yahoo, svc: createAdeService({ store, yahoo, adeTickers: BOOK, ...opts }) })
 
+const fy = (label, eps) => ({ fiscalEnd: label, end: new Date('2099-12-31'), eps, analysts: 5 })
+
+describe('forward P/E and rate sensitivity in a refresh', () => {
+  it('records a measured rate sensitivity from the yield series, and no yield symbol leaks into the book', async () => {
+    const { svc } = make()
+    await svc.refreshAll()
+    const { overlay } = await svc.live()
+    expect(overlay.MU.rateNote).toMatch(/vs 10Y yield/)
+    expect(Object.keys(overlay)).toEqual(['MU', 'NVDA'])
+  })
+
+  it('has no rate sensitivity when the yield series is unavailable', async () => {
+    const yahoo = fakeYahoo({ unknown: ['^TNX'] })
+    const { svc } = make({}, yahoo)
+    await svc.refreshAll()
+    expect((await svc.live()).overlay.MU.rateNote).toBeUndefined()
+  })
+
+  it('asks Nasdaq only for a ticker Yahoo has no forward EPS for, and uses its consensus', async () => {
+    const asked = []
+    const nasdaq = { yearlyEps: async sym => { asked.push(sym); return [fy('Dec 2099', 2)] } }
+    const { svc } = make({ nasdaq }, fakeYahoo({ noForward: ['NVDA'] }))
+    await svc.refreshAll()
+    const { overlay } = await svc.live()
+    expect(asked).toEqual(['NVDA'])
+    expect(overlay.MU.fwdPE).toBe(24.3)
+    expect(overlay.NVDA.fwdPE).toBeGreaterThan(0)
+    expect(overlay.NVDA.fwdPEBasis).toBe('Nasdaq consensus EPS, FY Dec 2099')
+  })
+
+  it('shows n/a, not 0, when neither source has a forward P/E', async () => {
+    const nasdaq = { yearlyEps: async () => { throw new Error('Nasdaq down') } }
+    const { svc } = make({ nasdaq }, fakeYahoo({ noForward: ['NVDA', 'NEWCO'] }))
+    await svc.addTicker('NEWCO')
+    await svc.refreshAll()
+    const live = await svc.live()
+    expect(live.overlay.NVDA.fwdPE).toBeNull()
+    expect(live.added.NEWCO.block.fwdPE).toBeNull()
+    expect(live.added.NEWCO.block.fwdPENote).toBe('n/a, no analyst estimates')
+  })
+})
+
+describe('macro strip in a refresh', () => {
+  const fetchImpl = async url => (url.includes('newyorkfed')
+    ? { ok: true, json: async () => ({ refRates: [{ effectiveDate: '2026-10-01', percentRate: 3.88, targetRateFrom: 3.75, targetRateTo: 4 }] }) }
+    : { ok: true, json: async () => ({ status: 'REQUEST_SUCCEEDED', Results: { series: [{ data: [{ year: '2026', period: 'M08', value: '103.4' }, { year: '2025', period: 'M08', value: '100' }] }] } }) })
+
+  it('is stored by refreshAll and served by live()', async () => {
+    const { svc } = make({ fetchImpl })
+    await svc.refreshAll()
+    const { macro } = await svc.live()
+    expect(macro).toMatchObject({ cpi: 3.4, fedFunds: 3.88 })
+    expect(macro.vix).not.toBeNull()
+  })
+
+  it('is absent, not faked, when no fetch is configured', async () => {
+    const { svc } = make()
+    await svc.refreshAll()
+    expect((await svc.live()).macro).toBeNull()
+  })
+
+  it('keeps yesterday\'s strip when every source fails', async () => {
+    const { svc } = make({ fetchImpl })
+    await svc.refreshAll()
+    const before = (await svc.live()).macro
+    const down = createAdeService({ store, yahoo: fakeYahoo({ unknown: ['^GSPC', '^VIX', '^TNX', 'DX-Y.NYB', 'CL=F', 'GC=F', 'BTC-USD'] }), adeTickers: BOOK, fetchImpl: async () => ({ ok: false, status: 500 }) })
+    await down.refreshAll()
+    expect((await down.live()).macro).toEqual(before)
+  })
+})
+
 describe('refreshAll', () => {
   it('snapshots every ADE ticker and every added ticker', async () => {
     const { svc, yahoo } = make()
@@ -17,7 +88,8 @@ describe('refreshAll', () => {
     const meta = await svc.refreshAll()
     expect(meta.count).toBe(3)
     expect(meta.failed).toEqual([])
-    expect([...yahoo.calls.chart].sort()).toEqual(['MU', 'NET', 'NVDA'])
+    // the 10-year yield (for rate sensitivity) is fetched once for the whole refresh, not once per ticker
+    expect([...yahoo.calls.chart].sort()).toEqual(['MU', 'NET', 'NVDA', '^TNX'])
   })
 
   it('one failing ticker does not stop the others, and is reported', async () => {
