@@ -6,7 +6,7 @@ import { FONT_MONO, RADIUS } from '../theme/tokens.js'
 
 const CLASS_LABEL = {
   live: 'Live from Yahoo', computed: 'Computed from live data', generated: 'Generated from live numbers',
-  ai: 'Claude-drafted, unverified', stale: 'ADE’s published value, not refreshed', empty: 'Not shown (no source)', placeholder: 'Placeholder, not real data',
+  ai: 'Claude-drafted, unverified', stale: 'ADE’s published value, not refreshed', static: 'Company fact (name, sector), kept as ADE wrote it', empty: 'Not shown (no source)', placeholder: 'Placeholder, not real data',
 }
 
 // "Is the live-data pipeline actually working?" Runs the same checks as `npm run diagnose`
@@ -39,30 +39,30 @@ export default function PipelineStatus({ live }) {
   }, {})
 
   return (
-    <div style={{ marginTop: 8 }}>
+    <div style={{ display: 'contents' }}>
       <button
         onClick={toggle}
         aria-expanded={open}
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', background: t.card, border: `1px solid ${t.border}`, borderRadius: 999, color: t.mid, fontFamily: 'inherit', fontSize: 13, cursor: 'pointer' }}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 14px', background: t.card, border: `1px solid ${t.border}`, borderRadius: 999, color: t.mid, fontFamily: 'inherit', fontSize: 16, cursor: 'pointer' }}
       >
-        <Activity size={14} aria-hidden="true" />
+        <Activity size={16} aria-hidden="true" />
         Data pipeline
         {dot && <span aria-label={`status ${dot}`} style={{ width: 8, height: 8, borderRadius: 999, background: color[dot] }} />}
       </button>
 
       {open && (
-        <section aria-label="Data pipeline status" style={{ marginTop: 10, padding: 16, background: t.card, border: `1px solid ${t.border}`, borderRadius: RADIUS }}>
+        <section aria-label="Data pipeline status" style={{ flex: '1 1 100%', marginTop: 4, padding: 16, background: t.card, border: `1px solid ${t.border}`, borderRadius: RADIUS }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
             <strong style={{ fontSize: 16 }}>Pipeline check</strong>
-            {state.report && <span style={{ fontFamily: FONT_MONO, fontSize: 12, color: color[state.report.status] }}>{state.report.status.toUpperCase()}</span>}
-            <button onClick={run} disabled={state.status === 'running'} style={{ marginLeft: 'auto', padding: '3px 10px', background: 'none', border: `1.5px solid ${t.border}`, borderRadius: 10, color: t.hi, fontFamily: 'inherit', fontSize: 13, cursor: 'pointer' }}>
+            {state.report && <span style={{ fontFamily: FONT_MONO, fontSize: 14, color: color[state.report.status] }}>{state.report.status.toUpperCase()}</span>}
+            <button onClick={run} disabled={state.status === 'running'} style={{ marginLeft: 'auto', padding: '3px 10px', background: 'none', border: `1.5px solid ${t.border}`, borderRadius: 10, color: t.hi, fontFamily: 'inherit', fontSize: 15, cursor: 'pointer' }}>
               {state.status === 'running' ? 'Checking…' : 'Re-run'}
             </button>
           </div>
 
           {state.status === 'error' && <p role="alert" style={{ color: t.down, margin: 0 }}>The check itself failed ({state.message}).</p>}
           {state.report && (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
               <tbody>
                 {state.report.stages.map(s => (
                   <tr key={s.id} style={{ borderTop: `1px solid ${t.border}` }}>
@@ -77,16 +77,16 @@ export default function PipelineStatus({ live }) {
           )}
 
           <details style={{ marginTop: 14 }}>
-            <summary style={{ cursor: 'pointer', color: t.mid, fontSize: 14 }}>Where each field comes from (for tickers you add)</summary>
-            <dl style={{ margin: '10px 0 0', fontSize: 13 }}>
+            <summary style={{ cursor: 'pointer', color: t.mid, fontSize: 16 }}>Where each field comes from (for tickers you add)</summary>
+            <dl style={{ margin: '10px 0 0', fontSize: 15 }}>
               {Object.entries(CLASS_LABEL).filter(([k]) => grouped[k]).map(([k, label]) => (
                 <div key={k} style={{ display: 'flex', gap: 12, padding: '4px 0', borderTop: `1px solid ${t.border}` }}>
                   <dt style={{ flex: '0 0 230px', color: k === 'placeholder' ? t.down : t.hi }}>{label}</dt>
-                  <dd style={{ margin: 0, color: t.mid, fontFamily: FONT_MONO, fontSize: 12 }}>{grouped[k].join(', ')}</dd>
+                  <dd style={{ margin: 0, color: t.mid, fontFamily: FONT_MONO, fontSize: 14 }}>{grouped[k].join(', ')}</dd>
                 </div>
               ))}
             </dl>
-            <p style={{ color: t.low, fontSize: 12, margin: '8px 0 0' }}>
+            <p style={{ color: t.low, fontSize: 14, margin: '8px 0 0' }}>
               For ADE&rsquo;s own 24 tickers, everything except its hand-written text is refreshed from Yahoo; that text stays as ADE published it.
             </p>
           </details>

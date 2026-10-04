@@ -3,7 +3,9 @@
 // (score.js, parity-tested against rank.py); numbers come from Yahoo, never from a model.
 
 import { analyse } from './indicators.js'
+import { rateSensitivity } from './rates.js'
 import { band, scoreSetup } from './score.js'
+import { forwardPE } from './valuation.js'
 import { raw } from './yahoo.js'
 
 // Verdict colours as they appear in the recoloured ADE file (sync/transforms/ade-colors.json).
@@ -24,13 +26,17 @@ export function fmtMktCap(v) {
 
 const CONSENSUS = { strong_buy: 'Strong Buy', buy: 'Buy', hold: 'Hold', underperform: 'Sell', sell: 'Sell', strong_sell: 'Sell' }
 
-export function buildSnapshot({ symbol, candles, meta, summary, options = null }, { now = new Date() } = {}) {
+// `nasdaq` (consensus EPS by fiscal year) and `yields` (^TNX candles) are optional extras: without them
+// the forward P/E falls back to Yahoo alone and the rate sensitivity is simply absent.
+export function buildSnapshot({ symbol, candles, meta, summary, options = null, nasdaq = null, yields = null }, { now = new Date() } = {}) {
   const a = analyse(candles)
   const fd = summary?.financialData ?? {}
   const sd = summary?.summaryDetail ?? {}
   const price = summary?.price ?? {}
   const avgPT = raw(fd.targetMeanPrice)
   const earningsTs = summary?.calendarEvents?.earnings?.earningsDate?.map(raw).filter(Boolean)?.[0]
+  const fwd = forwardPE({ price: a.price, summaryDetail: sd, keyStats: summary?.defaultKeyStatistics, nasdaq, now })
+  const rate = yields ? rateSensitivity(candles, yields) : null
   const revenue = raw(fd.totalRevenue)
   const fcf = raw(fd.freeCashflow)
 
@@ -55,10 +61,14 @@ export function buildSnapshot({ symbol, candles, meta, summary, options = null }
     lowPT: raw(fd.targetLowPrice),
     analysts: raw(fd.numberOfAnalystOpinions),
     consensus: CONSENSUS[fd.recommendationKey] ?? null,
-    fwdPE: raw(sd.forwardPE) == null ? null : r1(raw(sd.forwardPE)),
+    fwdPE: fwd.pe,
+    fwdPEBasis: fwd.basis,
+    fwdPENote: fwd.note,
+    ...(rate ? { rateSens: rate.rateSens, rateCorr: rate.rateCorr, rateNote: rate.rateNote } : {}),
     mktCap: fmtMktCap(raw(price.marketCap) ?? raw(sd.marketCap)),
     sector: summary?.assetProfile?.sector ?? null,
     earningsDate: earningsTs ? dateLong(earningsTs * 1000) : null,
+    earningsEstimate: earningsTs ? Boolean(raw(summary?.calendarEvents?.earnings?.isEarningsDateEstimate)) : null,
     epsEst: raw(summary?.calendarEvents?.earnings?.earningsAverage),
     metrics: {
       revGrowth: raw(fd.revenueGrowth) == null ? null : Math.round(raw(fd.revenueGrowth) * 100),
@@ -171,13 +181,15 @@ export function buildBlock(s, prose = null, { today = new Date() } = {}) {
     lowPT: s.lowPT ?? s.avgPT ?? s.price,
     high52: s.high52,
     low52: s.low52,
-    fwdPE: s.fwdPE ?? 0,
+    fwdPE: s.fwdPE ?? null,
+    fwdPENote: s.fwdPENote ?? null,
+    ...(s.rateNote ? { rateSens: s.rateSens, rateCorr: s.rateCorr, rateNote: s.rateNote } : {}),
     mktCap: s.mktCap ?? 'n/a',
     ytd: s.ytd ?? 0,
     yr1: s.yr1 ?? 0,
     consensus: s.consensus ?? 'n/a',
-    earningsDate: s.earningsDate ?? 'TBC',
-    epsEst: s.epsEst ?? 0,
+    earningsDate: s.earningsDate ? `${s.earningsDate}${s.earningsEstimate ? ' (TBC)' : ''}` : 'TBC',
+    epsEst: s.epsEst ?? null,
     epsEstDate: asOf,
     sector: s.sector ?? 'Unclassified',
     userAdded: true,

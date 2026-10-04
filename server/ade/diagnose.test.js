@@ -19,10 +19,17 @@ const persistent = () => {
   return { kind: 'upstash', get: async k => (m.has(k) ? JSON.parse(m.get(k)) : null), set: async (k, v) => { m.set(k, JSON.stringify(v)) }, del: async k => { m.delete(k) } }
 }
 
-async function diagnose({ yahoo = fakeYahoo(), st = persistent(), env = ENV, refresh = true, published = {}, live = true } = {}) {
-  const svc = createAdeService({ store: st, yahoo, adeTickers: BOOK, now: () => NOW })
+// NY Fed + BLS stand-in for the macro strip.
+const macroFetch = async url => (url.includes('newyorkfed')
+  ? { ok: true, json: async () => ({ refRates: [{ effectiveDate: '2026-10-01', percentRate: 3.88, targetRateFrom: 3.75, targetRateTo: 4 }] }) }
+  : { ok: true, json: async () => ({ status: 'REQUEST_SUCCEEDED', Results: { series: [{ data: [{ year: '2026', period: 'M08', value: '103.4' }, { year: '2025', period: 'M08', value: '100' }] }] } }) })
+const goodNasdaq = { yearlyEps: async () => [{ fiscalEnd: 'Dec 2099', end: new Date('2099-12-31'), eps: 2, analysts: 9 }] }
+const ADE_AS_OF = new Date(NOW - 86400_000).toISOString().slice(0, 10)
+
+async function diagnose({ yahoo = fakeYahoo(), st = persistent(), env = ENV, refresh = true, published = {}, live = true, fetchImpl = macroFetch, nasdaq = goodNasdaq, adeAsOf = ADE_AS_OF } = {}) {
+  const svc = createAdeService({ store: st, yahoo, adeTickers: BOOK, fetchImpl, nasdaq, now: () => NOW })
   if (refresh) await svc.refreshAll()
-  return runDiagnostics({ yahoo, store: st, adeTickers: BOOK, published, env, now: NOW, live })
+  return runDiagnostics({ yahoo, store: st, adeTickers: BOOK, published, adeAsOf, nasdaq, env, now: NOW, live })
 }
 
 const stage = (r, id) => r.stages.find(s => s.id === id)
@@ -31,8 +38,8 @@ describe('runDiagnostics', () => {
   it('passes when every stage works', async () => {
     const r = await diagnose()
     expect(r.stages.map(s => `${s.id}:${s.status}`)).toEqual([
-      'yahoo.chart:pass', 'yahoo.summary:pass', 'yahoo.options:pass', 'snapshot.build:pass',
-      'store.roundtrip:pass', 'config:pass', 'refresh.recency:pass', 'snapshots:pass',
+      'yahoo.chart:pass', 'yahoo.summary:pass', 'yahoo.options:pass', 'nasdaq.estimates:pass', 'snapshot.build:pass',
+      'store.roundtrip:pass', 'config:pass', 'refresh.recency:pass', 'macro:pass', 'ade.text:pass', 'snapshots:pass',
     ])
     expect(r.status).toBe('ok')
     expect(r.stages.every(s => typeof s.ms === 'number')).toBe(true)
@@ -123,7 +130,43 @@ describe('runDiagnostics', () => {
   it('includes the provenance summary', async () => {
     const r = await diagnose()
     expect(r.provenance.existing.live).toBeGreaterThan(0)
-    expect(r.provenance.added.placeholder).toBeGreaterThanOrEqual(1)
+    expect(r.provenance.added.placeholder ?? 0).toBe(0) // nothing is made up any more: a missing value is n/a
+  })
+})
+
+describe('macro, Nasdaq and the age of ADE\'s text', () => {
+  it('warns that ADE\'s hand-typed macro is still showing when no strip is stored', async () => {
+    const r = await diagnose({ fetchImpl: null })
+    expect(stage(r, 'macro')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/hand-typed macro text is still on the page/) })
+  })
+
+  it('names the macro source that failed and says its fields show n/a', async () => {
+    const r = await diagnose({ fetchImpl: async url => (url.includes('bls') ? { ok: false, status: 503 } : macroFetch(url)) })
+    expect(stage(r, 'macro')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/BLS CPI-U: BLS 503.*show n\/a/) })
+  })
+
+  it('reports the live values when every macro source works', async () => {
+    expect(stage(await diagnose(), 'macro').detail).toMatch(/CPI 3\.4% \(Aug 2026\), fed funds 3\.88%/)
+  })
+
+  it('warns, but does not fail, when the Nasdaq fallback is down', async () => {
+    const r = await diagnose({ nasdaq: { yearlyEps: async () => { throw new Error('Nasdaq estimates 403 for AAPL') } } })
+    expect(stage(r, 'nasdaq.estimates')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/403.*n\/a instead/) })
+    expect(r.status).toBe('degraded')
+  })
+
+  it('warns when ADE has not published for days (its numbers beside it are live, its words are not)', async () => {
+    const r = await diagnose({ adeAsOf: new Date(NOW - 9 * 86400_000).toISOString().slice(0, 10) })
+    expect(stage(r, 'ade.text')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/9 days old.*words are not/) })
+  })
+
+  it('counts a forward P/E that is n/a for a stated reason as covered, not as a gap', async () => {
+    const st = persistent()
+    const svc = createAdeService({ store: st, yahoo: fakeYahoo({ noForward: ['NVDA'] }), adeTickers: BOOK, fetchImpl: macroFetch, now: () => NOW })
+    await svc.refreshAll()
+    const r = await runDiagnostics({ yahoo: fakeYahoo(), store: st, adeTickers: BOOK, adeAsOf: ADE_AS_OF, env: ENV, now: NOW })
+    expect(r.coverage.tickers.NVDA.fwdPE).toBe(true)
+    expect(r.coverage.gaps).not.toContain('NVDA.fwdPE')
   })
 })
 

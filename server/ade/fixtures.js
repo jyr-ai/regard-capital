@@ -9,7 +9,7 @@ export function fakeCandles(seed = 1, n = 450) {
   })
 }
 
-export function fakeYahoo({ unknown = [], noSummary = [], noOptions = [], instrument = {} } = {}) {
+export function fakeYahoo({ unknown = [], noSummary = [], noOptions = [], noForward = [], instrument = {} } = {}) {
   const calls = { chart: [], summary: [] }
   let seed = 0
   return {
@@ -33,7 +33,7 @@ export function fakeYahoo({ unknown = [], noSummary = [], noOptions = [], instru
           numberOfAnalystOpinions: { raw: 30 }, revenueGrowth: { raw: 0.31 }, grossMargins: { raw: 0.7 }, operatingMargins: { raw: 0.2 },
           profitMargins: { raw: 0.15 }, returnOnEquity: { raw: 0.25 }, debtToEquity: { raw: 45 }, totalRevenue: { raw: 1000 }, freeCashflow: { raw: 200 },
         },
-        summaryDetail: { forwardPE: { raw: 24.3 } },
+        summaryDetail: noForward.includes(sym) ? {} : { forwardPE: { raw: 24.3 } },
         assetProfile: { sector: 'Technology' },
         calendarEvents: { earnings: { earningsDate: [{ raw: 1798056000 }], earningsAverage: { raw: 1.23 } } },
       }

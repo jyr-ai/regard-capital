@@ -38,10 +38,10 @@ describe('provenance', () => {
     expect(touched.length).toBeGreaterThan(10)
     expect(touched.filter(k => !OVERLAID.includes(k))).toEqual([])
     // ADE's hand-written text is never touched
-    for (const k of ['news', 'playbook', 'fund', 'catalysts', 'peers', 'rateSens', 'earningsDate', 'epsEst']) expect(block[k], k).toEqual(before[k])
+    for (const k of ['news', 'playbook', 'fund', 'catalysts', 'peers', 'name', 'sector']) expect(block[k], k).toEqual(before[k])
   })
 
-  it('invents no rate sensitivity for an added ticker (Yahoo has no such field)', async () => {
+  it('invents no rate sensitivity for an added ticker when there is no yield history to measure it from', async () => {
     expect(buildBlock(await snap('NEWCO'), null, { today: NOW })).not.toHaveProperty('rateSens')
   })
 

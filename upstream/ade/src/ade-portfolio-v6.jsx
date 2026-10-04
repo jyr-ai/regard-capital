@@ -1936,7 +1936,7 @@ export const LC={ASML:1808.49,TSLA:354.11,CRWD:266.09,MRVL:268.08,HOOD:111.15,SH
 // ═══════════════════════════════════════════════
 // MACRO REGIME — updated each refresh
 // ═══════════════════════════════════════════════
-const MACRO={spy:7712,vix:17.5,dxy:101.0,oil:90.0,btc:80000,gold:4081,cpi:3.4,fedFunds:3.875,rateOutlook:"Fed hiked 25bp Sep 16 to 3.75-4.00%; projections point to one more quarter-point this year",regime:"BOTH CATALYSTS PAID \u2014 SNPS RE-RATED, MU CONFIRMED",color:"#3DBFA8",note:"Oct 1 settled closes. SEVENTEEN OF 23 NAMES ROSE. SNPS +12.78% TO \u0024490.54 ON 3.4x VOLUME \u2014 the heaviest print in the book and the clearest re-rating of this series. The Sep 30 Investor Day guided fiscal 2027 revenue growth of ~15% to \u002411.15B at the midpoint with expanding non-GAAP operating margins. The stock is up ~34% from \u0024367 on Sep 15. RSI 74 is now the only overbought reading in the book; upside to the \u0024545 consensus has compressed to 11% and the defended score has fallen to 35 from 64 \u2014 the position worked and the asymmetry is spent. The target predates the new model and should rise. MU +3.03% TO \u00241,097.39 on 1.4x volume, reversing the after-hours dip. The Q4 beat \u2014 revenue \u002454.23B (+379%), EPS \u002433.42, gross margin 87%, all above the high end \u2014 did get paid after all. A new node formed at \u00241,070.60, 2.4% below, but the nearest DEFENDED level is still 66.8% below, which is why the defended score (47) and tool score (77) diverge more than on any other name. AVGO FELL 2.15% TO \u0024343.64 on 1.1x volume and now sits 0.5% above the \u0024342.00 node and 4.2% above \u0024329.06 (held 11x). It RISES to 93, the highest score recorded in this series, on 50% upside and R:R 11.7x. RSI 40. VST +1.01% to \u0024139.75, reclaiming \u0024138.53 \u2014 now 0.9% below and reading as held TEN times. Six broken levels remain. PWR +3.13% to \u0024662.60 and LRCX +3.53%. FOUR NAMES REMAIN ABOVE CONSENSUS: OKTA -14%, CRWD -8%, NET -5%, AMD -2% \u2014 the bottom four on asymmetry. VOLUME WAS THIN AGAIN: 18 of 23 below the 50-day average, the tenth consecutive session. IV HISTORY: 17 observations.",macroDate:"Oct 1, 2026"};
+export const MACRO={spy:7712,vix:17.5,dxy:101.0,oil:90.0,btc:80000,gold:4081,cpi:3.4,fedFunds:3.875,rateOutlook:"Fed hiked 25bp Sep 16 to 3.75-4.00%; projections point to one more quarter-point this year",regime:"BOTH CATALYSTS PAID \u2014 SNPS RE-RATED, MU CONFIRMED",color:"#3DBFA8",note:"Oct 1 settled closes. SEVENTEEN OF 23 NAMES ROSE. SNPS +12.78% TO \u0024490.54 ON 3.4x VOLUME \u2014 the heaviest print in the book and the clearest re-rating of this series. The Sep 30 Investor Day guided fiscal 2027 revenue growth of ~15% to \u002411.15B at the midpoint with expanding non-GAAP operating margins. The stock is up ~34% from \u0024367 on Sep 15. RSI 74 is now the only overbought reading in the book; upside to the \u0024545 consensus has compressed to 11% and the defended score has fallen to 35 from 64 \u2014 the position worked and the asymmetry is spent. The target predates the new model and should rise. MU +3.03% TO \u00241,097.39 on 1.4x volume, reversing the after-hours dip. The Q4 beat \u2014 revenue \u002454.23B (+379%), EPS \u002433.42, gross margin 87%, all above the high end \u2014 did get paid after all. A new node formed at \u00241,070.60, 2.4% below, but the nearest DEFENDED level is still 66.8% below, which is why the defended score (47) and tool score (77) diverge more than on any other name. AVGO FELL 2.15% TO \u0024343.64 on 1.1x volume and now sits 0.5% above the \u0024342.00 node and 4.2% above \u0024329.06 (held 11x). It RISES to 93, the highest score recorded in this series, on 50% upside and R:R 11.7x. RSI 40. VST +1.01% to \u0024139.75, reclaiming \u0024138.53 \u2014 now 0.9% below and reading as held TEN times. Six broken levels remain. PWR +3.13% to \u0024662.60 and LRCX +3.53%. FOUR NAMES REMAIN ABOVE CONSENSUS: OKTA -14%, CRWD -8%, NET -5%, AMD -2% \u2014 the bottom four on asymmetry. VOLUME WAS THIN AGAIN: 18 of 23 below the 50-day average, the tenth consecutive session. IV HISTORY: 17 observations.",macroDate:"Oct 1, 2026"};
 
 // ═══════════════════════════════════════════════
 // SIGNAL ENGINE
@@ -4683,15 +4683,15 @@ totalScore=Math.max(0,Math.min(100,totalScore));
 
  {/* TICKER BAR */}
  <div style={{background:"#17131A",borderBottom:"1px solid #2C2433",padding:"0 16px",display:"flex",alignItems:"center",overflowX:"auto",position:"sticky",top:"var(--nav-h, 66px)",zIndex:90}}>
- <span onClick={()=>setShowPortfolio(true)} style={{...M,fontWeight:700,fontSize:13,letterSpacing:2.5,color:showPortfolio?"#0D0D0D":"#E6A817",marginRight:8,flexShrink:0,cursor:"pointer",background:showPortfolio?"#E6A817":"transparent",padding:"6px 10px",borderRadius:4,transition:"all 0.2s"}} title="Portfolio Dashboard">ADE</span>
- <span onClick={()=>{setShowHealth(!showHealth);setShowPortfolio(true);}} style={{...M,fontSize:12,cursor:"pointer",marginRight:8,flexShrink:0,padding:"4px 8px",borderRadius:4,background:showHealth?"#241C2B":"transparent",border:`1px solid ${healthCheck.totalScore>=80?G+"44":healthCheck.totalScore>=60?Y+"44":R+"44"}`,display:"flex",alignItems:"center",gap:4,transition:"all 0.2s"}} title="Dashboard Health Check">
- <span style={{fontSize:11}}>🩺</span>
- <span style={{...M,fontSize:9,fontWeight:700,color:healthCheck.gradeColor}}>{healthCheck.grade}</span>
+ <span onClick={()=>setShowPortfolio(true)} style={{...M,fontWeight:700,fontSize:18,letterSpacing:2.5,color:showPortfolio?"#0D0D0D":"#E6A817",marginRight:8,flexShrink:0,cursor:"pointer",background:showPortfolio?"#E6A817":"transparent",padding:"6px 10px",borderRadius:4,transition:"all 0.2s"}} title="Portfolio Dashboard">ADE</span>
+ <span onClick={()=>{setShowHealth(!showHealth);setShowPortfolio(true);}} style={{...M,fontSize:17,cursor:"pointer",marginRight:8,flexShrink:0,padding:"4px 8px",borderRadius:4,background:showHealth?"#241C2B":"transparent",border:`1px solid ${healthCheck.totalScore>=80?G+"44":healthCheck.totalScore>=60?Y+"44":R+"44"}`,display:"flex",alignItems:"center",gap:4,transition:"all 0.2s"}} title="Dashboard Health Check">
+ <span style={{fontSize:16}}>🩺</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:healthCheck.gradeColor}}>{healthCheck.grade}</span>
  </span>
  {tickers.map(t=>{const s=S[t],isA=t===activeTicker&&!showPortfolio,sp=computeSignal(s,allItems[t],prices[t],"none");return(
- <button key={t} onClick={()=>{setActiveTicker(t);setEps("none");setFilter("all");setTab("feed");setShowPortfolio(false);}} style={{...M,fontSize:10,padding:"10px 12px",border:"none",borderBottom:isA?"2px solid #E6A817":"2px solid transparent",background:"transparent",color:isA?"#E6A817":"#B8AE92",cursor:"pointer",fontWeight:isA?700:400,display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
+ <button key={t} onClick={()=>{setActiveTicker(t);setEps("none");setFilter("all");setTab("feed");setShowPortfolio(false);}} style={{...M,fontSize:15,padding:"10px 12px",border:"none",borderBottom:isA?"2px solid #E6A817":"2px solid transparent",background:"transparent",color:isA?"#E6A817":"#B8AE92",cursor:"pointer",fontWeight:isA?700:400,display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
  <span>{t}</span>
- <span style={{fontSize:8,color:sp.score>20?G:sp.score>-5?Y:R}}>{sp.score>0?"+":""}{sp.score}</span>
+ <span style={{fontSize:13,color:sp.score>20?G:sp.score>-5?Y:R}}>{sp.score>0?"+":""}{sp.score}</span>
  </button>);})}
  </div>
 
@@ -4704,11 +4704,11 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  {/* HEADER */}
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12,flexWrap:"wrap",gap:8}}>
  <div>
- <span style={{...M,fontWeight:700,fontSize:20,background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PORTFOLIO DASHBOARD</span>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginTop:2}}>{tickers.length} positions • Signal-weighted overview • Click any row to drill in</div>
+ <span style={{...M,fontWeight:700,fontSize:24,background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PORTFOLIO DASHBOARD</span>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginTop:2}}>{tickers.length} tickers • Signal-weighted overview • Click any row to drill in</div>
  </div>
  <div style={{display:"flex",gap:4,alignItems:"center"}}>
- {["snapshot","market","exit"].map(v=>(<button key={v} onClick={()=>setPortfolioView(v)} style={{...M,fontSize:8,padding:"4px 10px",border:`1px solid ${portfolioView===v?(v==="exit"?"#E8643A":"#E6A817"):"#3A3042"}`,background:portfolioView===v?(v==="exit"?"#E8643A15":"#E6A81715"):"transparent",color:portfolioView===v?(v==="exit"?"#E8643A":"#E6A817"):"#9A8F82",borderRadius:4,cursor:"pointer",fontWeight:600}}>{v==="snapshot"?"SNAPSHOT":v==="market"?"MARKET":"EXIT MAP"}</button>))}
+ {["snapshot","market"].map(v=>(<button key={v} onClick={()=>setPortfolioView(v)} style={{...M,fontSize:13,padding:"4px 10px",border:`1px solid ${portfolioView===v?(v==="exit"?"#E8643A":"#E6A817"):"#3A3042"}`,background:portfolioView===v?(v==="exit"?"#E8643A15":"#E6A81715"):"transparent",color:portfolioView===v?(v==="exit"?"#E8643A":"#E6A817"):"#9A8F82",borderRadius:4,cursor:"pointer",fontWeight:600}}>{v==="snapshot"?"SNAPSHOT":v==="market"?"MARKET":"EXIT MAP"}</button>))}
  </div>
  </div>
 
@@ -4716,20 +4716,20 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  {showHealth&&<div style={{background:"#17131A",border:`1px solid ${healthCheck.gradeColor}33`,borderRadius:6,padding:16,marginBottom:12}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
  <div style={{display:"flex",alignItems:"center",gap:10}}>
- <span style={{fontSize:18}}>🩺</span>
+ <span style={{fontSize:22}}>🩺</span>
  <div>
- <span style={{...M,fontSize:12,fontWeight:700,color:"#F4EEDF"}}>Dashboard Health Check</span>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginTop:1}}>Auto-audit of all data integrity, freshness, and coherence</div>
+ <span style={{...M,fontSize:17,fontWeight:700,color:"#F4EEDF"}}>Dashboard Health Check</span>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginTop:1}}>Auto-audit of all data integrity, freshness, and coherence</div>
  </div>
  </div>
  <div style={{display:"flex",alignItems:"center",gap:12}}>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:36,fontWeight:800,color:healthCheck.gradeColor}}>{healthCheck.grade}</div>
- <div style={{...M,fontSize:8,color:"#9A8F82"}}>GRADE</div>
+ <div style={{...M,fontSize:40,fontWeight:800,color:healthCheck.gradeColor}}>{healthCheck.grade}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82"}}>GRADE</div>
  </div>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:36,fontWeight:800,color:healthCheck.gradeColor}}>{healthCheck.totalScore}</div>
- <div style={{...M,fontSize:8,color:"#9A8F82"}}>SCORE</div>
+ <div style={{...M,fontSize:40,fontWeight:800,color:healthCheck.gradeColor}}>{healthCheck.totalScore}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82"}}>SCORE</div>
  </div>
  </div>
  </div>
@@ -4739,36 +4739,36 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  </div>
  {/* Summary badges */}
  <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
- {healthCheck.highCount>0&&<span style={{...M,fontSize:8,fontWeight:700,padding:"3px 8px",borderRadius:4,background:R+"15",color:R,border:`1px solid ${R}33`}}>{healthCheck.highCount} CRITICAL</span>}
- {healthCheck.medCount>0&&<span style={{...M,fontSize:8,fontWeight:700,padding:"3px 8px",borderRadius:4,background:Y+"15",color:Y,border:`1px solid ${Y}33`}}>{healthCheck.medCount} WARNING</span>}
- <span style={{...M,fontSize:8,fontWeight:700,padding:"3px 8px",borderRadius:4,background:G+"15",color:G,border:`1px solid ${G}33`}}>{healthCheck.okCount} PASS</span>
- <span style={{...M,fontSize:8,padding:"3px 8px",borderRadius:4,background:"#E6A81708",color:"#E6A817",border:"1px solid #E6A81722"}}>Updated {healthCheck.daysSinceUpdate}d ago</span>
+ {healthCheck.highCount>0&&<span style={{...M,fontSize:13,fontWeight:700,padding:"3px 8px",borderRadius:4,background:R+"15",color:R,border:`1px solid ${R}33`}}>{healthCheck.highCount} CRITICAL</span>}
+ {healthCheck.medCount>0&&<span style={{...M,fontSize:13,fontWeight:700,padding:"3px 8px",borderRadius:4,background:Y+"15",color:Y,border:`1px solid ${Y}33`}}>{healthCheck.medCount} WARNING</span>}
+ <span style={{...M,fontSize:13,fontWeight:700,padding:"3px 8px",borderRadius:4,background:G+"15",color:G,border:`1px solid ${G}33`}}>{healthCheck.okCount} PASS</span>
+ <span style={{...M,fontSize:13,padding:"3px 8px",borderRadius:4,background:"#E6A81708",color:"#E6A817",border:"1px solid #E6A81722"}}>Updated {healthCheck.daysSinceUpdate}d ago</span>
  </div>
  {/* Individual checks */}
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {healthCheck.checks.map((ch,i)=>(<div key={i} style={{display:"flex",gap:8,padding:"8px 10px",background:ch.sev==="HIGH"?"#E8643A06":ch.sev==="MED"?"#FFBF0006":"transparent",border:`1px solid ${ch.sev==="HIGH"?"#E8643A22":ch.sev==="MED"?"#FFBF0022":G+"22"}`,borderRadius:4,alignItems:"flex-start"}}>
  <div style={{flexShrink:0,minWidth:72,display:"flex",alignItems:"center",gap:4}}>
- <span style={{fontSize:10}}>{ch.sev==="HIGH"?"🔴":ch.sev==="MED"?"🟡":"🟢"}</span>
- <span style={{...M,fontSize:7,fontWeight:700,color:ch.sev==="HIGH"?R:ch.sev==="MED"?Y:G,textTransform:"uppercase",letterSpacing:0.5}}>{ch.cat}</span>
+ <span style={{fontSize:15}}>{ch.sev==="HIGH"?"🔴":ch.sev==="MED"?"🟡":"🟢"}</span>
+ <span style={{...M,fontSize:12,fontWeight:700,color:ch.sev==="HIGH"?R:ch.sev==="MED"?Y:G,textTransform:"uppercase",letterSpacing:0.5}}>{ch.cat}</span>
  </div>
  <div style={{flex:1}}>
- <div style={{...M,fontSize:9,color:"#E8E1D0",lineHeight:1.5}}>{ch.msg}</div>
- {ch.fix&&<div style={{...M,fontSize:7,color:"#E08A4A",marginTop:2}}>Fix: {ch.fix}</div>}
+ <div style={{...M,fontSize:14,color:"#E8E1D0",lineHeight:1.5}}>{ch.msg}</div>
+ {ch.fix&&<div style={{...M,fontSize:12,color:"#E08A4A",marginTop:2}}>Fix: {ch.fix}</div>}
  </div>
- {ch.pts!==0&&<div style={{flexShrink:0,...M,fontSize:9,fontWeight:700,color:R}}>{ch.pts}</div>}
+ {ch.pts!==0&&<div style={{flexShrink:0,...M,fontSize:14,fontWeight:700,color:R}}>{ch.pts}</div>}
  </div>))}
  </div>
  {/* Earnings alerts detail */}
  {healthCheck.earningsAlerts.length>0&&<div style={{marginTop:10,padding:"8px 10px",background:"#B266FF08",border:"1px solid #B266FF22",borderRadius:4}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:"#B266FF",marginBottom:4}}>EARNINGS IN 7 DAYS — ACTION REQUIRED</div>
- {healthCheck.earningsAlerts.map((e,i)=>(<div key={i} style={{...M,fontSize:9,color:"#E8E1D0",marginBottom:2}}>
+ <div style={{...M,fontSize:13,fontWeight:700,color:"#B266FF",marginBottom:4}}>EARNINGS IN 7 DAYS — ACTION REQUIRED</div>
+ {healthCheck.earningsAlerts.map((e,i)=>(<div key={i} style={{...M,fontSize:14,color:"#E8E1D0",marginBottom:2}}>
  <span style={{fontWeight:700,color:"#B266FF"}}>{e.ticker}</span> — {e.date} ({e.dte===0?"TODAY":e.dte+"d"}) → Update playbook, patterns, risk scenarios, options data
  </div>))}
  </div>}
  {/* Quick fix guide */}
  {healthCheck.totalScore<80&&<div style={{marginTop:10,padding:"8px 10px",background:"#E6A81708",border:"1px solid #E6A81722",borderRadius:4}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:"#E6A817",marginBottom:4}}>QUICK FIX GUIDE</div>
- <div style={{...M,fontSize:8,color:"#B8AE92",lineHeight:1.7}}>
+ <div style={{...M,fontSize:13,fontWeight:700,color:"#E6A817",marginBottom:4}}>QUICK FIX GUIDE</div>
+ <div style={{...M,fontSize:13,color:"#B8AE92",lineHeight:1.7}}>
  Screenshot this panel and share it to get a targeted refresh. Priority order: CRITICAL items first, then WARNINGS. Each fix will improve the health score.
  </div>
  </div>}
@@ -4784,14 +4784,14 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  <div style={{background:"#17131A",border:`1px solid ${MACRO.color}33`,borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
  <span style={{width:10,height:10,borderRadius:5,background:MACRO.color}}/>
- <span style={{...M,fontSize:12,fontWeight:700,color:MACRO.color}}>{MACRO.regime}</span>
- <span style={{...M,fontSize:8,color:"#9A8F82",marginLeft:"auto"}}>VIX {MACRO.vix} • CPI {MACRO.cpi}% • Fed: {MACRO.rateOutlook}</span>
+ <span style={{...M,fontSize:17,fontWeight:700,color:MACRO.color}}>{MACRO.regime}</span>
+ <span style={{...M,fontSize:13,color:"#9A8F82",marginLeft:"auto"}}>VIX {MACRO.vix} • CPI {MACRO.cpi==null?"n/a":MACRO.cpi+"%"} • Fed: {MACRO.rateOutlook}</span>
  </div>
- <div style={{...M,fontSize:9,color:"#D6CDB6",lineHeight:1.7}}>{MACRO.note}</div>
+ <div style={{...M,fontSize:14,color:"#D6CDB6",lineHeight:1.7}}>{MACRO.note}</div>
  </div>
 
  {/* KEY THEMES */}
- <div style={{...M,fontSize:9,fontWeight:700,color:"#E6A817",marginBottom:8}}>KEY INVESTMENT THEMES</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:"#E6A817",marginBottom:8}}>KEY INVESTMENT THEMES · written by ADE, {(globalThis.__ADE_LIVE__||{}).adeDate||""}, not refreshed here</div>
  {[
  {theme:"AI Infrastructure Buildout",horizon:"NOW → 2028",status:"ACCELERATING",color:"#3DBFA8",
  tam:"$1.7T infra TAM by 2030",cagr:"Capex guides still rising",
@@ -4908,29 +4908,29 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  ].map((t,i)=>(<div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:8,borderLeft:`3px solid ${t.color}`}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
  <div style={{display:"flex",alignItems:"center",gap:8}}>
- <span style={{...M,fontSize:11,fontWeight:700,color:"#F4EEDF"}}>{t.theme}</span>
- <span style={{...M,fontSize:7,padding:"2px 6px",borderRadius:3,background:t.color+"22",color:t.color,fontWeight:600}}>{t.status}</span>
+ <span style={{...M,fontSize:16,fontWeight:700,color:"#F4EEDF"}}>{t.theme}</span>
+ <span style={{...M,fontSize:12,padding:"2px 6px",borderRadius:3,background:t.color+"22",color:t.color,fontWeight:600}}>{t.status}</span>
  </div>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{t.horizon}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{t.horizon}</span>
  </div>
  <div style={{display:"flex",gap:10,marginBottom:6}}>
- <span style={{...M,fontSize:8,padding:"2px 6px",borderRadius:3,background:"#E6A81711",color:"#E6A817",border:"1px solid #E6A81722"}}>{t.tam}</span>
- <span style={{...M,fontSize:8,padding:"2px 6px",borderRadius:3,background:"#3DBFA811",color:"#3DBFA8",border:"1px solid #3DBFA822"}}>{t.cagr}</span>
+ <span style={{...M,fontSize:13,padding:"2px 6px",borderRadius:3,background:"#E6A81711",color:"#E6A817",border:"1px solid #E6A81722"}}>{t.tam}</span>
+ <span style={{...M,fontSize:13,padding:"2px 6px",borderRadius:3,background:"#3DBFA811",color:"#3DBFA8",border:"1px solid #3DBFA822"}}>{t.cagr}</span>
  </div>
  <div style={{display:"flex",flexDirection:"column",gap:3,marginBottom:8}}>
- {t.sub.map((s,j)=>(<div key={j} style={{...M,fontSize:8,color:"#B8AE92",lineHeight:1.5,paddingLeft:8,borderLeft:"1px solid #2C2433"}}>• {s}</div>))}
+ {t.sub.map((s,j)=>(<div key={j} style={{...M,fontSize:13,color:"#B8AE92",lineHeight:1.5,paddingLeft:8,borderLeft:"1px solid #2C2433"}}>• {s}</div>))}
  </div>
  <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
- <div style={{...M,fontSize:7}}><span style={{color:"#E6A817"}}>EXPOSURE: </span><span style={{color:"#B8AE92"}}>{t.exposure}</span></div>
- <div style={{...M,fontSize:7}}><span style={{color:R}}>RISK: </span><span style={{color:"#B8AE92"}}>{t.risk}</span></div>
+ <div style={{...M,fontSize:12}}><span style={{color:"#E6A817"}}>EXPOSURE: </span><span style={{color:"#B8AE92"}}>{t.exposure}</span></div>
+ <div style={{...M,fontSize:12}}><span style={{color:R}}>RISK: </span><span style={{color:"#B8AE92"}}>{t.risk}</span></div>
  </div>
  </div>))}
 
  {/* KEY MARKET OPPORTUNITIES — HOW TO PLAY THE FUTURE */}
  <div style={{background:"#17131A",border:"1px solid #3DBFA833",borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
- <span style={{fontSize:12}}>💡</span>
- <span style={{...M,fontSize:11,fontWeight:700,color:"#3DBFA8"}}>KEY OPPORTUNITIES — HOW TO PLAY THE FUTURE</span>
+ <span style={{fontSize:17}}>💡</span>
+ <span style={{...M,fontSize:16,fontWeight:700,color:"#3DBFA8"}}>KEY OPPORTUNITIES — HOW TO PLAY THE FUTURE</span>
  </div>
  {[
  {opp:"VRT: PT Was Wrong — Real Upside Is +33% into Jul 29 \u2713 Print",timeframe:"NOW \u2192 Jul 29 \u2713",conviction:"HIGH",
@@ -4975,17 +4975,17 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  color:P}].map((o,i)=>(<div key={i} style={{background:"#241C2B",border:`1px solid ${o.color}22`,borderRadius:5,padding:12,marginBottom:8,borderLeft:`3px solid ${o.color}`}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
  <div style={{display:"flex",alignItems:"center",gap:8}}>
- <span style={{...M,fontSize:10,fontWeight:700,color:"#F4EEDF"}}>{o.opp}</span>
- <span style={{...M,fontSize:7,padding:"2px 6px",borderRadius:3,background:o.color+"22",color:o.color,fontWeight:600}}>{o.conviction}</span>
+ <span style={{...M,fontSize:15,fontWeight:700,color:"#F4EEDF"}}>{o.opp}</span>
+ <span style={{...M,fontSize:12,padding:"2px 6px",borderRadius:3,background:o.color+"22",color:o.color,fontWeight:600}}>{o.conviction}</span>
  </div>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{o.timeframe}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{o.timeframe}</span>
  </div>
- <div style={{...M,fontSize:8,color:"#D6CDB6",lineHeight:1.6,marginBottom:6}}>{o.thesis}</div>
- <div style={{...M,fontSize:8,marginBottom:4}}>
+ <div style={{...M,fontSize:13,color:"#D6CDB6",lineHeight:1.6,marginBottom:6}}>{o.thesis}</div>
+ <div style={{...M,fontSize:13,marginBottom:4}}>
  <span style={{color:"#3DBFA8",fontWeight:600}}>HOW TO PLAY: </span>
  <span style={{color:"#B8AE92"}}>{o.play}</span>
  </div>
- <div style={{...M,fontSize:7}}>
+ <div style={{...M,fontSize:12}}>
  <span style={{color:"#B266FF",fontWeight:600}}>SIZING: </span>
  <span style={{color:"#9A8F82"}}>{o.sizing}</span>
  </div>
@@ -4994,7 +4994,7 @@ totalScore=Math.max(0,Math.min(100,totalScore));
 
  {/* POLICY & REGULATORY CALENDAR */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
- <div style={{...M,fontSize:9,fontWeight:700,color:"#E08A4A",marginBottom:8}}>POLICY & REGULATORY CALENDAR</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:"#E08A4A",marginBottom:8}}>POLICY & REGULATORY CALENDAR</div>
  {[
  {date:"May 12 ✓",event:"CPI April Report",impact:"3.7% headline. In-line; Fed-on-hold reinforced",tickers:"All (macro)"},
  {date:"May 13-14 ✓",event:"Trump-Xi Summit (AI Guardrails)",impact:"Inconclusive — chip export framework discussed, no resolution",tickers:"NVDA, AMD, TSM"},
@@ -5004,26 +5004,26 @@ totalScore=Math.max(0,Math.min(100,totalScore));
  {date:"Q2-Q3 2026",event:"Commerce Dept AI Chip Export Rules",impact:"Final rule on global restrictions. Could hit NVDA China $8B/qtr",tickers:"NVDA, AMD, TSM, ANET"},
  {date:"Q3 2026",event:"DOJ v Google Chrome Remedies",impact:"Divestiture ruling. Structural impact",tickers:"GOOGL"},
  {date:"Q3 2026",event:"FTC v Meta Antitrust Trial",impact:"WhatsApp/Instagram divestiture risk",tickers:"META"}].map((p,i)=>(<div key={i} style={{display:"flex",gap:10,padding:"6px 0",borderBottom:i<5?"1px solid #2C243344":"none"}}>
- <span style={{...M,fontSize:8,fontWeight:700,color:"#E08A4A",minWidth:65,flexShrink:0}}>{p.date}</span>
+ <span style={{...M,fontSize:13,fontWeight:700,color:"#E08A4A",minWidth:106,flexShrink:0}}>{p.date}</span>
  <div style={{flex:1}}>
- <div style={{...M,fontSize:9,fontWeight:600,color:"#F4EEDF"}}>{p.event}</div>
- <div style={{...M,fontSize:7,color:"#B8AE92"}}>{p.impact}</div>
+ <div style={{...M,fontSize:14,fontWeight:600,color:"#F4EEDF"}}>{p.event}</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92"}}>{p.impact}</div>
  </div>
- <span style={{...M,fontSize:7,color:"#E6A817",flexShrink:0}}>{p.tickers}</span>
+ <span style={{...M,fontSize:12,color:"#E6A817",flexShrink:0}}>{p.tickers}</span>
  </div>))}
  </div>
 
  {/* SECTOR ROTATION MAP */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14}}>
- <div style={{...M,fontSize:9,fontWeight:700,color:"#B266FF",marginBottom:8}}>WHAT'S ROTATING</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:"#B266FF",marginBottom:8}}>WHAT'S ROTATING</div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
  <div>
- <div style={{...M,fontSize:8,fontWeight:600,color:G,marginBottom:4}}>FLOWING INTO ↑</div>
- {["AI infrastructure (cooling phase — PWR/VRT pullback)","Memory/HBM (MU +168% YTD but -6% May 14)","Defensive payments (V steady, +18% to PT)","Optical interconnect (gap play — CRDO/LITE not owned)","Mag-7 quality (META, GOOGL setup)"].map((s,i)=>(<div key={i} style={{...M,fontSize:8,color:"#B8AE92",marginBottom:2}}>• {s}</div>))}
+ <div style={{...M,fontSize:13,fontWeight:600,color:G,marginBottom:4}}>FLOWING INTO ↑</div>
+ {["AI infrastructure (cooling phase — PWR/VRT pullback)","Memory/HBM (MU +168% YTD but -6% May 14)","Defensive payments (V steady, +18% to PT)","Optical interconnect (gap play — CRDO/LITE not owned)","Mag-7 quality (META, GOOGL setup)"].map((s,i)=>(<div key={i} style={{...M,fontSize:13,color:"#B8AE92",marginBottom:2}}>• {s}</div>))}
  </div>
  <div>
- <div style={{...M,fontSize:8,fontWeight:600,color:R,marginBottom:4}}>FLOWING OUT OF ↓</div>
- {["","Streaming consumer (NFLX guide miss)","Stretched cyclicals (PWR +45% over consensus PT)","NVDA Q1 vol — hedges over longs","Risk: VIX expansion to 20+ on weak NVDA print"].map((s,i)=>(<div key={i} style={{...M,fontSize:8,color:"#B8AE92",marginBottom:2}}>• {s}</div>))}
+ <div style={{...M,fontSize:13,fontWeight:600,color:R,marginBottom:4}}>FLOWING OUT OF ↓</div>
+ {["","Streaming consumer (NFLX guide miss)","Stretched cyclicals (PWR +45% over consensus PT)","NVDA Q1 vol — hedges over longs","Risk: VIX expansion to 20+ on weak NVDA print"].map((s,i)=>(<div key={i} style={{...M,fontSize:13,color:"#B8AE92",marginBottom:2}}>• {s}</div>))}
  </div>
  </div>
  </div>
@@ -5036,35 +5036,35 @@ totalScore=Math.max(0,Math.min(100,totalScore));
 
 portfolioView==="exit"&&<div>
  {/* EXIT MAP — position action signals */}
- <div style={{...M,fontSize:9,fontWeight:700,color:"#E8643A",marginBottom:4}}>EXIT MAP — POSITION ACTION SIGNALS</div>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:8}}>Composite signal based on 6 factors. Sorted by urgency — act on top items first.</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:"#E8643A",marginBottom:4}}>EXIT MAP — POSITION ACTION SIGNALS</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:8}}>Composite signal based on 6 factors. Sorted by urgency — act on top items first.</div>
 
  <div style={{background:"#1E1924",border:"1px solid #3A3042",borderRadius:6,padding:10,marginBottom:10}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:"#B266FF",marginBottom:6}}>SCORING LOGIC</div>
+ <div style={{...M,fontSize:13,fontWeight:700,color:"#B266FF",marginBottom:6}}>SCORING LOGIC</div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:8}}>
  <div>
- <div style={{...M,fontSize:7,fontWeight:600,color:"#E6A817",marginBottom:3}}>UPSIDE EXHAUSTION</div>
- <div style={{...M,fontSize:7,color:"#B8AE92",lineHeight:1.5}}>{"<5% to PT: +30\n<10% to PT: +20\n<15% to PT: +10"}</div>
+ <div style={{...M,fontSize:12,fontWeight:600,color:"#E6A817",marginBottom:3}}>UPSIDE EXHAUSTION</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92",lineHeight:1.5}}>{"<5% to PT: +30\n<10% to PT: +20\n<15% to PT: +10"}</div>
  </div>
  <div>
- <div style={{...M,fontSize:7,fontWeight:600,color:"#E6A817",marginBottom:3}}>GAIN HEAT</div>
- <div style={{...M,fontSize:7,color:"#B8AE92",lineHeight:1.5}}>{">200% gain: +15\n>100% gain: +10\n>50% gain: +5"}</div>
+ <div style={{...M,fontSize:12,fontWeight:600,color:"#E6A817",marginBottom:3}}>GAIN HEAT</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92",lineHeight:1.5}}>{">200% gain: +15\n>100% gain: +10\n>50% gain: +5"}</div>
  </div>
  <div>
- <div style={{...M,fontSize:7,fontWeight:600,color:"#E6A817",marginBottom:3}}>CONCENTRATION</div>
- <div style={{...M,fontSize:7,color:"#B8AE92",lineHeight:1.5}}>{">35% weight: +25\n>20% weight: +15\n>10% weight: +8\n>5% weight: +3"}</div>
+ <div style={{...M,fontSize:12,fontWeight:600,color:"#E6A817",marginBottom:3}}>CONCENTRATION</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92",lineHeight:1.5}}>{">35% weight: +25\n>20% weight: +15\n>10% weight: +8\n>5% weight: +3"}</div>
  </div>
  <div>
- <div style={{...M,fontSize:7,fontWeight:600,color:"#E6A817",marginBottom:3}}>MODIFIERS</div>
- <div style={{...M,fontSize:7,color:"#B8AE92",lineHeight:1.5}}>{"Thesis <50: +10\nMacro weak: +10\nEarnings <3d: -10\nUnderwater: -10"}</div>
+ <div style={{...M,fontSize:12,fontWeight:600,color:"#E6A817",marginBottom:3}}>MODIFIERS</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92",lineHeight:1.5}}>{"Thesis <50: +10\nMacro weak: +10\nEarnings <3d: -10\nUnderwater: -10"}</div>
  </div>
  </div>
- <div style={{...M,fontSize:7,fontWeight:600,color:"#B266FF",marginBottom:4}}>SIGNAL THRESHOLDS</div>
+ <div style={{...M,fontSize:12,fontWeight:600,color:"#B266FF",marginBottom:4}}>SIGNAL THRESHOLDS</div>
  <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
  {[["ACCUMULATE","#E6A817","Big upside + small gain"],["LET IT RUN","#3DBFA8","Score ≤15"],["TIGHTEN STOP","#B266FF","Score 16-24"],["TRIM","#FFBF00","Score 25-39"],["TRIM NOW","#E08A4A","Score 40-54"],["EXIT","#E8643A","Score 55+"]].map(([label,color,desc],i)=>(
  <div key={i} style={{display:"flex",alignItems:"center",gap:4,marginBottom:2}}>
- <span style={{...M,fontSize:7,fontWeight:700,padding:"1px 5px",borderRadius:8,background:color+"22",color:color}}>{label}</span>
- <span style={{...M,fontSize:6,color:"#9A8F82"}}>{desc}</span>
+ <span style={{...M,fontSize:12,fontWeight:700,padding:"1px 5px",borderRadius:8,background:color+"22",color:color}}>{label}</span>
+ <span style={{...M,fontSize:11,color:"#9A8F82"}}>{desc}</span>
  </div>
  ))}
  </div>
@@ -5131,32 +5131,32 @@ if(upsideLeft>25&&gainPct<20){action="ACCUMULATE";actionColor="#E6A817";}
  <div key={i} style={{background:"#17131A",border:"1px solid "+(r.actionColor=="#E8643A"||r.actionColor=="#E08A4A"?r.actionColor+"44":"#2C243344"),borderRadius:6,padding:10,marginBottom:6,borderLeft:"3px solid "+r.actionColor}}>
  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
  <div style={{display:"flex",alignItems:"center",gap:8}}>
- <span style={{...M,fontSize:12,fontWeight:700,color:"#F4EEDF"}}>{r.t}</span>
- <span style={{...M,fontSize:9,color:"#B8AE92"}}>${Math.round(r.p)}</span>
+ <span style={{...M,fontSize:17,fontWeight:700,color:"#F4EEDF"}}>{r.t}</span>
+ <span style={{...M,fontSize:14,color:"#B8AE92"}}>${Math.round(r.p)}</span>
  </div>
- <span style={{...M,fontSize:8,fontWeight:700,padding:"2px 8px",borderRadius:10,background:r.actionColor+"22",color:r.actionColor}}>{r.action}</span>
+ <span style={{...M,fontSize:13,fontWeight:700,padding:"2px 8px",borderRadius:10,background:r.actionColor+"22",color:r.actionColor}}>{r.action}</span>
  </div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:4,marginBottom:6}}>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>GAIN</div>
- <div style={{...M,fontSize:9,fontWeight:700,color:r.gainPct>=0?"#3DBFA8":"#E8643A"}}>{r.gainPct>=0?"+":""}{Math.round(r.gainPct)}%</div>
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>GAIN</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:r.gainPct>=0?"#3DBFA8":"#E8643A"}}>{r.gainPct>=0?"+":""}{Math.round(r.gainPct)}%</div>
  </div>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>UPSIDE</div>
- <div style={{...M,fontSize:9,fontWeight:700,color:r.upsideLeft>20?"#3DBFA8":r.upsideLeft>10?"#FFBF00":"#E8643A"}}>{r.upsideLeft>=0?"+":""}{Math.round(r.upsideLeft)}%</div>
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>UPSIDE</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:r.upsideLeft>20?"#3DBFA8":r.upsideLeft>10?"#FFBF00":"#E8643A"}}>{r.upsideLeft>=0?"+":""}{Math.round(r.upsideLeft)}%</div>
  </div>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>WEIGHT</div>
- <div style={{...M,fontSize:9,fontWeight:700,color:r.weight>25?"#E8643A":r.weight>10?"#FFBF00":"#F4EEDF"}}>{r.weight.toFixed(1)}%</div>
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>WEIGHT</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:r.weight>25?"#E8643A":r.weight>10?"#FFBF00":"#F4EEDF"}}>{r.weight.toFixed(1)}%</div>
  </div>
  <div style={{textAlign:"center"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>MACRO</div>
- <div style={{...M,fontSize:9,fontWeight:700,color:r.macro==="strong"?"#3DBFA8":r.macro==="moderate"?"#FFBF00":r.macro==="weak"?"#E8643A":"#B8AE92"}}>{r.macro.toUpperCase()}</div>
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>MACRO</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:r.macro==="strong"?"#3DBFA8":r.macro==="moderate"?"#FFBF00":r.macro==="weak"?"#E8643A":"#B8AE92"}}>{r.macro.toUpperCase()}</div>
  </div>
  </div>
- <div style={{...M,fontSize:7,color:"#D6CDB6",marginBottom:4}}>{r.reason}</div>
- {r.earnDate&&<div style={{...M,fontSize:7,color:"#E6A817"}}>Earnings: {r.earnDate}</div>}
- {r.killer&&<div style={{...M,fontSize:7,color:"#E8643A",marginTop:2}}>Killer: {typeof r.killer==="string"?r.killer.substring(0,80):""}</div>}
+ <div style={{...M,fontSize:12,color:"#D6CDB6",marginBottom:4}}>{r.reason}</div>
+ {r.earnDate&&<div style={{...M,fontSize:12,color:"#E6A817"}}>Earnings: {r.earnDate}</div>}
+ {r.killer&&<div style={{...M,fontSize:12,color:"#E8643A",marginTop:2}}>Killer: {typeof r.killer==="string"?r.killer.substring(0,80):""}</div>}
  </div>
  ));
  })()}
@@ -5172,14 +5172,14 @@ portfolioView==="snapshot"&&<>
  {l:"HOLD",v:portfolioStats.bySignal.hold,c:Y,bg:Y+"12"},
  {l:"SELL",v:portfolioStats.bySignal.sell,c:R,bg:R+"12"},
  {l:"AVG UPSIDE",v:portfolioStats.avgUpside+"%",c:"#E6A817",bg:"#E6A81712"}].map((c,i)=>(<div key={i} style={{background:c.bg,border:`1px solid ${c.c}22`,borderRadius:5,padding:"8px 10px",textAlign:"center"}}>
- <div style={{...M,fontSize:20,fontWeight:800,color:c.c}}>{c.v}</div>
- <div style={{...M,fontSize:7,color:c.c,opacity:0.7,letterSpacing:0.8}}>{c.l}</div>
+ <div style={{...M,fontSize:24,fontWeight:800,color:c.c}}>{c.v}</div>
+ <div style={{...M,fontSize:12,color:c.c,opacity:0.7,letterSpacing:0.8}}>{c.l}</div>
  </div>))}
  </div>
 
  {/* SECTOR EXPOSURE */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:"8px 12px",marginBottom:12}}>
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",marginBottom:6}}>Sector Concentration</div>
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",marginBottom:6}}>Sector Concentration</div>
  <div style={{display:"flex",gap:0,height:20,borderRadius:3,overflow:"hidden",marginBottom:4}}>
  {Object.entries(portfolioStats.bySector).sort((a,b)=>b[1]-a[1]).map(([sec,count],i)=>{
  const colors=["#E6A817","#B266FF","#3DBFA8","#E08A4A","#FFBF00","#E8643A","#7E91E8","#D9A05B"];
@@ -5190,7 +5190,7 @@ portfolioView==="snapshot"&&<>
  {Object.entries(portfolioStats.bySector).sort((a,b)=>b[1]-a[1]).map(([sec,count],i)=>{
  const colors=["#E6A817","#B266FF","#3DBFA8","#E08A4A","#FFBF00","#E8643A","#7E91E8","#D9A05B"];
  const pct=((count/tickers.length)*100).toFixed(0);
- return(<span key={sec} style={{...M,fontSize:7,color:colors[i%colors.length],display:"flex",alignItems:"center",gap:3}}>
+ return(<span key={sec} style={{...M,fontSize:12,color:colors[i%colors.length],display:"flex",alignItems:"center",gap:3}}>
  <span style={{width:6,height:6,borderRadius:2,background:colors[i%colors.length]}}/>{sec} ({count}) {pct}%
  </span>);
  })}
@@ -5201,7 +5201,7 @@ portfolioView==="snapshot"&&<>
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,overflow:"hidden"}}>
  <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
  {/* Table header */}
- <div style={{display:"grid",gridTemplateColumns:"44px 50px 60px 48px 52px 52px 58px 62px minmax(70px,1fr) 50px",gap:0,padding:"8px 10px",background:"#1E1924",borderBottom:"1px solid #2C2433",alignItems:"center",minWidth:560}}>
+ <div style={{display:"grid",gridTemplateColumns:"66px 75px 90px 72px 78px 78px 87px 93px minmax(105px,1fr) 75px",gap:0,padding:"8px 10px",background:"#1E1924",borderBottom:"1px solid #2C2433",alignItems:"center",minWidth:560}}>
  {[
  {k:"gr",l:"RANK"},
  {k:"ticker",l:"TICKER"},
@@ -5212,8 +5212,8 @@ portfolioView==="snapshot"&&<>
  {k:"earnDte",l:"EARNINGS"},
  {k:"pb1w",l:"1W BIAS"},
  {k:"cv",l:"CONVICTION"},
- {k:"avgAge",l:"INTEL"}].map(h=>(<div key={h.k} onClick={()=>{if(portfolioSort===h.k)setPortfolioSortDir(d=>d*-1);else{setPortfolioSort(h.k);setPortfolioSortDir(-1);}}} style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:0.8,color:portfolioSort===h.k?"#E6A817":"#9A8F82",fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:2}}>
- {h.l}{portfolioSort===h.k&&<span style={{fontSize:8}}>{portfolioSortDir>0?"▲":"▼"}</span>}
+ {k:"avgAge",l:"INTEL"}].map(h=>(<div key={h.k} onClick={()=>{if(portfolioSort===h.k)setPortfolioSortDir(d=>d*-1);else{setPortfolioSort(h.k);setPortfolioSortDir(-1);}}} style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:0.8,color:portfolioSort===h.k?"#E6A817":"#9A8F82",fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:2}}>
+ {h.l}{portfolioSort===h.k&&<span style={{fontSize:13}}>{portfolioSortDir>0?"▲":"▼"}</span>}
  </div>))}
  </div>
  {/* Table rows */}
@@ -5225,43 +5225,43 @@ portfolioView==="snapshot"&&<>
  if(typeof av==="string")return portfolioSortDir*(av.localeCompare(bv));
  if(av===null&&bv===null)return 0;if(av===null)return 1;if(bv===null)return -1;
  return portfolioSortDir*(av-bv);
- }).map((r,idx)=>(<div key={r.ticker} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("feed");}} style={{display:"grid",gridTemplateColumns:"44px 50px 60px 48px 52px 52px 58px 62px minmax(70px,1fr) 50px",gap:0,padding:"7px 10px",borderBottom:"1px solid #2C243344",background:idx%2===0?"transparent":"#17131A08",cursor:"pointer",alignItems:"center",minWidth:560}}>
+ }).map((r,idx)=>(<div key={r.ticker} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("feed");}} style={{display:"grid",gridTemplateColumns:"66px 75px 90px 72px 78px 78px 87px 93px minmax(105px,1fr) 75px",gap:0,padding:"7px 10px",borderBottom:"1px solid #2C243344",background:idx%2===0?"transparent":"#17131A08",cursor:"pointer",alignItems:"center",minWidth:560}}>
  {/* RANK */}
- <div style={{...M,fontSize:13,fontWeight:800,color:r.gc}}>{r.gr}</div>
+ <div style={{...M,fontSize:18,fontWeight:800,color:r.gc}}>{r.gr}</div>
  {/* TICKER */}
  <div>
- <div style={{...M,fontSize:11,fontWeight:700,color:"#F4EEDF"}}>{r.ticker}</div>
+ <div style={{...M,fontSize:16,fontWeight:700,color:"#F4EEDF"}}>{r.ticker}</div>
  </div>
  {/* PRICE */}
- <div style={{...M,fontSize:11,fontWeight:600,color:"#F4EEDF"}}>${r.price}</div>
+ <div style={{...M,fontSize:16,fontWeight:600,color:"#F4EEDF"}}>${r.price}</div>
  {/* SUPPORT DIST */}
-  <div style={{...M,fontSize:11,fontWeight:700,color:r.ds<5?G:r.ds<15?Y:R}}>{r.ds.toFixed(1)}%</div>
+  <div style={{...M,fontSize:16,fontWeight:700,color:r.ds<5?G:r.ds<15?Y:R}}>{r.ds.toFixed(1)}%</div>
  {/* UPSIDE TO PT */}
- <div style={{...M,fontSize:10,fontWeight:600,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</div>
+ <div style={{...M,fontSize:15,fontWeight:600,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</div>
  {/* YTD */}
- <div style={{...M,fontSize:10,color:r.ytd>0?G:R}}>{r.ytd>0?"+":""}{r.ytd}%</div>
+ <div style={{...M,fontSize:15,color:r.ytd>0?G:R}}>{r.ytd>0?"+":""}{r.ytd}%</div>
  {/* EARNINGS */}
  <div>
- {r.earnDte!==null&&r.earnDte<=7?<span style={{...M,fontSize:8,fontWeight:700,padding:"2px 4px",borderRadius:3,background:"#B266FF22",color:"#B266FF",animation:r.earnDte<=3?"pulse 2s infinite":"none"}}>{r.earnDte===0?"TODAY":r.earnDte+"d"}</span>
- :r.earnDte!==null&&r.earnDte<=30?<span style={{...M,fontSize:8,color:"#B8AE92"}}>{r.earnDte}d</span>
- :<span style={{...M,fontSize:8,color:"#9A8F82"}}>{r.earnDte!==null?r.earnDte+"d":"—"}</span>}
+ {r.earnDte!==null&&r.earnDte<=7?<span style={{...M,fontSize:13,fontWeight:700,padding:"2px 4px",borderRadius:3,background:"#B266FF22",color:"#B266FF",animation:r.earnDte<=3?"pulse 2s infinite":"none"}}>{r.earnDte===0?"TODAY":r.earnDte+"d"}</span>
+ :r.earnDte!==null&&r.earnDte<=30?<span style={{...M,fontSize:13,color:"#B8AE92"}}>{r.earnDte}d</span>
+ :<span style={{...M,fontSize:13,color:"#9A8F82"}}>{r.earnDte!==null?r.earnDte+"d":"—"}</span>}
  </div>
  {/* 1W BIAS */}
  <div>
- <span style={{...M,fontSize:7,fontWeight:600,padding:"2px 4px",borderRadius:3,background:r.pb1w.color+"18",color:r.pb1w.color,maxWidth:60,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",display:"inline-block"}}>{r.pb1w.bias||r.pb1w.h}</span>
+ <span style={{...M,fontSize:12,fontWeight:600,padding:"2px 4px",borderRadius:3,background:r.pb1w.color+"18",color:r.pb1w.color,maxWidth:60,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",display:"inline-block"}}>{r.pb1w.bias||r.pb1w.h}</span>
  </div>
  {/* CONVICTION BAR */}
  <div style={{position:"relative",height:14,background:"#241C2B",borderRadius:3,overflow:"hidden"}}>
  <div style={{position:"absolute",left:r.cv>=0?"50%":"auto",right:r.cv<0?"50%":"auto",width:`${Math.abs(r.cv)/2}%`,height:"100%",background:r.gc,borderRadius:r.cv>=0?"0 3px 3px 0":"3px 0 0 3px",transition:"width 0.3s"}}/>
  <div style={{position:"absolute",left:"50%",top:0,width:1,height:"100%",background:"#9A8F82"}}/>
- <span style={{position:"absolute",right:r.cv>=0?4:"auto",left:r.cv<0?4:"auto",top:1,...M,fontSize:8,fontWeight:700,color:r.gc}}>{r.cv}</span>
+ <span style={{position:"absolute",right:r.cv>=0?4:"auto",left:r.cv<0?4:"auto",top:1,...M,fontSize:13,fontWeight:700,color:r.gc}}>{r.cv}</span>
  </div>
  {/* INTEL FRESHNESS */}
  <div style={{display:"flex",alignItems:"center",gap:3}}>
  {r.freshCount>0&&<span style={{width:6,height:6,borderRadius:3,background:"#E6A817",flexShrink:0}} title={r.freshCount+" fresh items"}/>}
- {r.staleCount>3?<span style={{...M,fontSize:7,color:R}} title={r.staleCount+" stale items (>14d)"}>⚠{r.staleCount}</span>
- :r.staleCount>0?<span style={{...M,fontSize:7,color:Y}} title={r.staleCount+" aging items"}>{r.staleCount}old</span>
- :<span style={{...M,fontSize:7,color:G}}>✓</span>}
+ {r.staleCount>3?<span style={{...M,fontSize:12,color:R}} title={r.staleCount+" stale items (>14d)"}>⚠{r.staleCount}</span>
+ :r.staleCount>0?<span style={{...M,fontSize:12,color:Y}} title={r.staleCount+" aging items"}>{r.staleCount}old</span>
+ :<span style={{...M,fontSize:12,color:G}}>✓</span>}
  </div>
  </div>))}
  </div>
@@ -5269,12 +5269,12 @@ portfolioView==="snapshot"&&<>
 
  {/* INTEL FRESHNESS SUMMARY */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:"10px 14px",marginTop:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Intel Freshness Report</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Intel Freshness Report</div>
  <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
- {portfolioStats.rows.filter(r=>r.staleCount>2).sort((a,b)=>b.staleCount-a.staleCount).map(r=>(<span key={r.ticker} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("feed");}} style={{...M,fontSize:8,padding:"3px 8px",borderRadius:4,background:r.staleCount>4?R+"15":Y+"15",color:r.staleCount>4?R:Y,cursor:"pointer",border:`1px solid ${r.staleCount>4?R:Y}22`}}>
+ {portfolioStats.rows.filter(r=>r.staleCount>2).sort((a,b)=>b.staleCount-a.staleCount).map(r=>(<span key={r.ticker} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("feed");}} style={{...M,fontSize:13,padding:"3px 8px",borderRadius:4,background:r.staleCount>4?R+"15":Y+"15",color:r.staleCount>4?R:Y,cursor:"pointer",border:`1px solid ${r.staleCount>4?R:Y}22`}}>
  {r.ticker}: {r.staleCount}/{r.newsCount} stale ({Math.round(r.avgAge)}d avg)
  </span>))}
- {portfolioStats.rows.filter(r=>r.staleCount>2).length===0&&<span style={{...M,fontSize:9,color:G}}>✓ All tickers have fresh intel</span>}
+ {portfolioStats.rows.filter(r=>r.staleCount>2).length===0&&<span style={{...M,fontSize:14,color:G}}>✓ All tickers have fresh intel</span>}
  </div>
  </div>
  </>}
@@ -5285,11 +5285,11 @@ portfolioView==="snapshot"&&<>
  <div style={{background:"linear-gradient(180deg,#17131A 0%,#1E1924 100%)",border:"1px solid #E6A81722",borderRadius:8,padding:18,marginTop:12}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
  <div style={{display:"flex",alignItems:"center",gap:8}}>
- <span style={{fontSize:16}}>🎯</span>
- <span style={{...M,fontSize:14,fontWeight:700,background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NEXT SESSION BRIEFING</span>
+ <span style={{fontSize:20}}>🎯</span>
+ <span style={{...M,fontSize:19,fontWeight:700,background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NEXT SESSION BRIEFING</span>
  </div>
  <div style={{display:"flex",gap:6}}>
- {[{l:"REGIME",v:MACRO.regime,c:MACRO.color},{l:"VIX",v:MACRO.vix,c:MACRO.vix>25?R:MACRO.vix>18?Y:G}].map((m,i)=>(<div key={i} style={{...M,fontSize:8,padding:"3px 8px",borderRadius:4,background:m.c+"15",color:m.c,border:`1px solid ${m.c}33`,fontWeight:600}}>{m.l}: {m.v}</div>))}
+ {[{l:"REGIME",v:MACRO.regime,c:MACRO.color},{l:"VIX",v:MACRO.vix,c:MACRO.vix>25?R:MACRO.vix>18?Y:G}].map((m,i)=>(<div key={i} style={{...M,fontSize:13,padding:"3px 8px",borderRadius:4,background:m.c+"15",color:m.c,border:`1px solid ${m.c}33`,fontWeight:600}}>{m.l}: {m.v}</div>))}
  </div>
  </div>
  {(()=>{
@@ -5331,48 +5331,48 @@ portfolioView==="snapshot"&&<>
  {/* PRIORITY ACTION LIST */}
  {actions.length>0?<div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:14}}>
  {actions.sort((a,b)=>a.priority-b.priority).map((a,i)=>(<div key={i} onClick={()=>{setActiveTicker(a.ticker);setShowPortfolio(false);setTab(a.priority===1?"options":"riskrew");}} style={{display:"flex",gap:10,padding:"10px 12px",background:a.color+"08",border:`1px solid ${a.color}22`,borderRadius:5,cursor:"pointer",borderLeft:`3px solid ${a.color}`}}>
- <div style={{fontSize:14,flexShrink:0,marginTop:1}}>{a.icon}</div>
+ <div style={{fontSize:19,flexShrink:0,marginTop:1}}>{a.icon}</div>
  <div style={{flex:1}}>
- <div style={{...M,fontSize:10,fontWeight:700,color:a.color,marginBottom:2}}>{a.title}</div>
- <div style={{...M,fontSize:8,color:"#B8AE92",lineHeight:1.5}}>{a.detail}</div>
+ <div style={{...M,fontSize:15,fontWeight:700,color:a.color,marginBottom:2}}>{a.title}</div>
+ <div style={{...M,fontSize:13,color:"#B8AE92",lineHeight:1.5}}>{a.detail}</div>
  </div>
- <div style={{...M,fontSize:7,color:"#9A8F82",flexShrink:0,alignSelf:"center"}}>TAP →</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",flexShrink:0,alignSelf:"center"}}>TAP →</div>
  </div>))}
- </div>:<div style={{...M,fontSize:9,color:G,padding:12,textAlign:"center"}}>No immediate action items. Portfolio balanced.</div>}
+ </div>:<div style={{...M,fontSize:14,color:G,padding:12,textAlign:"center"}}>No immediate action items. Portfolio balanced.</div>}
 
  {/* CATALYSTS + CONVICTION GRID */}
  {nearCats.length>0&&<div style={{background:"#241C2B",borderRadius:5,padding:10,marginBottom:10}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:"#E6A817",marginBottom:6}}>UPCOMING CATALYSTS</div>
+ <div style={{...M,fontSize:13,fontWeight:700,color:"#E6A817",marginBottom:6}}>UPCOMING CATALYSTS</div>
  <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
- {nearCats.slice(0,5).map((cat,i)=>(<span key={i} style={{...M,fontSize:7,padding:"3px 8px",borderRadius:4,background:"#E6A81708",color:"#E6A817",border:"1px solid #E6A81722"}}>{cat.ticker} {cat.date}: {cat.event.substring(0,35)}</span>))}
+ {nearCats.slice(0,5).map((cat,i)=>(<span key={i} style={{...M,fontSize:12,padding:"3px 8px",borderRadius:4,background:"#E6A81708",color:"#E6A817",border:"1px solid #E6A81722"}}>{cat.ticker} {cat.date}: {cat.event.substring(0,35)}</span>))}
  </div>
  </div>}
 
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
  <div style={{background:"#241C2B",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:G,marginBottom:6}}>TOP CONVICTION</div>
+ <div style={{...M,fontSize:13,fontWeight:700,color:G,marginBottom:6}}>TOP CONVICTION</div>
  {top3.map((r,i)=>(<div key={i} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("riskrew");}} style={{display:"flex",justifyContent:"space-between",marginBottom:4,cursor:"pointer",padding:"2px 4px",borderRadius:3,":hover":{background:"#2C2433"}}}>
- <span style={{...M,fontSize:10,fontWeight:700,color:"#F4EEDF"}}>{i+1}. {r.ticker}</span>
+ <span style={{...M,fontSize:15,fontWeight:700,color:"#F4EEDF"}}>{i+1}. {r.ticker}</span>
  <div style={{display:"flex",gap:6,alignItems:"center"}}>
- <span style={{...M,fontSize:8,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</span>
- <span style={{...M,fontSize:9,fontWeight:700,color:r.gc}}>{r.gr}</span>
+ <span style={{...M,fontSize:13,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:r.gc}}>{r.gr}</span>
  </div>
  </div>))}
  </div>
  <div style={{background:"#241C2B",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:R,marginBottom:6}}>WEAKEST — CONSIDER EXIT</div>
+ <div style={{...M,fontSize:13,fontWeight:700,color:R,marginBottom:6}}>WEAKEST — CONSIDER EXIT</div>
  {bot3.map((r,i)=>(<div key={i} onClick={()=>{setActiveTicker(r.ticker);setShowPortfolio(false);setTab("riskrew");}} style={{display:"flex",justifyContent:"space-between",marginBottom:4,cursor:"pointer",padding:"2px 4px",borderRadius:3}}>
- <span style={{...M,fontSize:10,fontWeight:600,color:"#B8AE92"}}>{r.ticker}</span>
+ <span style={{...M,fontSize:15,fontWeight:600,color:"#B8AE92"}}>{r.ticker}</span>
  <div style={{display:"flex",gap:6,alignItems:"center"}}>
- <span style={{...M,fontSize:8,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</span>
- <span style={{...M,fontSize:9,fontWeight:700,color:r.gc}}>{r.gr}</span>
+ <span style={{...M,fontSize:13,color:r.uA>0?G:R}}>{r.uA>0?"+":""}{r.uA.toFixed(0)}%</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:r.gc}}>{r.gr}</span>
  </div>
  </div>))}
  </div>
  </div>
 
  {/* MACRO ONE-LINER */}
- <div style={{...M,fontSize:8,color:"#B8AE92",lineHeight:1.6,padding:"8px 10px",background:"#241C2B",borderRadius:4,borderLeft:`3px solid ${MACRO.color}`}}>{MACRO.note}</div>
+ <div style={{...M,fontSize:13,color:"#B8AE92",lineHeight:1.6,padding:"8px 10px",background:"#241C2B",borderRadius:4,borderLeft:`3px solid ${MACRO.color}`}}>{MACRO.note}</div>
  </>);
  })()}
  </div>
@@ -5386,43 +5386,43 @@ portfolioView==="snapshot"&&<>
  {/* HEADER */}
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10,flexWrap:"wrap",gap:6}}>
  <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
- <span style={{...M,fontWeight:700,fontSize:22}}>{activeTicker}</span>
- <span style={{fontSize:12,color:"#B8AE92"}}>{stock.name}</span>
- <span style={{...M,fontSize:9,padding:"2px 6px",borderRadius:3,background:sig.color+"15",color:sig.color}}>{sig.signal}</span>
+ <span style={{...M,fontWeight:700,fontSize:26}}>{activeTicker}</span>
+ <span style={{fontSize:17,color:"#B8AE92"}}>{stock.name}</span>
+ <span style={{...M,fontSize:14,padding:"2px 6px",borderRadius:3,background:sig.color+"15",color:sig.color}}>{sig.signal}</span>
  <div style={{display:"flex",gap:3,marginLeft:"auto"}}>
- <span title={"Price Targets: "+(stock.ptVerified?"VERIFIED "+stock.ptDate:"Sep 25, 2026")} style={{...M,fontSize:6,padding:"1px 4px",borderRadius:2,background:stock.ptVerified?"#3DBFA822":"#FFBF0022",color:stock.ptVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.ptVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.ptVerified?"✓ PT":"⚠ PT"}</span>
- <span title={"Technicals: "+(stock.techVerified?"VERIFIED":"ESTIMATED")} style={{...M,fontSize:6,padding:"1px 4px",borderRadius:2,background:stock.techVerified?"#3DBFA822":"#FFBF0022",color:stock.techVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.techVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.techVerified?"✓ TECH":"⚠ TECH"}</span>
- <span title={"Support: "+(stock.supportVerified?"VERIFIED — anchor: "+(stock.supportAnchor||""):"ESTIMATED")} style={{...M,fontSize:6,padding:"1px 4px",borderRadius:2,background:stock.supportVerified?"#3DBFA822":"#FFBF0022",color:stock.supportVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.supportVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.supportVerified?"✓ SUP":"⚠ SUP"}</span>
- <span title={"Options: "+(stock.optionsVerified?"VERIFIED":"ESTIMATED")} style={{...M,fontSize:6,padding:"1px 4px",borderRadius:2,background:stock.optionsVerified?"#3DBFA822":"#FFBF0022",color:stock.optionsVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.optionsVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.optionsVerified?"✓ OPT":"⚠ OPT"}</span>
- <span title={"Fundamentals story refreshed "+(stock.fundDate||"")} style={{...M,fontSize:6,padding:"1px 4px",borderRadius:2,background:stock.fundVerified?"#3DBFA822":"#FFBF0022",color:stock.fundVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.fundVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.fundVerified?"✓ FUND":"⚠ FUND"}</span>
+ <span title={"Price Targets: "+(stock.ptVerified?"VERIFIED "+stock.ptDate:"Sep 25, 2026")} style={{...M,fontSize:11,padding:"1px 4px",borderRadius:2,background:stock.ptVerified?"#3DBFA822":"#FFBF0022",color:stock.ptVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.ptVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.ptVerified?"✓ PT":"⚠ PT"}</span>
+ <span title={"Technicals: "+(stock.techVerified?"VERIFIED":"ESTIMATED")} style={{...M,fontSize:11,padding:"1px 4px",borderRadius:2,background:stock.techVerified?"#3DBFA822":"#FFBF0022",color:stock.techVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.techVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.techVerified?"✓ TECH":"⚠ TECH"}</span>
+ <span title={"Support: "+(stock.supportVerified?"VERIFIED — anchor: "+(stock.supportAnchor||""):"ESTIMATED")} style={{...M,fontSize:11,padding:"1px 4px",borderRadius:2,background:stock.supportVerified?"#3DBFA822":"#FFBF0022",color:stock.supportVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.supportVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.supportVerified?"✓ SUP":"⚠ SUP"}</span>
+ <span title={"Options: "+(stock.optionsVerified?"VERIFIED":"ESTIMATED")} style={{...M,fontSize:11,padding:"1px 4px",borderRadius:2,background:stock.optionsVerified?"#3DBFA822":"#FFBF0022",color:stock.optionsVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.optionsVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.optionsVerified?"✓ OPT":"⚠ OPT"}</span>
+ <span title={"Fundamentals story refreshed "+(stock.fundDate||"")} style={{...M,fontSize:11,padding:"1px 4px",borderRadius:2,background:stock.fundVerified?"#3DBFA822":"#FFBF0022",color:stock.fundVerified?"#3DBFA8":"#FFBF00",fontWeight:700,border:`1px solid ${stock.fundVerified?"#3DBFA844":"#FFBF0044"}`}}>{stock.fundVerified?"✓ FUND":"⚠ FUND"}</span>
  </div>
  </div>
  <div style={{display:"flex",gap:8,alignItems:"center"}}>
- <span style={{display:"inline-flex",alignItems:"center",gap:4,...M,fontSize:9,color:"#E6A817"}}>
+ <span style={{display:"inline-flex",alignItems:"center",gap:4,...M,fontSize:14,color:"#E6A817"}}>
  <span style={{width:6,height:6,borderRadius:3,background:"#E6A817",display:"inline-block",animation:"pulse 2s ease-in-out infinite"}}/>
- REFRESHED Sep 3, 2026 POST-CLOSE — SETTLED 4PM PRICES FROM THE MARKET-DATA API. All 21 tickers carry verified technicals (50/100/200/400d MAs, RSI-14, MACD from 400 trading days), observed swing-low support with defended-counts, and exact max pain. AI capex accelerating — AVGO guided FY2027 AI revenue to ~$115B and FY2028 to $230B; NVDA guided hyperscaler capex $800B to $1.3T — but beats keep selling off, five instances now. Oil ~$83 after the US-Iran de-escalation. Sept hike odds elevated post-Jackson Hole. IV rank null pending ~20 daily runs — do not select options structures from this file.
+ {(globalThis.__ADE_LIVE__||{}).banner||""}
  </span>
- <span style={{...M,fontSize:9,color:"#9A8F82"}}>EARN: {stock.earningsDate}</span>
- <span style={{...M,fontSize:9,color:"#9A8F82"}}>{stock.sector}</span>
+ <span style={{...M,fontSize:14,color:"#9A8F82"}}>EARN: {stock.earningsDate}</span>
+ <span style={{...M,fontSize:14,color:"#9A8F82"}}>{stock.sector}</span>
  </div>
  </div>
 
  {/* ROW 1 */}
- <div style={{display:"grid",gridTemplateColumns:"minmax(120px,1fr) 160px minmax(140px,1fr)",gap:10,marginBottom:10,overflowX:"auto"}}>
+ <div style={{display:"grid",gridTemplateColumns:"minmax(180px,1fr) 240px minmax(210px,1fr)",gap:10,marginBottom:10,overflowX:"auto"}}>
  {/* PRICE */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:12}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Price Scenario</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Price Scenario</div>
  <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:4}}>
- <span style={{...M,fontSize:30,fontWeight:700,color:price===LC[activeTicker]?"#F4EEDF":"#E6A817"}}>${price<1?price.toFixed(2):price}</span>
- <span style={{...M,fontSize:10,color:price>LC[activeTicker]?G:price<LC[activeTicker]?R:"#9A8F82"}}>{price===LC[activeTicker]?"LAST CLOSE":`${((price-LC[activeTicker])/LC[activeTicker]*100).toFixed(1)}%`}</span>
- <button onClick={()=>setPrice(LC[activeTicker])} style={{...M,fontSize:7,padding:"2px 6px",borderRadius:3,border:"1px solid #E6A81744",background:price===LC[activeTicker]?"#E6A81722":"transparent",color:"#E6A817",cursor:"pointer",fontWeight:600,marginLeft:"auto"}}>NOW</button>
+ <span style={{...M,fontSize:34,fontWeight:700,color:price===LC[activeTicker]?"#F4EEDF":"#E6A817"}}>${price<1?price.toFixed(2):price}</span>
+ <span style={{...M,fontSize:15,color:price>LC[activeTicker]?G:price<LC[activeTicker]?R:"#9A8F82"}}>{price===LC[activeTicker]?"LAST CLOSE":`${((price-LC[activeTicker])/LC[activeTicker]*100).toFixed(1)}%`}</span>
+ <button onClick={()=>setPrice(LC[activeTicker])} style={{...M,fontSize:12,padding:"2px 6px",borderRadius:3,border:"1px solid #E6A81744",background:price===LC[activeTicker]?"#E6A81722":"transparent",color:"#E6A817",cursor:"pointer",fontWeight:600,marginLeft:"auto"}}>NOW</button>
  </div>
  <input type="range" min={Math.round(stock.price*0.5)} max={Math.round(stock.price*1.5)} step={stock.price>100?1:0.5} value={price} onChange={e=>setPrice(Number(e.target.value))} style={{width:"100%",height:4,appearance:"none",background:"linear-gradient(90deg,#E8643A,#FFBF00 40%,#3DBFA8 50%,#FFBF00 65%,#E8643A)",borderRadius:2,outline:"none",cursor:"pointer"}}/>
- <div style={{display:"flex",justifyContent:"space-between",...M,fontSize:7,color:"#9A8F82",marginTop:3}}><span>LOW ${stock.lowPT}</span><span>AVG ${stock.avgPT}</span><span>HIGH ${stock.highPT}</span></div>
+ <div style={{display:"flex",justifyContent:"space-between",...M,fontSize:12,color:"#9A8F82",marginTop:3}}><span>LOW ${stock.lowPT}</span><span>AVG ${stock.avgPT}</span><span>HIGH ${stock.highPT}</span></div>
  <div style={{marginTop:8,paddingTop:6,borderTop:"1px solid #2C2433"}}>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginBottom:4}}>EARNINGS SCENARIO</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginBottom:4}}>EARNINGS SCENARIO</div>
  <div style={{display:"flex",gap:3,flexWrap:"wrap"}}>
- {[{id:"none",l:"NONE",c:"#B8AE92"},{id:"big_beat",l:"BIG BEAT",c:G},{id:"beat",l:"BEAT",c:G},{id:"miss",l:"MISS",c:R},{id:"big_miss",l:"BIG MISS",c:R}].map(s=>(<button key={s.id} onClick={()=>setEps(s.id)} style={{...M,fontSize:7,padding:"2px 5px",border:`1px solid ${eps===s.id?s.c+"66":"#3A3042"}`,background:eps===s.id?s.c+"15":"transparent",color:eps===s.id?s.c:"#B8AE92",borderRadius:3,cursor:"pointer"}}>{s.l}</button>))}
+ {[{id:"none",l:"NONE",c:"#B8AE92"},{id:"big_beat",l:"BIG BEAT",c:G},{id:"beat",l:"BEAT",c:G},{id:"miss",l:"MISS",c:R},{id:"big_miss",l:"BIG MISS",c:R}].map(s=>(<button key={s.id} onClick={()=>setEps(s.id)} style={{...M,fontSize:12,padding:"2px 5px",border:`1px solid ${eps===s.id?s.c+"66":"#3A3042"}`,background:eps===s.id?s.c+"15":"transparent",color:eps===s.id?s.c:"#B8AE92",borderRadius:3,cursor:"pointer"}}>{s.l}</button>))}
  </div>
  </div>
  </div>
@@ -5437,70 +5437,70 @@ portfolioView==="snapshot"&&<>
  <line x1="55" y1="55" x2={55+36*Math.cos(gaugeAngle*Math.PI/180)} y2={55-36*Math.sin(gaugeAngle*Math.PI/180)} stroke={sig.color} strokeWidth="2" strokeLinecap="round" style={{transition:"all 0.4s"}}/>
  <circle cx="55" cy="55" r="3" fill={sig.color}/>
  </svg>
- <div style={{...M,fontSize:16,fontWeight:700,color:sig.color}}>{sig.signal}</div>
- <div style={{...M,fontSize:9,color:"#B8AE92"}}>{sig.score>0?"+":""}{sig.score}/100</div>
- <div style={{...M,fontSize:8,color:"#9A8F82"}}>{sig.bullCount}B/{sig.bearCount}Be • {sig.activeCount}</div>
- <div style={{...M,fontSize:8,color:parseFloat(sig.upside)>0?G:R,marginTop:1}}>{parseFloat(sig.upside)>0?"+":""}{sig.upside}% to PT</div>
+ <div style={{...M,fontSize:20,fontWeight:700,color:sig.color}}>{sig.signal}</div>
+ <div style={{...M,fontSize:14,color:"#B8AE92"}}>{sig.score>0?"+":""}{sig.score}/100</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82"}}>{sig.bullCount}B/{sig.bearCount}Be • {sig.activeCount}</div>
+ <div style={{...M,fontSize:13,color:parseFloat(sig.upside)>0?G:R,marginTop:1}}>{parseFloat(sig.upside)>0?"+":""}{sig.upside}% to PT</div>
  </div>
  {/* RISK-ADJUSTED CONVICTION */}
  <div style={{background:"#17131A",border:`1px solid ${riskAdj.gapColor}33`,borderRadius:6,padding:10,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minWidth:110,position:"relative"}}>
  <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:4}}>
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Risk-Adjusted</div>
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Risk-Adjusted</div>
  <div onClick={()=>setShowRiskInfo(!showRiskInfo)} style={{cursor:"pointer",width:14,height:14,borderRadius:7,background:showRiskInfo?"#E6A81722":"#2C2433",border:`1px solid ${showRiskInfo?"#E6A81744":"#3A3042"}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
- <span style={{...M,fontSize:8,color:showRiskInfo?"#E6A817":"#9A8F82",fontWeight:700}}>?</span>
+ <span style={{...M,fontSize:13,color:showRiskInfo?"#E6A817":"#9A8F82",fontWeight:700}}>?</span>
  </div>
  </div>
  <div style={{display:"flex",alignItems:"baseline",gap:4}}>
- <span style={{...M,fontSize:24,fontWeight:800,color:riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R}}>{riskAdj.adjScore}</span>
- <span style={{...M,fontSize:10,color:"#9A8F82"}}>/100</span>
+ <span style={{...M,fontSize:28,fontWeight:800,color:riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R}}>{riskAdj.adjScore}</span>
+ <span style={{...M,fontSize:15,color:"#9A8F82"}}>/100</span>
  </div>
  <div style={{display:"flex",alignItems:"center",gap:4,marginTop:4}}>
- <span style={{...M,fontSize:9,color:sig.color,fontWeight:600}}>{sig.score}</span>
- <span style={{...M,fontSize:8,color:"#9A8F82"}}>→</span>
- <span style={{...M,fontSize:9,color:riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R,fontWeight:600}}>{riskAdj.adjScore}</span>
- <span style={{...M,fontSize:8,color:R}}>(-{riskAdj.penalty})</span>
+ <span style={{...M,fontSize:14,color:sig.color,fontWeight:600}}>{sig.score}</span>
+ <span style={{...M,fontSize:13,color:"#9A8F82"}}>→</span>
+ <span style={{...M,fontSize:14,color:riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R,fontWeight:600}}>{riskAdj.adjScore}</span>
+ <span style={{...M,fontSize:13,color:R}}>(-{riskAdj.penalty})</span>
  </div>
  {riskAdj.gap>=8&&<div style={{marginTop:4,padding:"2px 6px",borderRadius:3,background:riskAdj.gapColor+"22",border:`1px solid ${riskAdj.gapColor}44`}}>
- <span style={{...M,fontSize:7,fontWeight:700,color:riskAdj.gapColor}}>{riskAdj.label}</span>
+ <span style={{...M,fontSize:12,fontWeight:700,color:riskAdj.gapColor}}>{riskAdj.label}</span>
  </div>}
  <div style={{width:"100%",height:4,background:"#241C2B",borderRadius:2,marginTop:6,overflow:"hidden"}}>
  <div style={{width:`${riskAdj.adjScore}%`,height:"100%",background:`linear-gradient(90deg,${riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R},${riskAdj.adjScore>=60?G:riskAdj.adjScore>=35?Y:R}88)`,borderRadius:2,transition:"width 0.3s"}}/>
  </div>
  {showRiskInfo&&<div style={{position:"absolute",top:"100%",left:0,right:0,zIndex:50,marginTop:4,background:"#1E1924",border:"1px solid #E6A81733",borderRadius:6,padding:12,boxShadow:"0 8px 24px rgba(0,0,0,0.6)",minWidth:280}}>
- <div style={{...M,fontSize:9,fontWeight:700,color:"#E6A817",marginBottom:8}}>How Risk-Adjusted Score Works</div>
- <div style={{...M,fontSize:8,color:"#D6CDB6",lineHeight:1.7,marginBottom:8}}>
+ <div style={{...M,fontSize:14,fontWeight:700,color:"#E6A817",marginBottom:8}}>How Risk-Adjusted Score Works</div>
+ <div style={{...M,fontSize:13,color:"#D6CDB6",lineHeight:1.7,marginBottom:8}}>
  <span style={{fontWeight:700,color:"#F4EEDF"}}>Raw Score</span> = signal-based conviction (analyst PTs, momentum, flow, earnings).
  <br/><span style={{fontWeight:700,color:"#F4EEDF"}}>Penalty</span> = each active risk's <span style={{color:"#E08A4A"}}>probability</span> × <span style={{color:"#E08A4A"}}>severity weight</span> (HIGH=1.5x, MED=1.0x, LOW=0.5x), normalized to a max 40-point deduction.
  <br/><span style={{fontWeight:700,color:"#F4EEDF"}}>Risk-Adjusted</span> = Raw − Penalty. The score after accounting for what could go wrong.
  </div>
- <div style={{...M,fontSize:8,color:"#B8AE92",marginBottom:6}}>Example: 30% prob × HIGH (1.5x) = 0.45 weighted risk units</div>
+ <div style={{...M,fontSize:13,color:"#B8AE92",marginBottom:6}}>Example: 30% prob × HIGH (1.5x) = 0.45 weighted risk units</div>
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {[{label:"LOW GAP",range:"< 8 pts",color:G,desc:"Risks manageable. Conviction holds. Size normally."},
  {label:"MODERATE GAP",range:"12-19 pts",color:Y,desc:"Material risks. Size with caution. Review catalysts."},
  {label:"HIGH CONVICTION GAP",range:"20+ pts",color:R,desc:"Bull case and risk profile conflicting. Reduce size or wait for catalyst resolution."}
  ].map((g,i)=>(<div key={i} style={{display:"flex",gap:6,alignItems:"flex-start"}}>
- <span style={{...M,fontSize:7,fontWeight:700,padding:"2px 5px",borderRadius:3,background:g.color+"22",color:g.color,flexShrink:0,minWidth:48,textAlign:"center"}}>{g.label}</span>
+ <span style={{...M,fontSize:12,fontWeight:700,padding:"2px 5px",borderRadius:3,background:g.color+"22",color:g.color,flexShrink:0,minWidth:82,textAlign:"center"}}>{g.label}</span>
  <div>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{g.range}</span>
- <span style={{...M,fontSize:7,color:"#B8AE92"}}> — {g.desc}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{g.range}</span>
+ <span style={{...M,fontSize:12,color:"#B8AE92"}}> — {g.desc}</span>
  </div>
  </div>))}
  </div>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginTop:8,borderTop:"1px solid #2C2433",paddingTop:6}}>If two stocks both score 50 raw, but one adjusts to 45 and the other to 28 — the second has far more landmines. Size the first one bigger.</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginTop:8,borderTop:"1px solid #2C2433",paddingTop:6}}>If two stocks both score 50 raw, but one adjusts to 45 and the other to 28 — the second has far more landmines. Size the first one bigger.</div>
  </div>}
  </div>
  {/* WATERFALL */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:10,overflow:"hidden"}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Contributions</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Contributions</div>
  <div style={{maxHeight:175,overflowY:"auto"}}>
  {sig.contribs.map(c=>(<div key={activeTicker+"-c-"+c.id} style={{display:"flex",alignItems:"center",gap:3,marginBottom:1.5}}>
- <span style={{...M,fontSize:6,color:"#9A8F82",width:100,flexShrink:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.headline}</span>
+ <span style={{...M,fontSize:11,color:"#9A8F82",width:183,flexShrink:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.headline}</span>
  <div style={{flex:1,height:4,background:"#241C2B",borderRadius:2,position:"relative",overflow:"hidden"}}>
  {c.contrib>=0?<div style={{position:"absolute",left:"50%",width:`${(c.contrib/sig.mx)*50}%`,height:"100%",background:G,borderRadius:2}}/>
  :<div style={{position:"absolute",right:"50%",width:`${(Math.abs(c.contrib)/sig.mx)*50}%`,height:"100%",background:R,borderRadius:2}}/>}
  <div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"#3A3042"}}/>
  </div>
- <span style={{...M,fontSize:6,color:c.contrib>0?G:R,width:22,textAlign:"right",flexShrink:0}}>{c.contrib>0?"+":""}{c.contrib.toFixed(1)}</span>
+ <span style={{...M,fontSize:11,color:c.contrib>0?G:R,width:40,textAlign:"right",flexShrink:0}}>{c.contrib>0?"+":""}{c.contrib.toFixed(1)}</span>
  </div>))}
  </div>
  </div>
@@ -5521,7 +5521,7 @@ portfolioView==="snapshot"&&<>
  {aging>0&&<div style={{flex:aging,background:Y}} title={aging+" aging (8-14d)"}/>}
  {stale>0&&<div style={{flex:stale,background:R}} title={stale+" stale (>14d)"}/>}
  </div>
- <span style={{...M,fontSize:7,color:stale>3?R:Y,flexShrink:0}}>
+ <span style={{...M,fontSize:12,color:stale>3?R:Y,flexShrink:0}}>
  {stale>0?`${stale} stale`:""}{stale>0&&aging>0?" • ":""}{aging>0?`${aging} aging`:""}
  </span>
  </div>
@@ -5531,36 +5531,36 @@ portfolioView==="snapshot"&&<>
  {/* KEY STATS */}
  <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch",marginBottom:10}}>
  <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:0,border:"1px solid #2C2433",borderRadius:5,overflow:"hidden",background:"#17131A",minWidth:480}}>
- {[{l:"Price",v:`$${stock.price}`,c:"#F4EEDF"},{l:"YTD",v:`${stock.ytd>0?"+":""}${stock.ytd}%`,c:stock.ytd>0?G:R},{l:"Fwd P/E",v:`${stock.fwdPE}x`,c:"#7E91E8"},{l:"Mkt Cap",v:stock.mktCap,c:"#F4EEDF"},{l:"52w High",v:`$${stock.high52}`,c:Y},{l:"Consensus",v:stock.consensus,c:stock.consensus.includes("Buy")?G:Y}].map((s,i)=>(
+ {[{l:"Price",v:`$${stock.price}`,c:"#F4EEDF"},{l:"YTD",v:`${stock.ytd>0?"+":""}${stock.ytd}%`,c:stock.ytd>0?G:R},{l:"Fwd P/E",v:stock.fwdPE>0?`${stock.fwdPE}x`:(stock.fwdPENote||"n/a"),c:"#7E91E8"},{l:"Mkt Cap",v:stock.mktCap,c:"#F4EEDF"},{l:"52w High",v:`$${stock.high52}`,c:Y},{l:"Consensus",v:stock.consensus,c:stock.consensus.includes("Buy")?G:Y}].map((s,i)=>(
  <div key={i} style={{padding:"8px 10px",borderRight:i<5?"1px solid #2C2433":"none"}}>
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:2}}>{s.l}</div>
- <div style={{...M,fontSize:11,fontWeight:700,color:s.c}}>{s.v}</div>
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:2}}>{s.l}</div>
+ <div style={{...M,fontSize:16,fontWeight:700,color:s.c}}>{s.v}</div>
  </div>))}
  </div>
  </div>
 
  {/* TABS */}
  <div style={{display:"flex",gap:0,marginBottom:10,borderBottom:"1px solid #2C2433",overflowX:"auto"}}>
- {tabs.map(t=>(<button key={t.id} onClick={()=>setTab(t.id)} style={{...M,fontSize:9,padding:"7px 12px",border:"none",borderBottom:tab===t.id?"2px solid #E6A817":"2px solid transparent",background:"transparent",color:tab===t.id?"#E6A817":"#9A8F82",cursor:"pointer",fontWeight:600,flexShrink:0}}>{t.l}</button>))}
+ {tabs.map(t=>(<button key={t.id} onClick={()=>setTab(t.id)} style={{...M,fontSize:14,padding:"7px 12px",border:"none",borderBottom:tab===t.id?"2px solid #E6A817":"2px solid transparent",background:"transparent",color:tab===t.id?"#E6A817":"#9A8F82",cursor:"pointer",fontWeight:600,flexShrink:0}}>{t.l}</button>))}
  </div>
 
  {/* INTEL FEED */}
  {tab==="feed"&&(<>
  <div style={{marginBottom:6,display:"flex",gap:4,flexWrap:"wrap",alignItems:"center"}}>
- <button onClick={()=>setShowAdd(!showAdd)} style={{...M,fontSize:8,padding:"3px 8px",border:"1px solid #B266FF33",background:showAdd?"rgba(168,124,255,0.1)":"transparent",color:"#B266FF",borderRadius:3,cursor:"pointer",fontWeight:600}}>+ RUMOR</button>
- <button onClick={()=>setAllItems(p=>({...p,[activeTicker]:p[activeTicker].map(i=>({...i,on:true}))}))} style={{...M,fontSize:8,padding:"3px 6px",border:"1px solid #3A3042",background:"transparent",color:"#B8AE92",borderRadius:3,cursor:"pointer"}}>ALL ON</button>
- <button onClick={()=>setAllItems(p=>({...p,[activeTicker]:p[activeTicker].map(i=>({...i,on:false}))}))} style={{...M,fontSize:8,padding:"3px 6px",border:"1px solid #3A3042",background:"transparent",color:"#B8AE92",borderRadius:3,cursor:"pointer"}}>ALL OFF</button>
+ <button onClick={()=>setShowAdd(!showAdd)} style={{...M,fontSize:13,padding:"3px 8px",border:"1px solid #B266FF33",background:showAdd?"rgba(168,124,255,0.1)":"transparent",color:"#B266FF",borderRadius:3,cursor:"pointer",fontWeight:600}}>+ RUMOR</button>
+ <button onClick={()=>setAllItems(p=>({...p,[activeTicker]:p[activeTicker].map(i=>({...i,on:true}))}))} style={{...M,fontSize:13,padding:"3px 6px",border:"1px solid #3A3042",background:"transparent",color:"#B8AE92",borderRadius:3,cursor:"pointer"}}>ALL ON</button>
+ <button onClick={()=>setAllItems(p=>({...p,[activeTicker]:p[activeTicker].map(i=>({...i,on:false}))}))} style={{...M,fontSize:13,padding:"3px 6px",border:"1px solid #3A3042",background:"transparent",color:"#B8AE92",borderRadius:3,cursor:"pointer"}}>ALL OFF</button>
  <div style={{width:1,height:12,background:"#3A3042"}}/>
- {["all","rumor","bull","bear"].map(f=>(<button key={f} onClick={()=>setFilter(f)} style={{...M,fontSize:8,padding:"3px 6px",border:`1px solid ${filter===f?"#E6A817":"#3A3042"}`,background:filter===f?"rgba(0,212,255,0.08)":"transparent",color:filter===f?"#E6A817":"#B8AE92",borderRadius:3,cursor:"pointer"}}>{f.toUpperCase()}</button>))}
+ {["all","rumor","bull","bear"].map(f=>(<button key={f} onClick={()=>setFilter(f)} style={{...M,fontSize:13,padding:"3px 6px",border:`1px solid ${filter===f?"#E6A817":"#3A3042"}`,background:filter===f?"rgba(0,212,255,0.08)":"transparent",color:filter===f?"#E6A817":"#B8AE92",borderRadius:3,cursor:"pointer"}}>{f.toUpperCase()}</button>))}
  <div style={{width:1,height:12,background:"#3A3042"}}/>
- {[{v:"3d",l:"3D"},{v:"7d",l:"7D"},{v:"30d",l:"30D"},{v:"90d",l:"90D"},{v:"all",l:"ALL"}].map(tf=>(<button key={tf.v} onClick={()=>setTimeFilter(tf.v)} style={{...M,fontSize:8,padding:"3px 6px",border:`1px solid ${timeFilter===tf.v?"#E6A817":"#3A3042"}`,background:timeFilter===tf.v?"rgba(34,211,238,0.08)":"transparent",color:timeFilter===tf.v?"#E6A817":"#B8AE92",borderRadius:3,cursor:"pointer",fontWeight:timeFilter===tf.v?700:400}}>{tf.l}</button>))}
+ {[{v:"3d",l:"3D"},{v:"7d",l:"7D"},{v:"30d",l:"30D"},{v:"90d",l:"90D"},{v:"all",l:"ALL"}].map(tf=>(<button key={tf.v} onClick={()=>setTimeFilter(tf.v)} style={{...M,fontSize:13,padding:"3px 6px",border:`1px solid ${timeFilter===tf.v?"#E6A817":"#3A3042"}`,background:timeFilter===tf.v?"rgba(34,211,238,0.08)":"transparent",color:timeFilter===tf.v?"#E6A817":"#B8AE92",borderRadius:3,cursor:"pointer",fontWeight:timeFilter===tf.v?700:400}}>{tf.l}</button>))}
  </div>
  {showAdd&&(<div style={{background:"#17131A",border:"1px solid #B266FF33",borderRadius:4,padding:10,marginBottom:6}}>
- <input value={newH} onChange={e=>setNewH(e.target.value)} placeholder="Enter headline..." style={{width:"100%",background:"#241C2B",border:"1px solid #3A3042",borderRadius:3,padding:"5px 8px",color:"#F4EEDF",fontSize:11,fontFamily:"inherit",outline:"none",marginBottom:6}}/>
+ <input value={newH} onChange={e=>setNewH(e.target.value)} placeholder="Enter headline..." style={{width:"100%",background:"#241C2B",border:"1px solid #3A3042",borderRadius:3,padding:"5px 8px",color:"#F4EEDF",fontSize:16,fontFamily:"inherit",outline:"none",marginBottom:6}}/>
  <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
- <div><div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:2}}>SENT: {newSe.toFixed(1)}</div><input type="range" min={-1} max={1} step={0.1} value={newSe} onChange={e=>setNewSe(Number(e.target.value))} style={{width:120,appearance:"none",height:3,background:`linear-gradient(90deg,${R},${Y},${G})`,borderRadius:2,outline:"none",cursor:"pointer"}}/></div>
- <div><div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:2}}>WT: {newW}%</div><input type="range" min={1} max={20} step={1} value={newW} onChange={e=>setNewW(Number(e.target.value))} style={{width:80,appearance:"none",height:3,background:"#3A3042",borderRadius:2,outline:"none",cursor:"pointer"}}/></div>
- <button onClick={addRumor} style={{...M,fontSize:9,padding:"4px 10px",border:"none",background:"#B266FF",color:"#0D0D0D",borderRadius:3,cursor:"pointer",fontWeight:700}}>ADD</button>
+ <div><div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:2}}>SENT: {newSe.toFixed(1)}</div><input type="range" min={-1} max={1} step={0.1} value={newSe} onChange={e=>setNewSe(Number(e.target.value))} style={{width:120,appearance:"none",height:3,background:`linear-gradient(90deg,${R},${Y},${G})`,borderRadius:2,outline:"none",cursor:"pointer"}}/></div>
+ <div><div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:2}}>WT: {newW}%</div><input type="range" min={1} max={20} step={1} value={newW} onChange={e=>setNewW(Number(e.target.value))} style={{width:80,appearance:"none",height:3,background:"#3A3042",borderRadius:2,outline:"none",cursor:"pointer"}}/></div>
+ <button onClick={addRumor} style={{...M,fontSize:14,padding:"4px 10px",border:"none",background:"#B266FF",color:"#0D0D0D",borderRadius:3,cursor:"pointer",fontWeight:700}}>ADD</button>
  </div>
  </div>)}
  <div style={{display:"flex",flexDirection:"column",gap:3}}>
@@ -5572,24 +5572,24 @@ portfolioView==="snapshot"&&<>
  </div>
  <div style={{flex:1,minWidth:0}}>
  <div style={{display:"flex",alignItems:"center",gap:3,marginBottom:1,flexWrap:"wrap"}}>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{n.dateStr.slice(5)}</span>
- {age<=2&&<span style={{...M,fontSize:6,fontWeight:700,padding:"0 3px",borderRadius:2,background:"#E6A81722",color:"#E6A817",letterSpacing:0.5}}>NEW</span>}
- {age>14&&<span style={{...M,fontSize:6,fontWeight:700,padding:"0 3px",borderRadius:2,background:R+"22",color:R,letterSpacing:0.5}}>STALE</span>}
- {age>7&&age<=14&&<span style={{...M,fontSize:6,fontWeight:700,padding:"0 3px",borderRadius:2,background:Y+"22",color:Y,letterSpacing:0.5}}>AGING</span>}
- <span style={{...M,fontSize:6,fontWeight:600,padding:"0 3px",borderRadius:2,background:sc+"15",color:sc}}>{sl}</span>
- <span style={{...M,fontSize:6,fontWeight:600,padding:"0 3px",borderRadius:2,background:"rgba(126,145,232,0.08)",color:CC[n.category]||"#7E91E8"}}>{n.category.toUpperCase()}</span>
- {n.type==="rumor"&&<span style={{...M,fontSize:6,fontWeight:600,padding:"0 3px",borderRadius:2,background:"rgba(168,124,255,0.08)",color:"#B266FF"}}>RUMOR</span>}
- <span style={{...M,fontSize:6,color:"#9A8F82",opacity:0.5}}>×{decay.toFixed(2)}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{n.dateStr.slice(5)}</span>
+ {age<=2&&<span style={{...M,fontSize:11,fontWeight:700,padding:"0 3px",borderRadius:2,background:"#E6A81722",color:"#E6A817",letterSpacing:0.5}}>NEW</span>}
+ {age>14&&<span style={{...M,fontSize:11,fontWeight:700,padding:"0 3px",borderRadius:2,background:R+"22",color:R,letterSpacing:0.5}}>STALE</span>}
+ {age>7&&age<=14&&<span style={{...M,fontSize:11,fontWeight:700,padding:"0 3px",borderRadius:2,background:Y+"22",color:Y,letterSpacing:0.5}}>AGING</span>}
+ <span style={{...M,fontSize:11,fontWeight:600,padding:"0 3px",borderRadius:2,background:sc+"15",color:sc}}>{sl}</span>
+ <span style={{...M,fontSize:11,fontWeight:600,padding:"0 3px",borderRadius:2,background:"rgba(126,145,232,0.08)",color:CC[n.category]||"#7E91E8"}}>{n.category.toUpperCase()}</span>
+ {n.type==="rumor"&&<span style={{...M,fontSize:11,fontWeight:600,padding:"0 3px",borderRadius:2,background:"rgba(168,124,255,0.08)",color:"#B266FF"}}>RUMOR</span>}
+ <span style={{...M,fontSize:11,color:"#9A8F82",opacity:0.5}}>×{decay.toFixed(2)}</span>
  </div>
- <div style={{fontSize:11,fontWeight:600,lineHeight:1.2}}>{n.headline}</div>
- {n.on&&<div style={{fontSize:9,color:"#B8AE92",lineHeight:1.3,marginTop:1}}>{n.detail}
- <a href={`https://www.google.com/search?q=${encodeURIComponent(activeTicker+" "+n.headline+" "+n.source)}`} target="_blank" rel="noopener noreferrer" style={{...M,fontSize:8,color:"#E6A817",marginLeft:4,textDecoration:"none",opacity:0.7}} onClick={e=>e.stopPropagation()}>
+ <div style={{fontSize:16,fontWeight:600,lineHeight:1.2}}>{n.headline}</div>
+ {n.on&&<div style={{fontSize:14,color:"#B8AE92",lineHeight:1.3,marginTop:1}}>{n.detail}
+ <a href={`https://www.google.com/search?q=${encodeURIComponent(activeTicker+" "+n.headline+" "+n.source)}`} target="_blank" rel="noopener noreferrer" style={{...M,fontSize:13,color:"#E6A817",marginLeft:4,textDecoration:"none",opacity:0.7}} onClick={e=>e.stopPropagation()}>
  {n.source} ↗
  </a>
  </div>}
  </div>
  <div style={{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0,width:44}}>
- <span style={{...M,fontSize:6,color:"#9A8F82"}}>WT {n.weight}%</span>
+ <span style={{...M,fontSize:11,color:"#9A8F82"}}>WT {n.weight}%</span>
  <input type="range" min={0} max={20} step={1} value={n.weight} onChange={e=>updW(n.id,Number(e.target.value))} style={{width:36,appearance:"none",height:2,background:"#3A3042",borderRadius:2,outline:"none",cursor:"pointer"}}/>
  </div>
  </div>
@@ -5599,16 +5599,16 @@ portfolioView==="snapshot"&&<>
 
  {/* PLAYBOOK */}
  {tab==="playbook"&&(<div style={{display:"flex",flexDirection:"column",gap:8}}>
- <div style={{...M,fontSize:9,color:"#9A8F82"}}><span style={{background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:700}}>ADE ANALYST</span> — {activeTicker} at ${price}</div>
+ <div style={{...M,fontSize:14,color:"#9A8F82"}}><span style={{background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:700}}>ADE ANALYST</span> — {activeTicker} at ${price}</div>
  {stock.playbook.map((p,i)=>(<div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:14,borderLeft:`3px solid ${p.color}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
- <span style={{...M,fontSize:11,fontWeight:700,color:p.color}}>{p.h}</span>
- <span style={{...M,fontSize:9,fontWeight:600,padding:"2px 6px",borderRadius:3,background:p.color+"15",color:p.color}}>{p.bias}</span>
+ <span style={{...M,fontSize:16,fontWeight:700,color:p.color}}>{p.h}</span>
+ <span style={{...M,fontSize:14,fontWeight:600,padding:"2px 6px",borderRadius:3,background:p.color+"15",color:p.color}}>{p.bias}</span>
  </div>
- <div style={{fontSize:11,color:"#D6CDB6",lineHeight:1.5,marginBottom:8}}>{p.thesis}</div>
+ <div style={{fontSize:16,color:"#D6CDB6",lineHeight:1.5,marginBottom:8}}>{p.thesis}</div>
  <div style={{background:"#241C2B",borderRadius:3,padding:"8px 10px"}}>
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1,color:"#E6A817",fontWeight:600,marginBottom:3}}>ACTION</div>
- <div style={{fontSize:10,color:"#F4EEDF",lineHeight:1.4}}>{p.action}</div>
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1,color:"#E6A817",fontWeight:600,marginBottom:3}}>ACTION</div>
+ <div style={{fontSize:15,color:"#F4EEDF",lineHeight:1.4}}>{p.action}</div>
  </div>
  </div>))}
  </div>)}
@@ -5619,54 +5619,54 @@ portfolioView==="snapshot"&&<>
  <div style={{background:"#17131A",border:`1px solid ${MACRO.color}33`,borderRadius:6,padding:"10px 14px",marginBottom:10,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
  <div style={{display:"flex",alignItems:"center",gap:6}}>
  <span style={{width:8,height:8,borderRadius:4,background:MACRO.color}}/>
- <span style={{...M,fontSize:10,fontWeight:700,color:MACRO.color}}>{MACRO.regime}</span>
+ <span style={{...M,fontSize:15,fontWeight:700,color:MACRO.color}}>{MACRO.regime}</span>
  </div>
- <span style={{...M,fontSize:8,color:"#B8AE92"}}>CPI {MACRO.cpi}% (↓{MACRO.cpiPrior}%)</span>
- <span style={{...M,fontSize:8,color:"#B8AE92"}}>VIX {MACRO.vix}</span>
- <span style={{...M,fontSize:8,color:"#B8AE92"}}>Fed: {MACRO.rateOutlook}</span>
- <span style={{...M,fontSize:8,color:stock.rateSens>0.5?"#E6A817":"#9A8F82"}}>Rate sensitivity: {stock.rateSens==null?"n/a":`${stock.rateSens>0.5?"HIGH":stock.rateSens>0.2?"MED":"LOW"} (${(stock.rateSens*100).toFixed(0)}%)`}</span>
+ <span style={{...M,fontSize:13,color:"#B8AE92"}}>CPI {MACRO.cpi==null?"n/a":MACRO.cpi+"%"}{MACRO.cpiPrior==null?"":` (prior ${MACRO.cpiPrior}%)`}</span>
+ <span style={{...M,fontSize:13,color:"#B8AE92"}}>VIX {MACRO.vix}</span>
+ <span style={{...M,fontSize:13,color:"#B8AE92"}}>Fed: {MACRO.rateOutlook}</span>
+ <span style={{...M,fontSize:13,color:stock.rateNote&&stock.rateNote.startsWith("HIGH")?"#E6A817":"#9A8F82"}}>Rate sensitivity: {stock.rateNote||"n/a"}</span>
  </div>
  {/* Asymmetry with real support */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:16,marginBottom:12}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>{activeTicker} at ${price} — Asymmetry Profile</div>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>{activeTicker} at ${price} — Asymmetry Profile</div>
  <div style={{display:"flex",gap:6}}>
- {stock.ptVerified===true&&(<span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ PT VERIFIED {stock.ptDate}</span>)}
- {stock.supportVerified===true&&(<span title={stock.supportAnchor||""} style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ SUP VERIFIED {stock.supportDate}</span>)}
- {stock.ptVerified===false&&(<span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ PT ESTIMATED</span>)}
+ {stock.ptVerified===true&&(<span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ PT VERIFIED {stock.ptDate}</span>)}
+ {stock.supportVerified===true&&(<span title={stock.supportAnchor||""} style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ SUP VERIFIED {stock.supportDate}</span>)}
+ {stock.ptVerified===false&&(<span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ PT ESTIMATED</span>)}
  </div>
  </div>
  <div style={{display:"flex",alignItems:"center",gap:0,height:48,marginBottom:8}}>
  <div style={{flex:Math.max(1,Math.abs(rr.dS)),display:"flex",justifyContent:"flex-end",alignItems:"center",height:"100%"}}>
  <div style={{width:"100%",height:32,background:"linear-gradient(90deg,#E8643A22,#E8643A66)",borderRadius:"4px 0 0 4px",display:"flex",alignItems:"center",justifyContent:"flex-start",paddingLeft:8}}>
- <span style={{...M,fontSize:9,color:R,fontWeight:700}}>{rr.dS.toFixed(1)}%</span>
+ <span style={{...M,fontSize:14,color:R,fontWeight:700}}>{rr.dS.toFixed(1)}%</span>
  </div>
  </div>
  <div style={{width:3,height:48,background:"#F4EEDF",borderRadius:2,flexShrink:0,margin:"0 2px"}}/>
  <div style={{flex:Math.max(1,Math.abs(rr.uA)),display:"flex",justifyContent:"flex-start",alignItems:"center",height:"100%"}}>
  <div style={{width:"100%",height:32,background:rr.uA>0?"linear-gradient(90deg,#3DBFA866,#3DBFA822)":"linear-gradient(90deg,#E8643A66,#E8643A22)",borderRadius:"0 4px 4px 0",display:"flex",alignItems:"center",justifyContent:"flex-end",paddingRight:8}}>
- <span style={{...M,fontSize:9,color:rr.uA>0?G:R,fontWeight:700}}>{rr.uA>0?"+":""}{rr.uA.toFixed(1)}%</span>
+ <span style={{...M,fontSize:14,color:rr.uA>0?G:R,fontWeight:700}}>{rr.uA>0?"+":""}{rr.uA.toFixed(1)}%</span>
  </div>
  </div>
  </div>
  {/* Support levels row */}
- <div style={{display:"flex",justifyContent:"space-between",...M,fontSize:8,color:"#9A8F82",marginBottom:6}}>
+ <div style={{display:"flex",justifyContent:"space-between",...M,fontSize:13,color:"#9A8F82",marginBottom:6}}>
  <span>S1: ${rr.s1} <span style={{color:"#E8643A88"}}>({rr.s1Label})</span></span>
  <span style={{color:"#F4EEDF"}}>NOW ${price}</span>
  <span>Avg PT ${stock.avgPT}</span>
  </div>
  {stock.support&&<div style={{display:"flex",gap:6,marginBottom:12}}>
- {stock.support.map((s,i)=>(<span key={i} style={{...M,fontSize:7,padding:"2px 6px",borderRadius:3,background:i===0?"#E8643A22":i===1?"#E8643A11":"#E8643A08",color:i===0?R:"#E8643A88",border:`1px solid ${i===0?"#E8643A33":"#E8643A15"}`}}>S{i+1}: ${s.lvl} — {s.label}</span>))}
+ {stock.support.map((s,i)=>(<span key={i} style={{...M,fontSize:12,padding:"2px 6px",borderRadius:3,background:i===0?"#E8643A22":i===1?"#E8643A11":"#E8643A08",color:i===0?R:"#E8643A88",border:`1px solid ${i===0?"#E8643A33":"#E8643A15"}`}}>S{i+1}: ${s.lvl} — {s.label}</span>))}
  </div>}
  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
  {[{l:"Upside to Avg PT",v:`${rr.uA>0?"+":""}${rr.uA.toFixed(1)}%`,c:rr.uA>0?G:R,s:`$${stock.avgPT}`,verified:stock.ptVerified},
  {l:"Upside to High PT",v:`${rr.uH>0?"+":""}${rr.uH.toFixed(1)}%`,c:rr.uH>0?G:R,s:`$${stock.highPT}`,verified:stock.ptVerified},
  {l:"Downside to S1",v:`${rr.dS.toFixed(1)}%`,c:R,s:`$${rr.s1} (${rr.s1Label})`,verified:stock.supportVerified},
  {l:"Downside to S2",v:`${rr.dS2.toFixed(1)}%`,c:R,s:`$${rr.s2}`,verified:stock.supportVerified}
- ].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:10,position:"relative"}}>{m.verified===false&&(<span style={{...M,fontSize:6,padding:"0px 3px",borderRadius:2,background:"#FFBF0033",color:"#FFBF00",fontWeight:700,position:"absolute",top:4,right:4}}>EST</span>)}{m.verified===true&&(<span style={{...M,fontSize:6,padding:"0px 3px",borderRadius:2,background:"#3DBFA833",color:"#3DBFA8",fontWeight:700,position:"absolute",top:4,right:4}}>✓</span>)}
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:3}}>{m.l}</div>
- <div style={{...M,fontSize:18,fontWeight:700,color:m.c}}>{m.v}</div>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginTop:2}}>{m.s}</div>
+ ].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:10,position:"relative"}}>{m.verified===false&&(<span style={{...M,fontSize:11,padding:"0px 3px",borderRadius:2,background:"#FFBF0033",color:"#FFBF00",fontWeight:700,position:"absolute",top:4,right:4}}>EST</span>)}{m.verified===true&&(<span style={{...M,fontSize:11,padding:"0px 3px",borderRadius:2,background:"#3DBFA833",color:"#3DBFA8",fontWeight:700,position:"absolute",top:4,right:4}}>✓</span>)}
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:3}}>{m.l}</div>
+ <div style={{...M,fontSize:22,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginTop:2}}>{m.s}</div>
  </div>))}
  </div>
  </div>
@@ -5676,32 +5676,32 @@ portfolioView==="snapshot"&&<>
  {l:"R:R (High PT vs S1)",v:`${rr.rrH.toFixed(1)}x`,c:rr.rrH>3?G:rr.rrH>1.5?Y:R,b:rr.rrH/8*100,d:"Bull case / technical downside"},
  {l:"Expected Return",v:`${rr.er>0?"+":""}${rr.er.toFixed(1)}%`,c:rr.er>0?G:R,b:(rr.er+20)/40*100,d:"Signal-weighted probability × payoff"}
  ].map((m,i)=>(<div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>{m.l}</div>
- <div style={{...M,fontSize:28,fontWeight:700,color:m.c}}>{m.v}</div>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginTop:3}}>{m.d}</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>{m.l}</div>
+ <div style={{...M,fontSize:32,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginTop:3}}>{m.d}</div>
  <div style={{marginTop:6,height:4,background:"#241C2B",borderRadius:2,overflow:"hidden"}}><div style={{width:`${Math.min(100,Math.max(0,m.b))}%`,height:"100%",background:m.c,borderRadius:2}}/></div>
  </div>))}
  </div>
  {/* Options Strategy Recommendation */}
  <div style={{background:"#17131A",border:`1px solid ${rr.optColor}33`,borderRadius:6,padding:14,marginBottom:12}}>
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Options Strategy — Signal + IV {stock.optionsVerified===false&&(<span style={{...M,fontSize:7,padding:"1px 5px",marginLeft:6,borderRadius:3,background:"#E8643A22",color:"#EE8A64",border:"1px solid #E8643A44",fontWeight:700}}>⚠ ESTIMATED</span>)}{stock.optionsVerified===true&&(<span style={{...M,fontSize:7,padding:"1px 5px",marginLeft:6,borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ VERIFIED</span>)}</div>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Options Strategy — Signal + IV {stock.optionsVerified===false&&(<span style={{...M,fontSize:12,padding:"1px 5px",marginLeft:6,borderRadius:3,background:"#E8643A22",color:"#EE8A64",border:"1px solid #E8643A44",fontWeight:700}}>⚠ ESTIMATED</span>)}{stock.optionsVerified===true&&(<span style={{...M,fontSize:12,padding:"1px 5px",marginLeft:6,borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ VERIFIED</span>)}</div>
  <div style={{display:"flex",alignItems:"center",gap:12}}>
  <div>
- <div style={{...M,fontSize:20,fontWeight:800,color:rr.optColor}}>{rr.optStrat}</div>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginTop:2}}>Signal: {sig.score>0?"+":""}{sig.score} • IV Rank: {rr.iv}%</div>
+ <div style={{...M,fontSize:24,fontWeight:800,color:rr.optColor}}>{rr.optStrat}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginTop:2}}>Signal: {sig.score>0?"+":""}{sig.score} • IV Rank: {rr.iv}%</div>
  </div>
- <div style={{flex:1,fontSize:10,color:"#B8AE92",lineHeight:1.5}}>{rr.optDetail}</div>
+ <div style={{flex:1,fontSize:15,color:"#B8AE92",lineHeight:1.5}}>{rr.optDetail}</div>
  </div>
  </div>
  {/* Position sizing */}
  <div style={{background:"#17131A",border:`1px solid ${rr.kf>0.1?G+"33":"#2C2433"}`,borderRadius:6,padding:14}}>
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Position Sizing Signal</div>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Position Sizing Signal</div>
  <div style={{display:"flex",alignItems:"center",gap:16}}>
  <div>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginBottom:2}}>Kelly-Inspired Fraction</div>
- <div style={{...M,fontSize:24,fontWeight:700,color:rr.kf>0.15?G:rr.kf>0.05?Y:R}}>{(rr.kf*100).toFixed(1)}%</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginBottom:2}}>Kelly-Inspired Fraction</div>
+ <div style={{...M,fontSize:28,fontWeight:700,color:rr.kf>0.15?G:rr.kf>0.05?Y:R}}>{(rr.kf*100).toFixed(1)}%</div>
  </div>
- <div style={{flex:1,fontSize:10,color:"#B8AE92",lineHeight:1.5}}>
+ <div style={{flex:1,fontSize:15,color:"#B8AE92",lineHeight:1.5}}>
  {rr.kf>0.15?"Strong conviction. Allocate 10-15% of portfolio. Signal + R/R both favor aggressive sizing.":
  rr.kf>0.05?"Moderate conviction. 5-8% allocation appropriate. Asymmetry exists but isn't extreme.":
  rr.kf>0?"Low conviction. 2-4% max. Edge is thin relative to risk.":
@@ -5713,21 +5713,21 @@ portfolioView==="snapshot"&&<>
 
  {/* CONVICTION RANKER */}
  {tab==="ranker"&&(<div>
- <div style={{...M,fontSize:9,color:"#9A8F82",marginBottom:4}}>
+ <div style={{...M,fontSize:14,color:"#9A8F82",marginBottom:4}}>
  <span style={{background:"linear-gradient(135deg,#E6A817,#B266FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:700}}>ADE CONVICTION RANKER</span> — All Positions by Edge-Adjusted Risk/Reward
  </div>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginBottom:12,lineHeight:1.5}}>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginBottom:12,lineHeight:1.5}}>
  30% upside to PT + 28% R:R to nearest defended support + 17% support quality (distance x times defended) + 15% momentum (RSI/MACD) + 10% structural integrity. News sentiment REMOVED Sep 3 — it was self-scored, so feeding it back was circular; items still appear in INTEL. Stops removed — downside now measures to observed support. R:R denominator floored at 3% of price. IV term dropped while ivRank is null.
  </div>
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {rankerData.map((r,i)=>{const isA=r.ticker===activeTicker;return(
  <div key={r.ticker} onClick={()=>{setActiveTicker(r.ticker);setTab("riskrew");}} style={{background:isA?"#241C2B":"#17131A",border:`1px solid ${isA?"#E6A81733":"#2C2433"}`,borderRadius:5,padding:"10px 14px",cursor:"pointer",borderLeft:`4px solid ${r.gc}`,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,minWidth:520}}>
- <span style={{...M,fontSize:18,fontWeight:800,color:r.gc,width:32}}>{r.gr}</span>
+ <span style={{...M,fontSize:22,fontWeight:800,color:r.gc,width:39}}>{r.gr}</span>
  <div style={{flex:1}}>
  <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
- <span style={{...M,fontSize:13,fontWeight:700,color:isA?"#E6A817":"#F4EEDF"}}>{r.ticker}</span>
- <span style={{fontSize:10,color:"#B8AE92"}}>{r.name}</span>
+ <span style={{...M,fontSize:18,fontWeight:700,color:isA?"#E6A817":"#F4EEDF"}}>{r.ticker}</span>
+ <span style={{fontSize:15,color:"#B8AE92"}}>{r.name}</span>
  </div>
  <div style={{marginTop:4,height:6,background:"#241C2B",borderRadius:3,overflow:"hidden",position:"relative"}}>
  <div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"#3A3042"}}/>
@@ -5745,16 +5745,16 @@ portfolioView==="snapshot"&&<>
  {l:"ADJ",v:r.adjCv,c:r.gc},
  {l:"GAP",v:`-${r.pen2}`,c:r.cvGap>=20?R:r.cvGap>=12?Y:"#9A8F82"}
  ].map((m,j)=>(<div key={j} style={{textAlign:"center",minWidth:j>=5?36:30}}>
- <div style={{...M,fontSize:7,color:"#9A8F82"}}>{m.l}</div>
- <div style={{...M,fontSize:j===5?14:j===6?10:11,fontWeight:j===5?800:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82"}}>{m.l}</div>
+ <div style={{...M,fontSize:j===5?19:j===6?15:16,fontWeight:j===5?800:700,color:m.c}}>{m.v}</div>
  </div>))}
  </div>
  </div>
  </div>);})}
  </div>
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:12}}>
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:6}}>Capital Allocation Insight</div>
- <div style={{fontSize:11,color:"#D6CDB6",lineHeight:1.6}}>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:6}}>Capital Allocation Insight</div>
+ <div style={{fontSize:16,color:"#D6CDB6",lineHeight:1.6}}>
  {(()=>{const t3=rankerData.slice(0,3),bt=rankerData.filter(r=>r.cv<0);return`Top 3: ${t3.map(r=>`${r.ticker} (${r.gr})`).join(", ")}. Best combo of signal, asymmetry, and IV efficiency. ${bt.length>0?`Consider reducing ${bt.map(r=>r.ticker).join(", ")} — negative edge at current prices.`:"All positions positive edge — portfolio well-positioned."} Click any row → Risk/Reward detail.`;})()}
  </div>
  </div>
@@ -5766,13 +5766,13 @@ portfolioView==="snapshot"&&<>
  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:8}}>
  {[
  {l:"IV Rank",v:stock.options.ivRank==null?"n/a":`${stock.options.ivRank}%`,c:stock.options.ivRank>60?Y:"#7E91E8",sub:"12m range position"},
- {l:"IV Percentile",v:stock.options.ivPctl==null?"n/a":`${stock.options.ivPctl}%`,c:stock.options.ivPctl>70?R:stock.options.ivPctl>40?Y:G,sub:`IV higher ${stock.options.ivPctl}% of days`},
+ {l:"IV Percentile",v:stock.options.ivPctl==null?"n/a":`${stock.options.ivPctl}%`,c:stock.options.ivPctl>70?R:stock.options.ivPctl>40?Y:G,sub:stock.options.ivPctl==null?"needs 20 daily IV readings":`IV higher ${stock.options.ivPctl}% of days`},
  {l:"Put/Call Ratio",v:(stock.options.pcRatio==null?"n/a":stock.options.pcRatio.toFixed(2)),c:stock.options.pcRatio<0.7?G:stock.options.pcRatio>1?R:Y,sub:stock.options.pcRatio>1?"Bearish hedging":stock.options.pcRatio<0.7?"Bullish flow":"Neutral"}
  ].map((o,i)=>(
  <div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:3}}>{o.l}</div>
- <div style={{...M,fontSize:22,fontWeight:700,color:o.c}}>{o.v}</div>
- <div style={{...M,fontSize:8,color:"#9A8F82",marginTop:2}}>{o.sub}</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:3}}>{o.l}</div>
+ <div style={{...M,fontSize:26,fontWeight:700,color:o.c}}>{o.v}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82",marginTop:2}}>{o.sub}</div>
  </div>))}
  </div>
  {/* ROW 2: Implied Move, Skew, Max Pain */}
@@ -5781,26 +5781,26 @@ portfolioView==="snapshot"&&<>
  const mpDist=((stock.options.maxPain-price)/price*100);
  const skew=stock.options.skew;
  return[
- {l:"Implied Move",v:`±${stock.options.impliedMove}%`,c:P,sub:`Mkt pricing $${(price*stock.options.impliedMove/100).toFixed(0)} swing at earnings`,icon:"⚡"},
+ {l:"Implied Move",v:stock.options.impliedMove==null?"n/a":`±${stock.options.impliedMove}%`,c:P,sub:stock.options.impliedMove==null?"no earnings straddle priced yet":`Mkt pricing $${(price*stock.options.impliedMove/100).toFixed(0)} swing at earnings`,icon:"⚡"},
  {l:"Skew",v:skew==null?"n/a":`${skew>0?"+":""}${skew.toFixed(1)}%`,c:skew>1?G:skew<-1?R:Y,sub:skew>1?"Calls bid > puts (bullish)":skew<-1?"Puts bid > calls (bearish)":"Balanced call/put demand",icon:skew>0?"📈":"📉"},
  {l:"Max Pain",v:`$${stock.options.maxPain}`,c:P,sub:`${mpDist>0?"+":""}${mpDist.toFixed(1)}% from here — ${Math.abs(mpDist)<3?"strong magnet":Math.abs(mpDist)<8?"moderate pull":"weak pull"}`,icon:"🧲"}
  ];})().map((o,i)=>(
  <div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
  <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:3}}>
- <span style={{fontSize:10}}>{o.icon}</span>
- <span style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{o.l}</span>
+ <span style={{fontSize:15}}>{o.icon}</span>
+ <span style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{o.l}</span>
  </div>
- <div style={{...M,fontSize:22,fontWeight:700,color:o.c}}>{o.v}</div>
- <div style={{...M,fontSize:8,color:"#B8AE92",marginTop:2,lineHeight:1.4}}>{o.sub}</div>
+ <div style={{...M,fontSize:26,fontWeight:700,color:o.c}}>{o.v}</div>
+ <div style={{...M,fontSize:13,color:"#B8AE92",marginTop:2,lineHeight:1.4}}>{o.sub}</div>
  </div>))}
  </div>
  {/* ROW 3: Last Earnings Reaction + IV Crush Estimate */}
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Last Earnings Reaction</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Last Earnings Reaction</div>
  <div style={{display:"flex",alignItems:"baseline",gap:8}}>
- <span style={{...M,fontSize:26,fontWeight:700,color:stock.options.lastEarnMove>0?G:R}}>{stock.options.lastEarnMove>0?"+":""}{stock.options.lastEarnMove}%</span>
- <span style={{...M,fontSize:10,color:"#B8AE92"}}>actual move</span>
+ <span style={{...M,fontSize:30,fontWeight:700,color:stock.options.lastEarnMove>0?G:R}}>{stock.options.lastEarnMove>0?"+":""}{stock.options.lastEarnMove}%</span>
+ <span style={{...M,fontSize:15,color:"#B8AE92"}}>actual move</span>
  </div>
  <div style={{marginTop:6,display:"flex",alignItems:"center",gap:6}}>
  <div style={{flex:1,height:6,background:"#241C2B",borderRadius:3,overflow:"hidden",position:"relative"}}>
@@ -5809,27 +5809,27 @@ portfolioView==="snapshot"&&<>
  <div style={{position:"absolute",left:"50%",width:`${Math.min(50,Math.abs(stock.options.lastEarnMove)*2.5)}%`,height:"100%",background:G,borderRadius:"0 3px 3px 0"}}/>:
  <div style={{position:"absolute",right:"50%",width:`${Math.min(50,Math.abs(stock.options.lastEarnMove)*2.5)}%`,height:"100%",background:R,borderRadius:"3px 0 0 3px"}}/>}
  </div>
- <span style={{...M,fontSize:8,color:"#9A8F82"}}>vs ±{stock.options.impliedMove}% implied</span>
+ <span style={{...M,fontSize:13,color:"#9A8F82"}}>vs ±{stock.options.impliedMove}% implied</span>
  </div>
- <div style={{...M,fontSize:9,color:Math.abs(stock.options.lastEarnMove)>stock.options.impliedMove?Y:"#B8AE92",marginTop:4}}>
+ <div style={{...M,fontSize:14,color:Math.abs(stock.options.lastEarnMove)>stock.options.impliedMove?Y:"#B8AE92",marginTop:4}}>
  {Math.abs(stock.options.lastEarnMove)>stock.options.impliedMove?"⚠ Last move EXCEEDED implied — straddle buyers won":"Last move within implied range — straddle sellers won"}
  </div>
  </div>
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:12}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Earnings IV Crush Estimate</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Earnings IV Crush Estimate</div>
  {(()=>{
  const ed=new Date(stock.earningsDate.replace(/(\w+) (\d+), (\d+)/,"$1 $2, $3"));
  const dte=Math.max(0,Math.ceil((ed-TD)/(1000*60*60*24)));
  const crushEst=stock.options.ivRank>60?Math.round(stock.options.ivRank*0.45):Math.round(stock.options.ivRank*0.3);
  return(<>
  <div style={{display:"flex",alignItems:"baseline",gap:6}}>
- <span style={{...M,fontSize:26,fontWeight:700,color:"#B266FF"}}>{dte}d</span>
- <span style={{...M,fontSize:10,color:"#B8AE92"}}>to earnings</span>
+ <span style={{...M,fontSize:30,fontWeight:700,color:"#B266FF"}}>{dte}d</span>
+ <span style={{...M,fontSize:15,color:"#B8AE92"}}>to earnings</span>
  </div>
- <div style={{...M,fontSize:10,color:"#B8AE92",marginTop:4}}>
+ <div style={{...M,fontSize:15,color:"#B8AE92",marginTop:4}}>
  Est. IV crush: <span style={{color:Y,fontWeight:600}}>-{crushEst}pts</span> post-report
  </div>
- <div style={{...M,fontSize:9,color:"#9A8F82",marginTop:2}}>
+ <div style={{...M,fontSize:14,color:"#9A8F82",marginTop:2}}>
  {dte<=14?"🔥 EARNINGS IMMINENT — IV expanding, premium sellers prepare":
  dte<=30?"IV building — position 7-10 days before for best entry":
  "IV still low — early to sell premium, watch for ramp"}
@@ -5841,10 +5841,10 @@ portfolioView==="snapshot"&&<>
  {/* Strategy Rationale */}
  <div style={{background:"#17131A",border:`1px solid ${rr.optColor}44`,borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Strategy Recommendation</div>
- <span style={{...M,fontSize:11,fontWeight:700,padding:"3px 8px",borderRadius:4,background:rr.optColor+"20",color:rr.optColor,border:`1px solid ${rr.optColor}44`}}>{rr.optStrat}</span>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Strategy Recommendation</div>
+ <span style={{...M,fontSize:16,fontWeight:700,padding:"3px 8px",borderRadius:4,background:rr.optColor+"20",color:rr.optColor,border:`1px solid ${rr.optColor}44`}}>{rr.optStrat}</span>
  </div>
- <div style={{...M,fontSize:10,color:"#D6CDB6",lineHeight:1.5,marginBottom:8}}>{rr.optDetail}</div>
+ <div style={{...M,fontSize:15,color:"#D6CDB6",lineHeight:1.5,marginBottom:8}}>{rr.optDetail}</div>
  <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
  {[
  {l:"Signal",v:`${sig.score>0?"+":""}${sig.score}`,c:sig.color,reason:sig.score>30?"Strong":sig.score>0?"Mild":"Weak/Negative"},
@@ -5852,16 +5852,16 @@ portfolioView==="snapshot"&&<>
  {l:"Skew",v:`${stock.options.skew>0?"+":""}${stock.options.skew}`,c:stock.options.skew>1?G:stock.options.skew<-1?R:Y,reason:stock.options.skew>1?"Call demand":stock.options.skew<-1?"Put demand":"Balanced"},
  {l:"P/C",v:(stock.options.pcRatio==null?"n/a":stock.options.pcRatio.toFixed(2)),c:stock.options.pcRatio>1?R:stock.options.pcRatio<0.7?G:Y,reason:stock.options.pcRatio>1?"Bearish":stock.options.pcRatio<0.7?"Bullish":"Neutral"}
  ].map((f,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"6px 10px",textAlign:"center"}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:1}}>{f.l}</div>
- <div style={{...M,fontSize:13,fontWeight:700,color:f.c}}>{f.v}</div>
- <div style={{...M,fontSize:7,color:f.c}}>{f.reason}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:1}}>{f.l}</div>
+ <div style={{...M,fontSize:18,fontWeight:700,color:f.c}}>{f.v}</div>
+ <div style={{...M,fontSize:12,color:f.c}}>{f.reason}</div>
  </div>))}
  </div>
  </div>
  {/* Notable Flow */}
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
- <span style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Notable Flow</span>
- <span style={{...M,fontSize:7,padding:"1px 6px",borderRadius:3,background:"#B266FF15",color:"#B266FF",border:"1px solid #B266FF22"}}>Notable strikes — verify with broker</span>
+ <span style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Notable Flow</span>
+ <span style={{...M,fontSize:12,padding:"1px 6px",borderRadius:3,background:"#B266FF15",color:"#B266FF",border:"1px solid #B266FF22"}}>Notable strikes — verify with broker</span>
  </div>
  {stock.options.flow.map((f,i)=>{
  const dist=((f.s-price)/price*100);
@@ -5884,16 +5884,16 @@ portfolioView==="snapshot"&&<>
  else if(f.t==="put"&&!f.b)interp="Selling puts = bullish. Willing to buy stock at $"+f.s+". Collecting premium.";
  return(<div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:"10px 12px",marginBottom:6,borderLeft:`3px solid ${f.t==="call"?G:R}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
- <span style={{...M,fontSize:9,fontWeight:700,color:f.t==="call"?G:R,width:35}}>{f.t.toUpperCase()}</span>
- <span style={{...M,fontSize:13,fontWeight:700,color:"#F4EEDF"}}>${f.s}</span>
- <span style={{...M,fontSize:8,padding:"1px 5px",borderRadius:3,background:atm?"#B266FF22":itm?G+"22":"#9A8F82"+"22",color:atm?"#B266FF":itm?G:"#B8AE92"}}>{moneyness}</span>
- <span style={{...M,fontSize:8,color:dist>0?G:dist<0?R:"#B8AE92"}}>{dist>0?"+":""}{dist.toFixed(0)}%</span>
- <span style={{...M,fontSize:8,color:"#B8AE92"}}>{f.e}</span>
- <span style={{...M,fontSize:9,fontWeight:600,color:"#E6A817",marginLeft:"auto"}}>${f.p}</span>
- <span style={{...M,fontSize:7,padding:"1px 4px",borderRadius:2,background:size==="LARGE"?"#E6A81722":size==="NOTABLE"?"#FFBF0022":"transparent",color:size==="LARGE"?"#E6A817":size==="NOTABLE"?"#FFBF00":"#9A8F82"}}>{size}</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:f.t==="call"?G:R,width:54}}>{f.t.toUpperCase()}</span>
+ <span style={{...M,fontSize:18,fontWeight:700,color:"#F4EEDF"}}>${f.s}</span>
+ <span style={{...M,fontSize:13,padding:"1px 5px",borderRadius:3,background:atm?"#B266FF22":itm?G+"22":"#9A8F82"+"22",color:atm?"#B266FF":itm?G:"#B8AE92"}}>{moneyness}</span>
+ <span style={{...M,fontSize:13,color:dist>0?G:dist<0?R:"#B8AE92"}}>{dist>0?"+":""}{dist.toFixed(0)}%</span>
+ <span style={{...M,fontSize:13,color:"#B8AE92"}}>{f.e}</span>
+ <span style={{...M,fontSize:14,fontWeight:600,color:"#E6A817",marginLeft:"auto"}}>${f.p}</span>
+ <span style={{...M,fontSize:12,padding:"1px 4px",borderRadius:2,background:size==="LARGE"?"#E6A81722":size==="NOTABLE"?"#FFBF0022":"transparent",color:size==="LARGE"?"#E6A817":size==="NOTABLE"?"#FFBF00":"#9A8F82"}}>{size}</span>
  </div>
- <div style={{...M,fontSize:8,color:f.b?G+"cc":R+"cc",marginBottom:2}}>{sentiment}</div>
- <div style={{...M,fontSize:7,color:"#B8AE92",lineHeight:1.5}}>{interp}</div>
+ <div style={{...M,fontSize:13,color:f.b?G+"cc":R+"cc",marginBottom:2}}>{sentiment}</div>
+ <div style={{...M,fontSize:12,color:"#B8AE92",lineHeight:1.5}}>{interp}</div>
  </div>);
  })}
 
@@ -5901,8 +5901,8 @@ portfolioView==="snapshot"&&<>
  {/* OPTIONS TRADE IDEAS — EDGE-FIRST ENGINE */}
  <div style={{background:"linear-gradient(180deg,#17131A,#1E1924)",border:"1px solid #3DBFA833",borderRadius:6,padding:16,marginTop:10}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
- <span style={{fontSize:14}}>⚡</span>
- <span style={{...M,fontSize:12,fontWeight:700,background:"linear-gradient(135deg,#3DBFA8,#E6A817)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>TRADE OPPORTUNITIES</span>
+ <span style={{fontSize:19}}>⚡</span>
+ <span style={{...M,fontSize:17,fontWeight:700,background:"linear-gradient(135deg,#3DBFA8,#E6A817)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>TRADE OPPORTUNITIES</span>
  </div>
  {(()=>{
  const p=price,s=stock,o=s.options||{};
@@ -6137,34 +6137,34 @@ portfolioView==="snapshot"&&<>
  return(<>
  {/* EDGE SCAN */}
  <div style={{marginBottom:10}}>
- <div style={{...M,fontSize:8,fontWeight:700,color:"#FFBF00",marginBottom:4}}>EDGE SCAN</div>
+ <div style={{...M,fontSize:13,fontWeight:700,color:"#FFBF00",marginBottom:4}}>EDGE SCAN</div>
  <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
  {edges.map((e,i)=>(<div key={i} style={{padding:"3px 8px",background:e.str==="STRONG"?G+"12":e.str==="MODERATE"?Y+"12":"#9A8F8212",border:"1px solid "+(e.str==="STRONG"?G:e.str==="MODERATE"?Y:"#9A8F82")+"22",borderRadius:4}}>
- <span style={{...M,fontSize:8,fontWeight:700,color:e.str==="STRONG"?G:e.str==="MODERATE"?Y:"#9A8F82"}}>{e.icon} {e.type}</span>
- <div style={{...M,fontSize:7,color:"#B8AE92"}}>{e.desc}</div>
+ <span style={{...M,fontSize:13,fontWeight:700,color:e.str==="STRONG"?G:e.str==="MODERATE"?Y:"#9A8F82"}}>{e.icon} {e.type}</span>
+ <div style={{...M,fontSize:12,color:"#B8AE92"}}>{e.desc}</div>
  </div>))}
  </div>
  </div>
  {/* DASHBOARD */}
  <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap"}}>
  {[{l:"CONVICTION",v:rawCv,c:rawCv>60?G:rawCv>40?Y:R,sub:verdictScore+"v/"+signalScore+"s/"+Math.round(fundScore)+"f"+(flowBoost?"/"+flowBoost+"flow":"")},{l:"UNCERTAINTY",v:uncertainty,c:uncertainty>50?R:uncertainty>30?Y:G},{l:"REGIME",v:regime.split("/")[0].trim(),c:convUncRatio>1.5?G:convUncRatio>0.7?Y:R},{l:"IV RANK",v:ivR+"%",c:ivR>60?Y:"#B8AE92"}].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:3,padding:"3px 6px"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>{m.l}</div>
- <div style={{...M,fontSize:9,fontWeight:700,color:m.c}}>{m.v}</div>
- {m.sub&&<div style={{...M,fontSize:5,color:"#9A8F82"}}>{m.sub}</div>}
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>{m.l}</div>
+ <div style={{...M,fontSize:14,fontWeight:700,color:m.c}}>{m.v}</div>
+ {m.sub&&<div style={{...M,fontSize:10,color:"#9A8F82"}}>{m.sub}</div>}
  </div>))}
  </div>
  {/* DEFINITIONS */}
- <div style={{...M,fontSize:6,padding:"4px 8px",borderRadius:3,background:"#241C2B",marginBottom:6,lineHeight:1.6,color:"#9A8F82"}}>
+ <div style={{...M,fontSize:11,padding:"4px 8px",borderRadius:3,background:"#241C2B",marginBottom:6,lineHeight:1.6,color:"#9A8F82"}}>
  <span style={{fontWeight:600}}>CONVICTION</span> = 35% technicals (MA/RSI/pattern) + 20% signal (news sentiment) + 25% fundamentals (rev growth + margins) + 20% risk-adjusted score {flowBoost!==0?("+ flow adj "+(flowBoost>0?"+":"")+flowBoost):""}.{" "}
  <span style={{fontWeight:600}}>UNCERTAINTY</span> = HIGH risks x20 + avg risk prob + macro({macroRisk?"10":"0"}) + war({warOn?"5":"0"}), capped 80.{" "}
  <span style={{fontWeight:600}}>REGIME</span> = conviction/uncertainty ratio. &gt;2 = HIGH CONV. &gt;1 = BALANCED. &gt;0.5 = HIGH UNC. &lt;0.5 = CAUTION.{" "}
  <span style={{fontWeight:600}}>EDGE</span> = detected mispricing (earnings vs price, vol vs realized, macro discount, catalyst density).
  </div>
  {/* CATALYSTS + COUNTER */}
- {allCats.length>0&&<div style={{...M,fontSize:7,padding:"4px 8px",borderRadius:3,background:"#241C2B",marginBottom:6,lineHeight:1.5}}>
+ {allCats.length>0&&<div style={{...M,fontSize:12,padding:"4px 8px",borderRadius:3,background:"#241C2B",marginBottom:6,lineHeight:1.5}}>
  <span style={{color:"#E6A817",fontWeight:600}}>CATALYSTS: </span><span style={{color:"#B8AE92"}}>{catChain}</span>
  </div>}
- {topRisk&&<div style={{...M,fontSize:7,padding:"4px 8px",borderRadius:3,background:R+"08",border:"1px solid "+R+"22",marginBottom:6}}>
+ {topRisk&&<div style={{...M,fontSize:12,padding:"4px 8px",borderRadius:3,background:R+"08",border:"1px solid "+R+"22",marginBottom:6}}>
  <span style={{color:R,fontWeight:600}}>COUNTER-THESIS: </span><span style={{color:"#B8AE92"}}>{topRisk.risk.substring(0,70)} ({topRisk.prob}%)</span>
  </div>}
  {/* FLOW ALIGNMENT */}
@@ -6175,7 +6175,7 @@ portfolioView==="snapshot"&&<>
  const bullPct=bullFlow.length/o.flow.length*100;
  const flowBias=bullPct>65?"BULLISH":bullPct<35?"BEARISH":"MIXED";
  const biggestTrade=o.flow.reduce((a2,f2)=>parseFloat(f2.p)>parseFloat(a2.p)?f2:a2,o.flow[0]);
- return(<div style={{...M,fontSize:7,padding:"4px 8px",borderRadius:3,background:flowBias==="BULLISH"?G+"08":flowBias==="BEARISH"?R+"08":Y+"08",border:"1px solid "+(flowBias==="BULLISH"?G:flowBias==="BEARISH"?R:Y)+"22",marginBottom:8}}>
+ return(<div style={{...M,fontSize:12,padding:"4px 8px",borderRadius:3,background:flowBias==="BULLISH"?G+"08":flowBias==="BEARISH"?R+"08":Y+"08",border:"1px solid "+(flowBias==="BULLISH"?G:flowBias==="BEARISH"?R:Y)+"22",marginBottom:8}}>
  <span style={{color:flowBias==="BULLISH"?G:flowBias==="BEARISH"?R:Y,fontWeight:600}}>SMART MONEY: {flowBias} </span>
  <span style={{color:"#B8AE92"}}>{bullFlow.length} bull / {bearFlow.length} bear flows. ${totalPremium.toFixed(1)}M total. Largest: {biggestTrade.t.toUpperCase()} ${biggestTrade.s} ${biggestTrade.e} (${biggestTrade.p})</span>
  </div>);
@@ -6183,22 +6183,22 @@ portfolioView==="snapshot"&&<>
  {/* TRADES */}
  {trades.map((t,i)=>(<div key={i} style={{marginBottom:8}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
- <span style={{...M,fontSize:9,fontWeight:700,color:t.clr}}>{t.label}</span>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{t.exp}</span>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>{t.catsInW} catalysts</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:t.clr}}>{t.label}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{t.exp}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>{t.catsInW} catalysts</span>
  <div style={{flex:1,height:1,background:t.clr+"33"}}/>
  </div>
  <div style={{background:"#241C2B",border:"1px solid "+t.clr+"22",borderRadius:5,padding:10,borderLeft:"3px solid "+t.clr}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
- <span style={{...M,fontSize:11,fontWeight:700,color:t.strat==="WAIT"||t.strat==="NO TRADE"?"#9A8F82":t.clr}}>{t.strat}</span>
- <span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:t.clr+"15",color:t.clr}}>{t.bias}</span>
+ <span style={{...M,fontSize:16,fontWeight:700,color:t.strat==="WAIT"||t.strat==="NO TRADE"?"#9A8F82":t.clr}}>{t.strat}</span>
+ <span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:t.clr+"15",color:t.clr}}>{t.bias}</span>
  </div>
- <div style={{...M,fontSize:9,fontWeight:600,color:"#F4EEDF",marginBottom:4}}>{t.setup}</div>
- <div style={{...M,fontSize:8,color:"#D6CDB6",lineHeight:1.5,marginBottom:4}}>{t.detail}</div>
- {t.why&&<div style={{...M,fontSize:7,marginBottom:2}}><span style={{color:"#B266FF",fontWeight:600}}>WHY: </span><span style={{color:"#B8AE92"}}>{t.why}</span></div>}
- {t.safety&&<div style={{...M,fontSize:7,marginBottom:2}}><span style={{color:G,fontWeight:600}}>SAFETY: </span><span style={{color:"#B8AE92"}}>{t.safety}</span></div>}
- {t.rr&&<div style={{...M,fontSize:7,marginBottom:2}}><span style={{color:"#E6A817",fontWeight:600}}>R:R: </span><span style={{color:"#F4EEDF",fontWeight:600}}>{t.rr}</span></div>}
- {t.wrong&&<div style={{...M,fontSize:7}}><span style={{color:R,fontWeight:600}}>IF WRONG: </span><span style={{color:"#B8AE92"}}>{t.wrong}</span></div>}
+ <div style={{...M,fontSize:14,fontWeight:600,color:"#F4EEDF",marginBottom:4}}>{t.setup}</div>
+ <div style={{...M,fontSize:13,color:"#D6CDB6",lineHeight:1.5,marginBottom:4}}>{t.detail}</div>
+ {t.why&&<div style={{...M,fontSize:12,marginBottom:2}}><span style={{color:"#B266FF",fontWeight:600}}>WHY: </span><span style={{color:"#B8AE92"}}>{t.why}</span></div>}
+ {t.safety&&<div style={{...M,fontSize:12,marginBottom:2}}><span style={{color:G,fontWeight:600}}>SAFETY: </span><span style={{color:"#B8AE92"}}>{t.safety}</span></div>}
+ {t.rr&&<div style={{...M,fontSize:12,marginBottom:2}}><span style={{color:"#E6A817",fontWeight:600}}>R:R: </span><span style={{color:"#F4EEDF",fontWeight:600}}>{t.rr}</span></div>}
+ {t.wrong&&<div style={{...M,fontSize:12}}><span style={{color:R,fontWeight:600}}>IF WRONG: </span><span style={{color:"#B8AE92"}}>{t.wrong}</span></div>}
  </div>
  </div>))}
  </>);
@@ -6212,44 +6212,44 @@ portfolioView==="snapshot"&&<>
  {/* THE STORY */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600}}>The Story</div>
- {stock.fundVerified===true&&(<span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ CURRENT</span>)}
- {stock.fundVerified===false&&(<span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ NEEDS PT VERIFY</span>)}
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600}}>The Story</div>
+ {stock.fundVerified===true&&(<span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",border:"1px solid #3DBFA844",fontWeight:700}}>✓ CURRENT</span>)}
+ {stock.fundVerified===false&&(<span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ NEEDS PT VERIFY</span>)}
  </div>
- <div style={{fontSize:12,color:"#D6CDB6",lineHeight:1.7}}>{stock.fund.story}</div>
- {stock.fundDate&&(<div style={{...M,fontSize:7,color:"#9A8F82",marginTop:6}}>Refreshed: {stock.fundDate}</div>)}
+ <div style={{fontSize:17,color:"#D6CDB6",lineHeight:1.7}}>{stock.fund.story}</div>
+ {stock.fundDate&&(<div style={{...M,fontSize:12,color:"#9A8F82",marginTop:6}}>Refreshed: {stock.fundDate}</div>)}
  </div>
  {/* KEY DRIVERS */}
  <div style={{marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Key Drivers</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Key Drivers</div>
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {stock.fund.drivers.map((d,i)=>{
  const dc=d.dir==="up"?G:d.dir==="down"?R:d.dir==="risk"?"#E08A4A":Y;
  const arrow=d.dir==="up"?"▲":d.dir==="down"?"▼":d.dir==="risk"?"⚠":"●";
  return(<div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:"10px 12px",borderLeft:`3px solid ${dc}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
- <span style={{...M,fontSize:10,color:dc}}>{arrow}</span>
- <span style={{...M,fontSize:11,fontWeight:700}}>{d.name}</span>
- <span style={{...M,fontSize:8,padding:"1px 6px",borderRadius:3,background:dc+"15",color:dc,marginLeft:"auto"}}>{d.dir==="up"?"ACCELERATING":d.dir==="down"?"DECELERATING":d.dir==="risk"?"RISK":"STABLE"}</span>
+ <span style={{...M,fontSize:15,color:dc}}>{arrow}</span>
+ <span style={{...M,fontSize:16,fontWeight:700}}>{d.name}</span>
+ <span style={{...M,fontSize:13,padding:"1px 6px",borderRadius:3,background:dc+"15",color:dc,marginLeft:"auto"}}>{d.dir==="up"?"ACCELERATING":d.dir==="down"?"DECELERATING":d.dir==="risk"?"RISK":"STABLE"}</span>
  </div>
- <div style={{...M,fontSize:10,color:"#B8AE92",lineHeight:1.5,paddingLeft:18}}>{d.detail}</div>
+ <div style={{...M,fontSize:15,color:"#B8AE92",lineHeight:1.5,paddingLeft:18}}>{d.detail}</div>
  </div>);
  })}
  </div>
  </div>
  {/* MONEY FLOW */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Money Flow</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Money Flow</div>
  <div style={{display:"flex",flexDirection:"column",gap:8}}>
  {[
  {label:"INSTITUTIONAL",icon:"🏛",text:stock.fund.flow.inst,color:"#7E91E8"},
  {label:"RETAIL",icon:"👥",text:stock.fund.flow.retail,color:"#B266FF"},
  {label:"SHORT INTEREST",icon:"📉",text:stock.fund.flow.short,color:Y}
  ].map((f,i)=>(<div key={i} style={{display:"flex",gap:8,alignItems:"flex-start"}}>
- <span style={{fontSize:12,flexShrink:0,marginTop:1}}>{f.icon}</span>
+ <span style={{fontSize:17,flexShrink:0,marginTop:1}}>{f.icon}</span>
  <div>
- <div style={{...M,fontSize:8,fontWeight:600,color:f.color,marginBottom:2}}>{f.label}</div>
- <div style={{fontSize:10,color:"#B8AE92",lineHeight:1.5}}>{f.text}</div>
+ <div style={{...M,fontSize:13,fontWeight:600,color:f.color,marginBottom:2}}>{f.label}</div>
+ <div style={{fontSize:15,color:"#B8AE92",lineHeight:1.5}}>{f.text}</div>
  </div>
  </div>))}
  </div>
@@ -6258,25 +6258,25 @@ portfolioView==="snapshot"&&<>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
  <div style={{background:"#17131A",border:`1px solid ${G}33`,borderRadius:6,padding:12}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
- <span style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:G,fontWeight:600}}>Bull Case</span>
- <span style={{...M,fontSize:10,fontWeight:700,color:G,marginLeft:"auto"}}>{stock.fund.bull.price}</span>
+ <span style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:G,fontWeight:600}}>Bull Case</span>
+ <span style={{...M,fontSize:15,fontWeight:700,color:G,marginLeft:"auto"}}>{stock.fund.bull.price}</span>
  </div>
- <div style={{fontSize:10,color:"#D6CDB6",lineHeight:1.6}}>{stock.fund.bull.path}</div>
+ <div style={{fontSize:15,color:"#D6CDB6",lineHeight:1.6}}>{stock.fund.bull.path}</div>
  </div>
  <div style={{background:"#17131A",border:`1px solid ${R}33`,borderRadius:6,padding:12}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
- <span style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:R,fontWeight:600}}>Bear Case</span>
- <span style={{...M,fontSize:10,fontWeight:700,color:R,marginLeft:"auto"}}>{stock.fund.bear.price}</span>
+ <span style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:R,fontWeight:600}}>Bear Case</span>
+ <span style={{...M,fontSize:15,fontWeight:700,color:R,marginLeft:"auto"}}>{stock.fund.bear.price}</span>
  </div>
- <div style={{fontSize:10,color:"#D6CDB6",lineHeight:1.6}}>{stock.fund.bear.path}</div>
+ <div style={{fontSize:15,color:"#D6CDB6",lineHeight:1.6}}>{stock.fund.bear.path}</div>
  </div>
  </div>
  {/* ACTIVE RISKS */}
  {stock.fund.activeRisks&&stock.fund.activeRisks.length>0&&<div style={{background:"#1B1224",border:"1px solid #E8643A33",borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
- <span style={{fontSize:11}}>⚠</span>
- <span style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#E08A4A",fontWeight:700}}>Active Risks — What Could Go Wrong</span>
- <span style={{...M,fontSize:8,color:"#9A8F82",marginLeft:"auto"}}>{stock.fund.activeRisks.filter(r=>r.sev==="HIGH").length} HIGH / {stock.fund.activeRisks.filter(r=>r.sev==="MED").length} MED / {stock.fund.activeRisks.filter(r=>r.sev==="LOW").length} LOW</span>
+ <span style={{fontSize:16}}>⚠</span>
+ <span style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#E08A4A",fontWeight:700}}>Active Risks — What Could Go Wrong</span>
+ <span style={{...M,fontSize:13,color:"#9A8F82",marginLeft:"auto"}}>{stock.fund.activeRisks.filter(r=>r.sev==="HIGH").length} HIGH / {stock.fund.activeRisks.filter(r=>r.sev==="MED").length} MED / {stock.fund.activeRisks.filter(r=>r.sev==="LOW").length} LOW</span>
  </div>
  <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap"}}>
  {(()=>{const highs=stock.fund.activeRisks.filter(r=>r.sev==="HIGH");const maxProb=highs.length?Math.max(...highs.map(r=>r.prob)):0;const avgProb=stock.fund.activeRisks.length?Math.round(stock.fund.activeRisks.reduce((a,r)=>a+r.prob,0)/stock.fund.activeRisks.length):0;const nearTerm=stock.fund.activeRisks.filter(r=>r.catalyst&&(r.catalyst.includes("Mar")||r.catalyst.includes("Apr"))).length;return[
@@ -6285,76 +6285,76 @@ portfolioView==="snapshot"&&<>
  {l:"Near-Term Catalysts",v:`${nearTerm}`,c:nearTerm>=3?"#FFBF00":"#B8AE92"},
  {l:"Total Risk Events",v:`${stock.fund.activeRisks.length}`,c:"#B8AE92"}
  ]})().map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"6px 10px",minWidth:80}}>
- <div style={{...M,fontSize:7,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{m.l}</div>
- <div style={{...M,fontSize:16,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{m.l}</div>
+ <div style={{...M,fontSize:20,fontWeight:700,color:m.c}}>{m.v}</div>
  </div>))}
  </div>
  {stock.fund.activeRisks.map((r,i)=>(<div key={i} style={{display:"flex",gap:8,marginBottom:8,padding:"10px 12px",background:r.sev==="HIGH"?"#E8643A08":r.sev==="MED"?"#FFBF0008":"transparent",border:`1px solid ${r.sev==="HIGH"?"#E8643A22":r.sev==="MED"?"#FFBF0022":"#2C2433"}`,borderRadius:4}}>
  <div style={{flexShrink:0,width:52,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
- <span style={{...M,fontSize:8,fontWeight:700,padding:"2px 5px",borderRadius:3,background:r.sev==="HIGH"?R+"22":r.sev==="MED"?"#FFBF00"+"22":G+"22",color:r.sev==="HIGH"?R:r.sev==="MED"?"#FFBF00":G}}>{r.sev}</span>
+ <span style={{...M,fontSize:13,fontWeight:700,padding:"2px 5px",borderRadius:3,background:r.sev==="HIGH"?R+"22":r.sev==="MED"?"#FFBF00"+"22":G+"22",color:r.sev==="HIGH"?R:r.sev==="MED"?"#FFBF00":G}}>{r.sev}</span>
  <div style={{width:36,height:36,borderRadius:"50%",border:`2px solid ${r.prob>=40?R:r.prob>=25?"#FFBF00":"#9A8F82"}`,display:"flex",alignItems:"center",justifyContent:"center",background:`conic-gradient(${r.prob>=40?R:r.prob>=25?"#FFBF00":"#9A8F82"} ${r.prob*3.6}deg, transparent ${r.prob*3.6}deg)`}}>
  <div style={{width:28,height:28,borderRadius:"50%",background:"#1B1224",display:"flex",alignItems:"center",justifyContent:"center"}}>
- <span style={{...M,fontSize:9,fontWeight:700,color:r.prob>=40?R:r.prob>=25?"#FFBF00":"#B8AE92"}}>{r.prob}%</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:r.prob>=40?R:r.prob>=25?"#FFBF00":"#B8AE92"}}>{r.prob}%</span>
  </div>
  </div>
  </div>
  <div style={{flex:1}}>
- <div style={{...M,fontSize:9,color:"#E8E1D0",lineHeight:1.5,marginBottom:4}}>{r.risk}</div>
+ <div style={{...M,fontSize:14,color:"#E8E1D0",lineHeight:1.5,marginBottom:4}}>{r.risk}</div>
  <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:4}}>
- <span style={{...M,fontSize:7,color:"#E08A4A"}}>Trigger: {r.trigger}</span>
- <span style={{...M,fontSize:7,color:R}}>Impact: {r.impact}</span>
+ <span style={{...M,fontSize:12,color:"#E08A4A"}}>Trigger: {r.trigger}</span>
+ <span style={{...M,fontSize:12,color:R}}>Impact: {r.impact}</span>
  </div>
- {r.catalyst&&<div style={{...M,fontSize:7,color:"#E6A817",background:"#E6A81708",border:"1px solid #E6A81722",borderRadius:3,padding:"3px 6px",display:"inline-block"}}>📅 {r.catalyst}</div>}
+ {r.catalyst&&<div style={{...M,fontSize:12,color:"#E6A817",background:"#E6A81708",border:"1px solid #E6A81722",borderRadius:3,padding:"3px 6px",display:"inline-block"}}>📅 {r.catalyst}</div>}
  </div>
  </div>))}
  </div>}
  {/* THESIS KILLER */}
  <div style={{background:"#24120E",border:"1px solid #E8643A33",borderRadius:6,padding:12}}>
  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
- <span style={{fontSize:12}}>💀</span>
- <span style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:R,fontWeight:600}}>Thesis Killer</span>
+ <span style={{fontSize:17}}>💀</span>
+ <span style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:R,fontWeight:600}}>Thesis Killer</span>
  </div>
- <div style={{fontSize:11,color:"#F29A85",lineHeight:1.6,fontWeight:500}}>{stock.fund.killer}</div>
+ <div style={{fontSize:16,color:"#F29A85",lineHeight:1.6,fontWeight:500}}>{stock.fund.killer}</div>
  </div>
  {/* FINANCIAL METRICS */}
  {stock.fund.metrics&&<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:10}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Financial Metrics</div>
- <div style={{...M,fontSize:8,color:"#9A8F82"}}>as of {stock.fund.metrics.lastQ}</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Financial Metrics</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82"}}>as of {stock.fund.metrics.lastQ}</div>
  </div>
  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
  {[
- {l:"Rev Growth",v:`${stock.fund.metrics.revGrowth>0?"+":""}${stock.fund.metrics.revGrowth}%`,c:stock.fund.metrics.revGrowth>25?G:stock.fund.metrics.revGrowth>10?Y:stock.fund.metrics.revGrowth>0?"#7E91E8":R},
- {l:"Gross Margin",v:`${stock.fund.metrics.grossMargin}%`,c:stock.fund.metrics.grossMargin>60?G:stock.fund.metrics.grossMargin>40?Y:R},
- {l:"Op Margin",v:`${stock.fund.metrics.opMargin}%`,c:stock.fund.metrics.opMargin>30?G:stock.fund.metrics.opMargin>15?Y:stock.fund.metrics.opMargin>0?"#7E91E8":R},
- {l:"Net Margin",v:`${stock.fund.metrics.netMargin}%`,c:stock.fund.metrics.netMargin>25?G:stock.fund.metrics.netMargin>10?Y:stock.fund.metrics.netMargin>0?"#7E91E8":R},
- {l:"FCF Margin",v:`${stock.fund.metrics.fcfMargin}%`,c:stock.fund.metrics.fcfMargin>25?G:stock.fund.metrics.fcfMargin>10?Y:stock.fund.metrics.fcfMargin>0?"#7E91E8":R},
- {l:"ROE",v:`${stock.fund.metrics.roe}%`,c:stock.fund.metrics.roe>25?G:stock.fund.metrics.roe>10?Y:stock.fund.metrics.roe>0?"#7E91E8":R},
- {l:"D/E Ratio",v:`${stock.fund.metrics.debtEquity}x`,c:stock.fund.metrics.debtEquity<0.5?G:stock.fund.metrics.debtEquity<1.5?Y:R},
- {l:"Fwd P/E",v:`${stock.fwdPE}x`,c:stock.fwdPE<20?G:stock.fwdPE<35?Y:R}
+ {l:"Rev Growth",v:stock.fund.metrics.revGrowth==null?"n/a":`${stock.fund.metrics.revGrowth>0?"+":""}${stock.fund.metrics.revGrowth}%`,c:stock.fund.metrics.revGrowth>25?G:stock.fund.metrics.revGrowth>10?Y:stock.fund.metrics.revGrowth>0?"#7E91E8":R},
+ {l:"Gross Margin",v:stock.fund.metrics.grossMargin==null?"n/a":`${stock.fund.metrics.grossMargin}%`,c:stock.fund.metrics.grossMargin>60?G:stock.fund.metrics.grossMargin>40?Y:R},
+ {l:"Op Margin",v:stock.fund.metrics.opMargin==null?"n/a":`${stock.fund.metrics.opMargin}%`,c:stock.fund.metrics.opMargin>30?G:stock.fund.metrics.opMargin>15?Y:stock.fund.metrics.opMargin>0?"#7E91E8":R},
+ {l:"Net Margin",v:stock.fund.metrics.netMargin==null?"n/a":`${stock.fund.metrics.netMargin}%`,c:stock.fund.metrics.netMargin>25?G:stock.fund.metrics.netMargin>10?Y:stock.fund.metrics.netMargin>0?"#7E91E8":R},
+ {l:"FCF Margin",v:stock.fund.metrics.fcfMargin==null?"n/a":`${stock.fund.metrics.fcfMargin}%`,c:stock.fund.metrics.fcfMargin>25?G:stock.fund.metrics.fcfMargin>10?Y:stock.fund.metrics.fcfMargin>0?"#7E91E8":R},
+ {l:"ROE",v:stock.fund.metrics.roe==null?"n/a":`${stock.fund.metrics.roe}%`,c:stock.fund.metrics.roe>25?G:stock.fund.metrics.roe>10?Y:stock.fund.metrics.roe>0?"#7E91E8":R},
+ {l:"D/E Ratio",v:stock.fund.metrics.debtEquity==null?"n/a":`${stock.fund.metrics.debtEquity}x`,c:stock.fund.metrics.debtEquity<0.5?G:stock.fund.metrics.debtEquity<1.5?Y:R},
+ {l:"Fwd P/E",v:stock.fwdPE>0?`${stock.fwdPE}x`:(stock.fwdPENote||"n/a"),c:stock.fwdPE>0?(stock.fwdPE<20?G:stock.fwdPE<35?Y:R):"#9A8F82"}
  ].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"7px 8px",textAlign:"center"}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
- <div style={{...M,fontSize:13,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
+ <div style={{...M,fontSize:18,fontWeight:700,color:m.c}}>{m.v}</div>
  </div>))}
  </div>
  {/* Margin quality bar */}
  <div style={{display:"flex",alignItems:"center",gap:6}}>
- <span style={{...M,fontSize:7,color:"#9A8F82",width:60,flexShrink:0}}>MARGIN STACK</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82",width:103,flexShrink:0}}>MARGIN STACK</span>
  <div style={{flex:1,height:10,background:"#241C2B",borderRadius:3,overflow:"hidden",display:"flex",position:"relative"}}>
  <div style={{width:`${stock.fund.metrics.grossMargin}%`,height:"100%",background:G+"44",position:"absolute",left:0,borderRadius:"3px 0 0 3px"}} title={`Gross: ${stock.fund.metrics.grossMargin}%`}/>
  <div style={{width:`${stock.fund.metrics.opMargin}%`,height:"100%",background:G+"88",position:"absolute",left:0}} title={`Op: ${stock.fund.metrics.opMargin}%`}/>
  <div style={{width:`${stock.fund.metrics.netMargin}%`,height:"100%",background:G,position:"absolute",left:0,borderRadius:"3px 0 0 3px"}} title={`Net: ${stock.fund.metrics.netMargin}%`}/>
  </div>
  <div style={{display:"flex",gap:8,flexShrink:0}}>
- <span style={{...M,fontSize:7,color:G}}>Net {stock.fund.metrics.netMargin}%</span>
- <span style={{...M,fontSize:7,color:G+"88"}}>Op {stock.fund.metrics.opMargin}%</span>
- <span style={{...M,fontSize:7,color:G+"44"}}>Gross {stock.fund.metrics.grossMargin}%</span>
+ <span style={{...M,fontSize:12,color:G}}>Net {stock.fund.metrics.netMargin}%</span>
+ <span style={{...M,fontSize:12,color:G+"88"}}>Op {stock.fund.metrics.opMargin}%</span>
+ <span style={{...M,fontSize:12,color:G+"44"}}>Gross {stock.fund.metrics.grossMargin}%</span>
  </div>
  </div>
  </div>}
  {/* KEY DATA POINTS TO WATCH */}
  {stock.fund.watchlist&&<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:8}}>Next Key Data Points to Watch</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:8}}>Next Key Data Points to Watch</div>
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {stock.fund.watchlist.map((w,i)=>{
  const dm=w.d.match(/^(\w+)\s+(\d+)$/);
@@ -6365,60 +6365,60 @@ portfolioView==="snapshot"&&<>
  }
  return(<div key={i} style={{background:"#1E1924",borderRadius:4,padding:"8px 10px",borderLeft:`3px solid ${dte!==null&&dte<=14?"#E6A817":dte!==null&&dte<=30?"#7E91E8":"#3A3042"}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
- {dte!==null&&<span style={{...M,fontSize:9,fontWeight:700,color:dte<=7?"#E8643A":dte<=14?Y:dte<=30?"#7E91E8":"#9A8F82",width:28,flexShrink:0}}>{dte<=0?"NOW":`${dte}d`}</span>}
- <span style={{...M,fontSize:9,fontWeight:600,color:"#E6A817",flexShrink:0}}>{w.d}</span>
- <span style={{fontSize:10,fontWeight:600,color:"#F4EEDF"}}>{w.item}</span>
+ {dte!==null&&<span style={{...M,fontSize:14,fontWeight:700,color:dte<=7?"#E8643A":dte<=14?Y:dte<=30?"#7E91E8":"#9A8F82",width:44,flexShrink:0}}>{dte<=0?"NOW":`${dte}d`}</span>}
+ <span style={{...M,fontSize:14,fontWeight:600,color:"#E6A817",flexShrink:0}}>{w.d}</span>
+ <span style={{fontSize:15,fontWeight:600,color:"#F4EEDF"}}>{w.item}</span>
  </div>
- <div style={{...M,fontSize:9,color:"#B8AE92",lineHeight:1.4,paddingLeft:dte!==null?36:0}}>{w.why}</div>
+ <div style={{...M,fontSize:14,color:"#B8AE92",lineHeight:1.4,paddingLeft:dte!==null?36:0}}>{w.why}</div>
  </div>);
  })}
  </div>
  </div>}
  {/* REVENUE MIX */}
  {stock.fund.revMix&&<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Revenue Mix</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Revenue Mix</div>
  <div style={{height:24,borderRadius:4,overflow:"hidden",display:"flex",marginBottom:6}}>
  {stock.fund.revMix.map((s,i)=>(<div key={i} style={{flex:s.p,background:s.c,position:"relative",borderRight:i<stock.fund.revMix.length-1?"1px solid #0D0D0D":"none"}} title={`${s.n}: ${s.p}%`}/>))}
  </div>
  <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
  {stock.fund.revMix.map((s,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4}}>
  <div style={{width:8,height:8,borderRadius:2,background:s.c,flexShrink:0}}/>
- <span style={{...M,fontSize:9,color:"#B8AE92"}}>{s.n}</span>
- <span style={{...M,fontSize:9,fontWeight:600,color:s.c}}>{s.p}%</span>
+ <span style={{...M,fontSize:14,color:"#B8AE92"}}>{s.n}</span>
+ <span style={{...M,fontSize:14,fontWeight:600,color:s.c}}>{s.p}%</span>
  </div>))}
  </div>
  </div>}
  {/* COMPETITIVE POSITION MAP */}
  {stock.fund.compPos&&<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Competitive Position</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Competitive Position</div>
  <div style={{position:"relative",height:180,border:"1px solid #2C2433",borderRadius:4,background:"#0A090B",overflow:"hidden"}}>
  {/* Grid lines */}
  <div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"#2C243344"}}/>
  <div style={{position:"absolute",top:"50%",left:0,right:0,height:1,background:"#2C243344"}}/>
  {/* Axis labels */}
- <div style={{position:"absolute",bottom:2,left:"50%",transform:"translateX(-50%)",...M,fontSize:7,color:"#9A8F82"}}>{stock.fund.compPos.xLabel} →</div>
- <div style={{position:"absolute",left:3,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",...M,fontSize:7,color:"#9A8F82"}}>{stock.fund.compPos.yLabel} →</div>
+ <div style={{position:"absolute",bottom:2,left:"50%",transform:"translateX(-50%)",...M,fontSize:12,color:"#9A8F82"}}>{stock.fund.compPos.xLabel} →</div>
+ <div style={{position:"absolute",left:3,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",...M,fontSize:12,color:"#9A8F82"}}>{stock.fund.compPos.yLabel} →</div>
  {/* Peers */}
  {stock.fund.compPos.peers.map((p,i)=>{
  const isSelf=p.self;
  return(<div key={i} style={{position:"absolute",left:`${Math.max(5,Math.min(92,p.x))}%`,bottom:`${Math.max(5,Math.min(88,p.y))}%`,transform:"translate(-50%, 50%)",display:"flex",flexDirection:"column",alignItems:"center",gap:2,zIndex:isSelf?10:1}}>
  <div style={{width:isSelf?12:8,height:isSelf?12:8,borderRadius:"50%",background:isSelf?"#E6A817":i===1?"#7E91E8":"#9A8F82",border:isSelf?"2px solid #E6A817":"1px solid #9A8F82",boxShadow:isSelf?"0 0 8px #E6A81744":"none"}}/>
- <span style={{...M,fontSize:isSelf?8:7,color:isSelf?"#E6A817":"#B8AE92",fontWeight:isSelf?700:400,whiteSpace:"nowrap"}}>{p.n}</span>
+ <span style={{...M,fontSize:isSelf?13:12,color:isSelf?"#E6A817":"#B8AE92",fontWeight:isSelf?700:400,whiteSpace:"nowrap"}}>{p.n}</span>
  </div>);
  })}
  </div>
  </div>}
  {/* MANAGEMENT CREDIBILITY */}
  {stock.fund.mgmt&&<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginTop:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Management Credibility</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Management Credibility</div>
  <div style={{display:"flex",gap:12,marginBottom:8}}>
  {[
  {l:"BEATS",v:stock.fund.mgmt.beats,c:G},
  {l:"MISSES",v:stock.fund.mgmt.misses,c:stock.fund.mgmt.misses>0?R:"#9A8F82"},
  {l:"STREAK",v:stock.fund.mgmt.streak,c:stock.fund.mgmt.streak.startsWith("+")?G:R}
  ].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"8px 14px",textAlign:"center",minWidth:60}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
- <div style={{...M,fontSize:18,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
+ <div style={{...M,fontSize:22,fontWeight:700,color:m.c}}>{m.v}</div>
  </div>))}
  <div style={{flex:1,display:"flex",alignItems:"center"}}>
  <div style={{height:6,flex:1,background:"#241C2B",borderRadius:3,overflow:"hidden",display:"flex"}}>
@@ -6426,10 +6426,10 @@ portfolioView==="snapshot"&&<>
  </div>
  </div>
  </div>
- <div style={{fontSize:10,color:"#B8AE92",lineHeight:1.5}}>{stock.fund.mgmt.note}</div>
+ <div style={{fontSize:15,color:"#B8AE92",lineHeight:1.5}}>{stock.fund.mgmt.note}</div>
  </div>}
  {/* THESIS DATE */}
- {stock.fund.thesisDate&&<div style={{marginTop:10,display:"flex",alignItems:"center",gap:6,...M,fontSize:8,color:"#9A8F82"}}>
+ {stock.fund.thesisDate&&<div style={{marginTop:10,display:"flex",alignItems:"center",gap:6,...M,fontSize:13,color:"#9A8F82"}}>
  <span style={{width:6,height:6,borderRadius:3,background:(()=>{
  const parts=stock.fund.thesisDate.match(/(\w+)\s+(\d+),\s+(\d+)/);
  if(!parts)return"#9A8F82";
@@ -6456,38 +6456,38 @@ portfolioView==="snapshot"&&<>
  <div style={{background:"#17131A",border:`1px solid ${stock.tech.verdict.c==="g"?G:stock.tech.verdict.c==="r"?R:Y}33`,borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:12}}>
  <div style={{textAlign:"center",minWidth:80}}>
- <div style={{...M,fontSize:28,fontWeight:800,color:stock.tech.verdict.c==="g"?G:stock.tech.verdict.c==="r"?R:Y}}>{stock.tech.verdict.score}</div>
- <div style={{...M,fontSize:7,color:"#9A8F82"}}>TECH SCORE</div>
- {stock.techVerified===false&&(<div style={{...M,fontSize:6,marginTop:3,padding:"1px 4px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",fontWeight:700,display:"inline-block"}}>⚠ EST</div>)}
- {stock.techVerified===true&&(<div style={{...M,fontSize:6,marginTop:3,padding:"1px 4px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",fontWeight:700,display:"inline-block"}}>✓ VER</div>)}
+ <div style={{...M,fontSize:32,fontWeight:800,color:stock.tech.verdict.c==="g"?G:stock.tech.verdict.c==="r"?R:Y}}>{stock.tech.verdict.score}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82"}}>TECH SCORE</div>
+ {stock.techVerified===false&&(<div style={{...M,fontSize:11,marginTop:3,padding:"1px 4px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",fontWeight:700,display:"inline-block"}}>⚠ EST</div>)}
+ {stock.techVerified===true&&(<div style={{...M,fontSize:11,marginTop:3,padding:"1px 4px",borderRadius:3,background:"#3DBFA822",color:"#3DBFA8",fontWeight:700,display:"inline-block"}}>✓ VER</div>)}
  </div>
  <div style={{flex:1}}>
- <div style={{...M,fontSize:14,fontWeight:700,color:stock.tech.verdict.c==="g"?G:stock.tech.verdict.c==="r"?R:Y,marginBottom:3}}>{stock.tech.verdict.label}</div>
- <div style={{fontSize:10,color:"#B8AE92",lineHeight:1.5}}>{stock.tech.verdict.drivers}</div>
+ <div style={{...M,fontSize:19,fontWeight:700,color:stock.tech.verdict.c==="g"?G:stock.tech.verdict.c==="r"?R:Y,marginBottom:3}}>{stock.tech.verdict.label}</div>
+ <div style={{fontSize:15,color:"#B8AE92",lineHeight:1.5}}>{stock.tech.verdict.drivers}</div>
  </div>
  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
- <div style={{...M,fontSize:8,color:"#9A8F82"}}>TREND</div>
- <div style={{...M,fontSize:11,fontWeight:700,color:stock.tech.ma.align==="bullish"?G:stock.tech.ma.align==="bearish"?R:Y,textTransform:"uppercase"}}>{stock.tech.ma.align}</div>
+ <div style={{...M,fontSize:13,color:"#9A8F82"}}>TREND</div>
+ <div style={{...M,fontSize:16,fontWeight:700,color:stock.tech.ma.align==="bullish"?G:stock.tech.ma.align==="bearish"?R:Y,textTransform:"uppercase"}}>{stock.tech.ma.align}</div>
  </div>
  </div>
  </div>
  {/* MOVING AVERAGE MATRIX */}
  <div style={{marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Moving Average Matrix</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>Moving Average Matrix</div>
  <div style={{display:"flex",flexDirection:"column",gap:4}}>
  {stock.tech.ma.brk.map((b,i)=>{
  const above=stock.price>=b.p;
  const dist=((stock.price-b.p)/b.p*100);
  return(<div key={i} style={{background:"#17131A",border:`1px solid ${above?G+"33":R+"33"}`,borderRadius:5,padding:"10px 12px",borderLeft:`3px solid ${above?G:R}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
- <span style={{...M,fontSize:12,fontWeight:800,color:above?G:R,width:42}}>{b.ma}</span>
- <span style={{...M,fontSize:14,fontWeight:700,color:"#F4EEDF"}}>${b.p}</span>
- <span style={{...M,fontSize:9,padding:"1px 6px",borderRadius:3,background:above?G+"15":R+"15",color:above?G:R}}>{above?"ABOVE":"BELOW"} {Math.abs(dist).toFixed(1)}%</span>
+ <span style={{...M,fontSize:17,fontWeight:800,color:above?G:R,width:60}}>{b.ma}</span>
+ <span style={{...M,fontSize:19,fontWeight:700,color:"#F4EEDF"}}>${b.p}</span>
+ <span style={{...M,fontSize:14,padding:"1px 6px",borderRadius:3,background:above?G+"15":R+"15",color:above?G:R}}>{above?"ABOVE":"BELOW"} {Math.abs(dist).toFixed(1)}%</span>
  <div style={{flex:1,height:4,background:"#241C2B",borderRadius:2,overflow:"hidden",marginLeft:8}}>
  <div style={{width:`${Math.min(100,Math.max(5,50+dist*2))}%`,height:"100%",background:above?G:R,borderRadius:2}}/>
  </div>
  </div>
- <div style={{fontSize:9,color:"#B8AE92",lineHeight:1.4,paddingLeft:50}}>
+ <div style={{fontSize:14,color:"#B8AE92",lineHeight:1.4,paddingLeft:50}}>
  <span style={{color:above?G+"cc":R+"cc"}}>{above?"▲ ":"▼ "}</span>{above?b.above:b.below}
  </div>
  </div>);
@@ -6496,41 +6496,41 @@ portfolioView==="snapshot"&&<>
  </div>
  {/* MOMENTUM INDICATORS */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Momentum</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Momentum</div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
  {/* RSI */}
  <div style={{background:"#241C2B",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:4}}>RSI (14)</div>
- <div style={{...M,fontSize:22,fontWeight:700,color:stock.tech.momentum.rsi>70?R:stock.tech.momentum.rsi<30?G:Y}}>{stock.tech.momentum.rsi==null?"—":stock.tech.momentum.rsi}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:4}}>RSI (14)</div>
+ <div style={{...M,fontSize:26,fontWeight:700,color:stock.tech.momentum.rsi>70?R:stock.tech.momentum.rsi<30?G:Y}}>{stock.tech.momentum.rsi==null?"—":stock.tech.momentum.rsi}</div>
  <div style={{marginTop:4,height:6,background:"#17131A",borderRadius:3,position:"relative"}}>
  <div style={{position:"absolute",left:"30%",top:-1,bottom:-1,width:1,background:G+"44"}}/>
  <div style={{position:"absolute",left:"70%",top:-1,bottom:-1,width:1,background:R+"44"}}/>
  <div style={{position:"absolute",left:`${stock.tech.momentum.rsi}%`,top:-1,width:6,height:8,borderRadius:3,background:stock.tech.momentum.rsi>70?R:stock.tech.momentum.rsi<30?G:Y,transform:"translateX(-50%)"}}/>
  </div>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginTop:3,textAlign:"center"}}>{stock.tech.momentum.rsi>70?"OVERBOUGHT":stock.tech.momentum.rsi>60?"HIGH":stock.tech.momentum.rsi<30?"OVERSOLD":stock.tech.momentum.rsi<40?"LOW":"NEUTRAL"}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginTop:3,textAlign:"center"}}>{stock.tech.momentum.rsi>70?"OVERBOUGHT":stock.tech.momentum.rsi>60?"HIGH":stock.tech.momentum.rsi<30?"OVERSOLD":stock.tech.momentum.rsi<40?"LOW":"NEUTRAL"}</div>
  </div>
  {/* MACD */}
  <div style={{background:"#241C2B",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:4}}>MACD</div>
- <div style={{...M,fontSize:16,fontWeight:700,color:stock.tech.momentum.macd.cross==="bullish"?G:R}}>{stock.tech.momentum.macd.cross==="bullish"?"▲ BULL":"▼ BEAR"}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:4}}>MACD</div>
+ <div style={{...M,fontSize:20,fontWeight:700,color:stock.tech.momentum.macd.cross==="bullish"?G:R}}>{stock.tech.momentum.macd.cross==="bullish"?"▲ BULL":"▼ BEAR"}</div>
  <div style={{display:"flex",gap:4,marginTop:4}}>
  {[{l:"MACD",v:stock.tech.momentum.macd.v},{l:"Signal",v:stock.tech.momentum.macd.s},{l:"Hist",v:stock.tech.momentum.macd.h}].map((m,j)=>(<div key={j} style={{flex:1,textAlign:"center"}}>
- <div style={{...M,fontSize:6,color:"#9A8F82"}}>{m.l}</div>
- <div style={{...M,fontSize:9,fontWeight:600,color:m.v==null?"#9A8F82":m.v>0?G:R}}>{m.v==null?"—":(m.v>0?"+":"")+m.v.toFixed(1)}</div>
+ <div style={{...M,fontSize:11,color:"#9A8F82"}}>{m.l}</div>
+ <div style={{...M,fontSize:14,fontWeight:600,color:m.v==null?"#9A8F82":m.v>0?G:R}}>{m.v==null?"—":(m.v>0?"+":"")+m.v.toFixed(1)}</div>
  </div>))}
  </div>
  </div>
  {/* ROC */}
  <div style={{background:"#241C2B",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:4}}>Rate of Change</div>
- <div style={{...M,fontSize:22,fontWeight:700,color:stock.tech.momentum.roc>0?G:R}}>{stock.tech.momentum.roc>0?"+":""}{stock.tech.momentum.roc}%</div>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginTop:6,textAlign:"center"}}>{Math.abs(stock.tech.momentum.roc)>10?"STRONG":Math.abs(stock.tech.momentum.roc)>5?"MODERATE":"WEAK"} {stock.tech.momentum.roc>0?"MOMENTUM":"DECELERATION"}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:4}}>Rate of Change</div>
+ <div style={{...M,fontSize:26,fontWeight:700,color:stock.tech.momentum.roc>0?G:R}}>{stock.tech.momentum.roc>0?"+":""}{stock.tech.momentum.roc}%</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginTop:6,textAlign:"center"}}>{Math.abs(stock.tech.momentum.roc)>10?"STRONG":Math.abs(stock.tech.momentum.roc)>5?"MODERATE":"WEAK"} {stock.tech.momentum.roc>0?"MOMENTUM":"DECELERATION"}</div>
  </div>
  </div>
  </div>
  {/* VOLUME PROFILE */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Volume Profile</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Volume Profile</div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8}}>
  {[
  {l:"AVG VOLUME",v:stock.tech.volume.avg,c:"#7E91E8"},
@@ -6538,21 +6538,21 @@ portfolioView==="snapshot"&&<>
  {l:"VOL RATIO",v:`${stock.tech.volume.ratio==null?"—":stock.tech.volume.ratio.toFixed(2)}x`,c:stock.tech.volume.ratio>1.2?G:stock.tech.volume.ratio<0.8?R:Y},
  {l:"OBV TREND",v:stock.tech.volume.obv.toUpperCase(),c:stock.tech.volume.obv==="rising"?G:stock.tech.volume.obv==="falling"?R:Y}
  ].map((m,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:4,padding:"6px 8px",textAlign:"center"}}>
- <div style={{...M,fontSize:7,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
- <div style={{...M,fontSize:11,fontWeight:700,color:m.c}}>{m.v}</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82",marginBottom:2}}>{m.l}</div>
+ <div style={{...M,fontSize:16,fontWeight:700,color:m.c}}>{m.v}</div>
  </div>))}
  </div>
  <div style={{marginTop:8,background:"#241C2B",borderRadius:4,padding:"8px 10px",display:"flex",alignItems:"center",gap:8}}>
- <span style={{fontSize:12}}>{stock.tech.volume.accDist==="accumulation"?"🟢":stock.tech.volume.accDist==="distribution"?"🔴":"⚪"}</span>
+ <span style={{fontSize:17}}>{stock.tech.volume.accDist==="accumulation"?"🟢":stock.tech.volume.accDist==="distribution"?"🔴":"⚪"}</span>
  <div>
- <span style={{...M,fontSize:10,fontWeight:600,color:stock.tech.volume.accDist==="accumulation"?G:stock.tech.volume.accDist==="distribution"?R:Y,textTransform:"uppercase"}}>{stock.tech.volume.accDist}</span>
- <span style={{fontSize:9,color:"#B8AE92",marginLeft:6}}>{stock.tech.volume.accDist==="accumulation"?"Smart money buying. Volume confirms uptrend.":stock.tech.volume.accDist==="distribution"?"Institutional selling. Volume confirms weakness.":"No clear directional volume bias."}</span>
+ <span style={{...M,fontSize:15,fontWeight:600,color:stock.tech.volume.accDist==="accumulation"?G:stock.tech.volume.accDist==="distribution"?R:Y,textTransform:"uppercase"}}>{stock.tech.volume.accDist}</span>
+ <span style={{fontSize:14,color:"#B8AE92",marginLeft:6}}>{stock.tech.volume.accDist==="accumulation"?"Smart money buying. Volume confirms uptrend.":stock.tech.volume.accDist==="distribution"?"Institutional selling. Volume confirms weakness.":"No clear directional volume bias."}</span>
  </div>
  </div>
  </div>
  {/* KEY TECHNICAL LEVELS — PRICE MAP */}
  <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:14,marginBottom:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Key Price Levels</div>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:8}}>Key Price Levels</div>
  {/* Visual price ruler */}
  {(()=>{
  const allLevels=[];
@@ -6565,15 +6565,15 @@ portfolioView==="snapshot"&&<>
  return(<div style={{position:"relative",minHeight:sorted.length*22+10,marginBottom:8}}>
  {/* Current price line */}
  <div style={{position:"absolute",left:50,right:0,top:`${(1-(stock.price-lo)/range)*100}%`,height:2,background:"#E6A817",zIndex:5,borderRadius:1}}>
- <div style={{position:"absolute",left:-50,top:-6,...M,fontSize:9,fontWeight:700,color:"#E6A817",width:48,textAlign:"right"}}>${stock.price}</div>
+ <div style={{position:"absolute",left:-50,top:-6,...M,fontSize:14,fontWeight:700,color:"#E6A817",width:75,textAlign:"right"}}>${stock.price}</div>
  </div>
  {sorted.map((lv,i)=>{
  const pct=(1-(lv.p-lo)/range)*100;
  const tc=lv.t==="fib"?"#B266FF":lv.t==="pivot"?"#FFBF00":"#7E91E8";
  const isNear=Math.abs(lv.p-stock.price)/stock.price<0.02;
  return(<div key={i} style={{position:"absolute",left:50,right:0,top:`${pct}%`,height:1,background:isNear?tc:tc+"44",display:"flex",alignItems:"center"}}>
- <div style={{position:"absolute",left:-50,...M,fontSize:7,color:tc,width:48,textAlign:"right",fontWeight:isNear?700:400}}>${lv.p}</div>
- <div style={{position:"absolute",right:0,...M,fontSize:7,color:isNear?tc:tc+"88"}}>{lv.l} <span style={{color:"#9A8F82",fontSize:6,textTransform:"uppercase"}}>{lv.t}</span></div>
+ <div style={{position:"absolute",left:-50,...M,fontSize:12,color:tc,width:82,textAlign:"right",fontWeight:isNear?700:400}}>${lv.p}</div>
+ <div style={{position:"absolute",right:0,...M,fontSize:12,color:isNear?tc:tc+"88"}}>{lv.l} <span style={{color:"#9A8F82",fontSize:11,textTransform:"uppercase"}}>{lv.t}</span></div>
  </div>);
  })}
  </div>);
@@ -6587,42 +6587,42 @@ portfolioView==="snapshot"&&<>
  {l:"S1",p:stock.tech.levels.pivots.s1,c:R},
  {l:"S2",p:stock.tech.levels.pivots.s2,c:R}
  ].map((p,i)=>(<div key={i} style={{background:"#241C2B",borderRadius:3,padding:"5px 4px",textAlign:"center"}}>
- <div style={{...M,fontSize:7,color:"#9A8F82"}}>{p.l}</div>
- <div style={{...M,fontSize:11,fontWeight:700,color:p.c}}>${p.p}</div>
- <div style={{...M,fontSize:7,color:p.p>stock.price?G:R}}>{((p.p-stock.price)/stock.price*100).toFixed(1)}%</div>
+ <div style={{...M,fontSize:12,color:"#9A8F82"}}>{p.l}</div>
+ <div style={{...M,fontSize:16,fontWeight:700,color:p.c}}>${p.p}</div>
+ <div style={{...M,fontSize:12,color:p.p>stock.price?G:R}}>{((p.p-stock.price)/stock.price*100).toFixed(1)}%</div>
  </div>))}
  </div>
  </div>
  {/* PATTERN RECOGNITION */}
  {stock.tech.pattern&&<div style={{background:"#17131A",border:`1px solid ${stock.tech.pattern.dir==="up"?G:stock.tech.pattern.dir==="down"?R:Y}33`,borderRadius:6,padding:14,marginBottom:10}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Chart Pattern</div>
- <span style={{...M,fontSize:9,padding:"2px 8px",borderRadius:3,background:stock.tech.pattern.dir==="up"?G+"15":stock.tech.pattern.dir==="down"?R+"15":Y+"15",color:stock.tech.pattern.dir==="up"?G:stock.tech.pattern.dir==="down"?R:Y,fontWeight:600}}>{stock.tech.pattern.dir==="up"?"BULLISH":stock.tech.pattern.dir==="down"?"BEARISH":"NEUTRAL"}</span>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600}}>Chart Pattern</div>
+ <span style={{...M,fontSize:14,padding:"2px 8px",borderRadius:3,background:stock.tech.pattern.dir==="up"?G+"15":stock.tech.pattern.dir==="down"?R+"15":Y+"15",color:stock.tech.pattern.dir==="up"?G:stock.tech.pattern.dir==="down"?R:Y,fontWeight:600}}>{stock.tech.pattern.dir==="up"?"BULLISH":stock.tech.pattern.dir==="down"?"BEARISH":"NEUTRAL"}</span>
  </div>
  <div style={{display:"flex",alignItems:"center",gap:12}}>
  <div>
- <div style={{...M,fontSize:16,fontWeight:700,color:"#F4EEDF"}}>{stock.tech.pattern.name}</div>
- {stock.tech.pattern.target&&<div style={{...M,fontSize:10,color:stock.tech.pattern.dir==="up"?G:R,marginTop:2}}>Measured target: ${stock.tech.pattern.target} ({((stock.tech.pattern.target-stock.price)/stock.price*100).toFixed(1)}%)</div>}
+ <div style={{...M,fontSize:20,fontWeight:700,color:"#F4EEDF"}}>{stock.tech.pattern.name}</div>
+ {stock.tech.pattern.target&&<div style={{...M,fontSize:15,color:stock.tech.pattern.dir==="up"?G:R,marginTop:2}}>Measured target: ${stock.tech.pattern.target} ({((stock.tech.pattern.target-stock.price)/stock.price*100).toFixed(1)}%)</div>}
  </div>
  </div>
- <div style={{fontSize:10,color:"#B8AE92",lineHeight:1.5,marginTop:6}}>{stock.tech.pattern.note}</div>
+ <div style={{fontSize:15,color:"#B8AE92",lineHeight:1.5,marginTop:6}}>{stock.tech.pattern.note}</div>
  </div>}
  </div>)}
 
  {/* REL VALUE */}
  {tab==="relative"&&(<div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,overflow:"hidden"}}>
  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"7px 12px",borderBottom:"1px solid #2C2433",background:"#1E1924"}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>Peers — Relative Valuation</div>
- <span style={{...M,fontSize:7,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ FwdP/E + EV/EBITDA ESTIMATED</span>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>Peers — Relative Valuation</div>
+ <span style={{...M,fontSize:12,padding:"1px 5px",borderRadius:3,background:"#FFBF0022",color:"#FFBF00",border:"1px solid #FFBF0044",fontWeight:700}}>⚠ FwdP/E + EV/EBITDA ESTIMATED</span>
  </div>
  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",padding:"7px 12px",borderBottom:"1px solid #2C2433",background:"#1E1924"}}>
- {["Company","Fwd P/E","EV/EBITDA","YTD"].map(h=>(<div key={h} style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{h}</div>))}
+ {["Company","Fwd P/E","EV/EBITDA","YTD"].map(h=>(<div key={h} style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#9A8F82",fontWeight:600}}>{h}</div>))}
  </div>
  {stock.peers.map((p,i)=>(<div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",padding:"7px 12px",borderBottom:"1px solid #2C2433",background:p.t===activeTicker?"#241C2B":"transparent"}}>
- <div style={{...M,fontSize:10,fontWeight:p.t===activeTicker?700:400,color:p.t===activeTicker?"#E6A817":"#F4EEDF"}}>{p.t}</div>
- <div style={{...M,fontSize:10,color:p.pe<15?G:p.pe>30?R:"#F4EEDF"}}>{p.pe}x</div>
- <div style={{...M,fontSize:10}}>{p.ev}x</div>
- <div style={{...M,fontSize:10,color:p.y>0?G:R}}>{p.y>0?"+":""}{p.y}%</div>
+ <div style={{...M,fontSize:15,fontWeight:p.t===activeTicker?700:400,color:p.t===activeTicker?"#E6A817":"#F4EEDF"}}>{p.t}</div>
+ <div style={{...M,fontSize:15,color:p.pe<15?G:p.pe>30?R:"#F4EEDF"}}>{p.pe}x</div>
+ <div style={{...M,fontSize:15}}>{p.ev}x</div>
+ <div style={{...M,fontSize:15,color:p.y>0?G:R}}>{p.y>0?"+":""}{p.y}%</div>
  </div>))}
  </div>)}
 
@@ -6630,7 +6630,7 @@ portfolioView==="snapshot"&&<>
  {tab==="catalysts"&&(<div>
  {/* Portfolio-wide catalyst calendar */}
  <div style={{marginBottom:12}}>
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:6}}>Portfolio Catalyst Calendar — Next 60 Days</div>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#E6A817",fontWeight:600,marginBottom:6}}>Portfolio Catalyst Calendar — Next 60 Days</div>
  <div style={{display:"flex",flexDirection:"column",gap:3,maxHeight:200,overflowY:"auto",marginBottom:6}}>
  {(()=>{
  const allCats=[];
@@ -6651,28 +6651,28 @@ portfolioView==="snapshot"&&<>
  // Find confluence (multiple events same week)
  const weekBuckets={};
  allCats.forEach(c=>{const wk=Math.floor(c.dte/7);weekBuckets[wk]=(weekBuckets[wk]||0)+1;});
- return allCats.length===0?[<div key="none" style={{...M,fontSize:10,color:"#9A8F82",padding:8}}>No dated catalysts in next 60 days</div>]:
+ return allCats.length===0?[<div key="none" style={{...M,fontSize:15,color:"#9A8F82",padding:8}}>No dated catalysts in next 60 days</div>]:
  allCats.map((c,i)=>{
  const ic=c.impact==="bullish"?G:c.impact==="bearish"?R:c.impact==="high"?P:Y;
  const isActive=c.ticker===activeTicker;
  const wk=Math.floor(c.dte/7);
  const confluence=weekBuckets[wk]>1;
  return(<div key={i} onClick={()=>{setActiveTicker(c.ticker);}} style={{background:isActive?"#241C2B":"#17131A",border:`1px solid ${isActive?"#E6A81733":"#2C2433"}`,borderRadius:4,padding:"6px 10px",display:"flex",alignItems:"center",gap:8,cursor:"pointer",borderLeft:`3px solid ${ic}`}}>
- <div style={{...M,fontSize:9,fontWeight:700,color:c.dte<=7?"#E8643A":c.dte<=14?Y:"#B8AE92",width:28,textAlign:"center",flexShrink:0}}>
+ <div style={{...M,fontSize:14,fontWeight:700,color:c.dte<=7?"#E8643A":c.dte<=14?Y:"#B8AE92",width:44,textAlign:"center",flexShrink:0}}>
  {c.dte===0?"TODAY":c.dte===1?"1d":`${c.dte}d`}
  </div>
- <span style={{...M,fontSize:9,fontWeight:700,color:isActive?"#E6A817":"#7E91E8",width:42,flexShrink:0}}>{c.ticker}</span>
- <span style={{flex:1,fontSize:10,fontWeight:500}}>{c.event}</span>
- {confluence&&<span style={{...M,fontSize:7,padding:"1px 4px",borderRadius:2,background:"#B266FF22",color:"#B266FF",flexShrink:0}}>CLUSTER</span>}
- <span style={{...M,fontSize:8,color:"#9A8F82",flexShrink:0}}>{c.date}</span>
- <span style={{...M,fontSize:8,padding:"1px 5px",borderRadius:3,background:ic+"15",color:ic,flexShrink:0}}>{c.impact==="high"?"⚡":"●"} {(c.iv||"med").toUpperCase()}</span>
+ <span style={{...M,fontSize:14,fontWeight:700,color:isActive?"#E6A817":"#7E91E8",width:65,flexShrink:0}}>{c.ticker}</span>
+ <span style={{flex:1,fontSize:15,fontWeight:500}}>{c.event}</span>
+ {confluence&&<span style={{...M,fontSize:12,padding:"1px 4px",borderRadius:2,background:"#B266FF22",color:"#B266FF",flexShrink:0}}>CLUSTER</span>}
+ <span style={{...M,fontSize:13,color:"#9A8F82",flexShrink:0}}>{c.date}</span>
+ <span style={{...M,fontSize:13,padding:"1px 5px",borderRadius:3,background:ic+"15",color:ic,flexShrink:0}}>{c.impact==="high"?"⚡":"●"} {(c.iv||"med").toUpperCase()}</span>
  </div>);
  });
  })()}
  </div>
  </div>
  {/* Active ticker catalysts — enriched */}
- <div style={{...M,fontSize:9,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>{activeTicker} Catalysts</div>
+ <div style={{...M,fontSize:14,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:6}}>{activeTicker} Catalysts</div>
  <div style={{display:"flex",flexDirection:"column",gap:5}}>
  {stock.catalysts.map((c,i)=>{
  const ic=c.i==="bullish"?G:c.i==="bearish"?R:c.i==="high"?P:Y;
@@ -6686,31 +6686,31 @@ portfolioView==="snapshot"&&<>
  return(
  <div key={i} style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:5,padding:"10px 12px",borderLeft:`3px solid ${ic}`}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
- {dte!==null&&<div style={{...M,fontSize:11,fontWeight:800,color:dte<=7?"#E8643A":dte<=14?Y:dte<=30?"#7E91E8":"#9A8F82",width:36,textAlign:"center",flexShrink:0}}>
+ {dte!==null&&<div style={{...M,fontSize:16,fontWeight:800,color:dte<=7?"#E8643A":dte<=14?Y:dte<=30?"#7E91E8":"#9A8F82",width:52,textAlign:"center",flexShrink:0}}>
  {dte<=0?"NOW":`${dte}d`}
  </div>}
- <div style={{...M,fontSize:10,fontWeight:700,color:"#E6A817",width:65,flexShrink:0}}>{c.d}</div>
- <div style={{flex:1,fontSize:12,fontWeight:600}}>{c.e}</div>
- <span style={{...M,fontSize:8,padding:"2px 5px",borderRadius:3,background:ic+"15",color:ic,flexShrink:0}}>{c.i.toUpperCase()}</span>
+ <div style={{...M,fontSize:15,fontWeight:700,color:"#E6A817",width:98,flexShrink:0}}>{c.d}</div>
+ <div style={{flex:1,fontSize:17,fontWeight:600}}>{c.e}</div>
+ <span style={{...M,fontSize:13,padding:"2px 5px",borderRadius:3,background:ic+"15",color:ic,flexShrink:0}}>{c.i.toUpperCase()}</span>
  </div>
  <div style={{display:"flex",gap:12,marginLeft:dte!==null?44:0,flexWrap:"wrap"}}>
  {c.iv&&<div style={{display:"flex",alignItems:"center",gap:3}}>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>IV IMPACT</span>
- <span style={{...M,fontSize:8,fontWeight:600,padding:"1px 5px",borderRadius:2,
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>IV IMPACT</span>
+ <span style={{...M,fontSize:13,fontWeight:600,padding:"1px 5px",borderRadius:2,
  background:c.iv==="high"?P+"15":c.iv==="med"?Y+"15":"#7E91E815",
  color:c.iv==="high"?P:c.iv==="med"?Y:"#7E91E8"}}>{c.iv.toUpperCase()}</span>
  </div>}
  {c.hm&&c.hm!=="N/A"&&<div style={{display:"flex",alignItems:"center",gap:3}}>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>LAST TIME</span>
- <span style={{...M,fontSize:8,fontWeight:600,color:c.hm.startsWith("+")?G:R}}>{c.hm}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>LAST TIME</span>
+ <span style={{...M,fontSize:13,fontWeight:600,color:c.hm.startsWith("+")?G:R}}>{c.hm}</span>
  </div>}
  {dte!==null&&dte<=14&&<div style={{display:"flex",alignItems:"center",gap:3}}>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>URGENCY</span>
- <span style={{...M,fontSize:8,fontWeight:600,color:dte<=3?"#E8643A":dte<=7?Y:"#7E91E8"}}>{dte<=3?"IMMINENT":dte<=7?"THIS WEEK":"SOON"}</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>URGENCY</span>
+ <span style={{...M,fontSize:13,fontWeight:600,color:dte<=3?"#E8643A":dte<=7?Y:"#7E91E8"}}>{dte<=3?"IMMINENT":dte<=7?"THIS WEEK":"SOON"}</span>
  </div>}
  {dte!==null&&c.iv==="high"&&<div style={{display:"flex",alignItems:"center",gap:3}}>
- <span style={{...M,fontSize:7,color:"#9A8F82"}}>IV CRUSH</span>
- <span style={{...M,fontSize:8,fontWeight:600,color:"#B266FF"}}>-{Math.round(stock.options.ivRank*0.4)}pts est</span>
+ <span style={{...M,fontSize:12,color:"#9A8F82"}}>IV CRUSH</span>
+ <span style={{...M,fontSize:13,fontWeight:600,color:"#B266FF"}}>-{Math.round(stock.options.ivRank*0.4)}pts est</span>
  </div>}
  </div>
  </div>);})}
@@ -6724,25 +6724,25 @@ portfolioView==="snapshot"&&<>
  if(mo!==undefined){const dt=new Date(2026,mo,parseInt(dm[2]));const dte=Math.ceil((dt-TD)/(1000*60*60*24));
  if(dte>=0&&dte<=7)upcoming.push({t,e:c.e,dte,i:c.i});}}});});
  return upcoming.length>1?(<div style={{marginTop:10,background:"#24103A",border:"1px solid #B266FF33",borderRadius:5,padding:10}}>
- <div style={{...M,fontSize:8,textTransform:"uppercase",letterSpacing:1,color:"#B266FF",fontWeight:600,marginBottom:4}}>⚡ Confluence Alert — {upcoming.length} events this week</div>
- <div style={{...M,fontSize:10,color:"#D6CDB6",lineHeight:1.5}}>
+ <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1,color:"#B266FF",fontWeight:600,marginBottom:4}}>⚡ Confluence Alert — {upcoming.length} events this week</div>
+ <div style={{...M,fontSize:15,color:"#D6CDB6",lineHeight:1.5}}>
  {upcoming.map(u=>`${u.t}: ${u.e} (${u.dte===0?"today":`${u.dte}d`})`).join(" • ")}
  </div>
- <div style={{...M,fontSize:9,color:"#B266FF",marginTop:4}}>Multiple catalysts = correlated moves. Size down individual positions, widen stops.</div>
+ <div style={{...M,fontSize:14,color:"#B266FF",marginTop:4}}>Multiple catalysts = correlated moves. Size down individual positions, widen stops.</div>
  </div>):null;
  })()}
  </div>)}
  </>)}
 
- <div style={{marginTop:20,paddingTop:8,borderTop:"1px solid #2C2433",...M,fontSize:7,color:"#9A8F82",lineHeight:1.6}}>
+ <div style={{marginTop:20,paddingTop:8,borderTop:"1px solid #2C2433",...M,fontSize:12,color:"#9A8F82",lineHeight:1.6}}>
  <div style={{marginBottom:6}}>
  <strong style={{color:"#B8AE92"}}>VERIFICATION LEGEND:</strong> <span style={{color:"#3DBFA8"}}>✓</span> = Web-verified within last 7 days · <span style={{color:"#FFBF00"}}>⚠</span> = Estimated/needs verification · <strong>PT</strong>=Price Targets · <strong>TECH</strong>=Technicals (MAs, fibs, RSI) · <strong>OPT</strong>=Options (IV, max pain, flow) · <strong>FUND</strong>=Fundamentals story
  </div>
  <div style={{marginBottom:6}}>
- <strong style={{color:"#B8AE92"}}>WHAT'S TRUSTED:</strong> Prices &amp; shares (from your brokerage screenshots) · Earnings dates · Support levels · Active risks. <strong style={{color:"#B8AE92"}}>WHAT'S ESTIMATED:</strong> Options IV/Max Pain (20/22 unverified) · Technicals MAs/fibs (all estimated based on rally trajectory, not chart-pulled) · FwdP/E and EV/EBITDA in Rel Value tab · Market cap displayed.
+ {(globalThis.__ADE_LIVE__||{}).legend||""}
  </div>
  <div>
- ADE INVESTMENTS — PORTFOLIO COMMAND CENTER v6 — {tickers.length} tickers, {Object.values(allItems).reduce((a,b)=>a+b.length,0)} signals — Sep 3, 2026 — Not investment advice
+ ADE INVESTMENTS — PORTFOLIO COMMAND CENTER v6 — {tickers.length} tickers, {Object.values(allItems).reduce((a,b)=>a+b.length,0)} signals — ADE text from {(globalThis.__ADE_LIVE__||{}).adeDate||"n/a"}; numbers live — Not investment advice
  </div>
  </div>
  </div>

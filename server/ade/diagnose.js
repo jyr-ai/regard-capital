@@ -11,9 +11,11 @@ import { summary as provenanceSummary } from './provenance.js'
 import { raw } from './yahoo.js'
 
 const HOUR = 3600_000
-const FIELDS = ['avgPT', 'highPT', 'lowPT', 'consensus', 'fwdPE', 'mktCap', 'sector', 'earningsDate', 'ytd', 'yr1', 'options', 'scores']
+const FIELDS = ['avgPT', 'highPT', 'lowPT', 'consensus', 'fwdPE', 'rateSens', 'mktCap', 'sector', 'earningsDate', 'ytd', 'yr1', 'options', 'scores']
+// A forward P/E that is null with a stated reason ("n/a, loss-making") is an answer, not a gap.
+const covered = (snap, f) => snap[f] != null || (f === 'fwdPE' && snap.fwdPENote != null)
 
-export async function runDiagnostics({ yahoo, store, adeTickers, published = {}, env = process.env, now = new Date(), probe = 'AAPL', live = true }) {
+export async function runDiagnostics({ yahoo, store, adeTickers, published = {}, adeAsOf = null, nasdaq = null, env = process.env, now = new Date(), probe = 'AAPL', live = true }) {
   const stages = []
   const stage = async (id, name, fn) => {
     const t0 = Date.now()
@@ -53,6 +55,18 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
       if (o.maxPain == null || o.atmIV == null) throw new Error('chain parsed but max pain / ATM IV missing')
       return { detail: `max pain ${o.maxPain} (${o.maxPainExp}), ATM IV ${o.atmIV}%, put/call ${o.pcRatio}` }
     })
+    if (nasdaq) {
+      await stage('nasdaq.estimates', `Nasdaq consensus EPS (${probe}), the forward P/E fallback`, async () => {
+        try {
+          const rows = await nasdaq.yearlyEps(probe)
+          const next = rows.find(r => r.end >= now) ?? rows.at(-1)
+          if (!next) throw new Error('no fiscal-year rows')
+          return { detail: `FY ${next.fiscalEnd} consensus EPS ${next.eps}, ${next.analysts ?? '?'} analysts` }
+        } catch (e) {
+          return { warn: `${e.message}: tickers Yahoo has no forward EPS for will show n/a instead of a Nasdaq-based P/E` }
+        }
+      })
+    }
     if (chart && summary) {
       await stage('snapshot.build', 'Indicators, support levels and ADE score', async () => {
         const snap = buildSnapshot({ symbol: probe, candles: chart.candles, meta: chart.meta, summary }, { now })
@@ -102,6 +116,26 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
     return { detail: what }
   })
 
+  // The macro strip (S&P, VIX, 10-year yield, CPI, Fed funds) refreshed with the tickers.
+  await stage('macro', 'Macro strip (Yahoo indices, NY Fed, BLS)', async () => {
+    const m = await store.get('ade:macro').catch(() => null)
+    if (!m) return { warn: "no macro strip stored: ADE's own hand-typed macro text is still on the page. NY Fed or BLS may be blocking this host, or no refresh has run yet." }
+    const down = (m.sources ?? []).filter(x => !x.ok)
+    const bits = [m.vix != null && `VIX ${m.vix}`, m.tnx != null && `10Y ${m.tnx}%`, m.cpi != null && `CPI ${m.cpi}% (${m.cpiMonth})`, m.fedFunds != null && `fed funds ${m.fedFunds}%`].filter(Boolean)
+    const age = m.asOf ? (now - new Date(m.asOf)) / (24 * HOUR) : null
+    if (down.length) return { warn: `${down.map(x => `${x.name}: ${x.error}`).join('; ')}. Those fields show n/a.` }
+    if (age != null && age > 5) return { warn: `macro closes are ${age.toFixed(1)} days old` }
+    return { detail: `${bits.join(', ')}; closes ${m.macroDate}` }
+  })
+
+  // ADE's own prose (news, theses, risk cards, market themes) is not refreshed by us: it changes when ADE publishes.
+  await stage('ade.text', "ADE's written analysis", async () => {
+    if (!adeAsOf) return { warn: 'unknown publish date' }
+    const days = (now - new Date(`${adeAsOf}T12:00:00Z`)) / (24 * HOUR)
+    const what = `published ${adeAsOf}, ${Math.max(0, Math.round(days))} day${Math.round(days) === 1 ? '' : 's'} old; it updates when ADE publishes (sync checks every 6 hours)`
+    return days > 4 ? { warn: `${what}. The numbers beside it are live, the words are not.` } : { detail: what }
+  })
+
   const coverage = { tickers: {}, fields: {} }
   await stage('snapshots', 'Stored snapshots for ADE\'s tickers', async () => {
     let have = 0
@@ -115,7 +149,7 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
       if (ageDays > 4) stale.push(`${ticker} (${ageDays.toFixed(0)}d)`)
       const was = published[ticker]?.price
       if (was && Math.abs(snap.price - was) / was > 0.35) diverged.push(`${ticker} ${snap.price} vs ADE ${was}`)
-      coverage.tickers[ticker] = Object.fromEntries(FIELDS.map(f => [f, snap[f] != null]))
+      coverage.tickers[ticker] = Object.fromEntries(FIELDS.map(f => [f, covered(snap, f)]))
     }
     for (const f of FIELDS) {
       const present = Object.values(coverage.tickers).filter(Boolean)

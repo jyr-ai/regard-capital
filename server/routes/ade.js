@@ -1,13 +1,14 @@
 import express from 'express'
 import { createAdeService } from '../ade/service.js'
 import { createProse } from '../ade/prose.js'
+import { createNasdaq } from '../ade/nasdaq.js'
 import { YahooError, createYahoo } from '../ade/yahoo.js'
 import { createStore } from '../lib/store.js'
 import { setAddedHoldings } from '../../adapters/feeds.js'
 
 let service
 export function getAdeService() {
-  service ??= createAdeService({ store: createStore(), yahoo: createYahoo(), prose: createProse() })
+  service ??= createAdeService({ store: createStore(), yahoo: createYahoo(), prose: createProse(), nasdaq: createNasdaq(), fetchImpl: fetch })
   return service
 }
 export const setAdeService = s => { service = s } // tests

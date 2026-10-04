@@ -92,6 +92,33 @@ export function applyColorMap(text, colors) {
   return { text: out, unmapped }
 }
 
+// Rescales the font sizes ADE hard-codes (6-14px, readable only on a large monitor). `sizes` maps old px to
+// new px; a literal not in the map is left alone and reported. Only literals in a `fontSize:` expression
+// are touched, and in a ternary only the branch values (`fontSize:a===5?14:11` leaves the 5 alone).
+// A text box with a fixed pixel width grows with its text, or the bigger text is cut off: in a style
+// object that has both `fontSize:N` and `width:W` (or `minWidth`), W is multiplied by new/old, and the
+// px columns of a `gridTemplateColumns` are multiplied by `gridFactor`.
+export function applyFontScale(text, sizes, gridFactor = 1) {
+  const unmapped = new Map()
+  const widened = text.replace(/\{[^{}]*\}/g, obj => {
+    const size = /\bfontSize:(\d+(?:\.\d+)?)(?![\d.?:])/.exec(obj)
+    if (!size || sizes[size[1]] == null) return obj
+    const ratio = sizes[size[1]] / Number(size[1])
+    return obj.replace(/(?<![\w.])(width|minWidth):(\d+(?:\.\d+)?)(?![\d.%])/g, (m, key, w) => `${key}:${Math.round(Number(w) * ratio)}`)
+  })
+  const out = widened.replace(/fontSize:([^,}]*)/g, (whole, expr) => {
+    const scaled = expr.replace(/(^|[?:])(\d+(?:\.\d+)?)(?![\d.])/g, (m, lead, num) => {
+      if (sizes[num] == null) { unmapped.set(num, (unmapped.get(num) ?? 0) + 1); return m }
+      return `${lead}${sizes[num]}`
+    })
+    return `fontSize:${scaled}`
+  })
+  // Fixed-pixel grid columns (ADE's portfolio table) hold text too: widen them by the same kind of factor.
+  const gridded = gridFactor === 1 ? out : out.replace(/gridTemplateColumns:"([^"]*)"/g, (whole, cols) =>
+    `gridTemplateColumns:"${cols.replace(/(\d+(?:\.\d+)?)px/g, (m, n) => `${Math.round(Number(n) * gridFactor)}px`)}"`)
+  return { text: gridded, unmapped }
+}
+
 // Returns a list of warning strings. Strict find/replace transforms throw on a count
 // mismatch; `optional` ones and colour maps warn instead.
 export function applyTransforms(destDir, transforms = [], baseDir = ROOT) {
@@ -107,6 +134,10 @@ export function applyTransforms(destDir, transforms = [], baseDir = ROOT) {
       for (const [colour, n] of [...res.unmapped].sort((a, b) => b[1] - a[1])) {
         warnings.push(`unmapped colour ${colour} (${n} use${n === 1 ? '' : 's'}) in ${t.file}: add it to ${t.map}`)
       }
+      text = res.text
+    } else if (t.type === 'fontScale') {
+      const res = applyFontScale(text, t.sizes, t.gridFactor)
+      for (const [size, n] of [...res.unmapped].sort((a, b) => b[1] - a[1])) warnings.push(`unscaled font size ${size}px (${n} use${n === 1 ? '' : 's'}) in ${t.file}: add it to the fontScale map`)
       text = res.text
     } else if (t.type === 'regex') {
       const re = new RegExp(t.find, `${t.flags ?? ''}g`)
