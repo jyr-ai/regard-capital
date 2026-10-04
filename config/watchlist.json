@@ -1,0 +1,17 @@
+{
+  "$comment": "Default Monitor watchlist until Phase 2 (ADE book) and Phase 4 (uploaded holdings) feed it. News is searched by company name; bare tickers like AG match unrelated companies.",
+  "holdings": [
+    { "ticker": "NVDA", "name": "Nvidia" },
+    { "ticker": "MU", "name": "Micron" },
+    { "ticker": "TSM", "name": "TSMC" },
+    { "ticker": "ASML", "name": "ASML" },
+    { "ticker": "AVGO", "name": "Broadcom" },
+    { "ticker": "AMZN", "name": "Amazon" },
+    { "ticker": "GOOGL", "name": "Alphabet" },
+    { "ticker": "CCJ", "name": "Cameco" },
+    { "ticker": "AG", "name": "First Majestic Silver" },
+    { "ticker": "CDE", "name": "Coeur Mining" },
+    { "ticker": "VST", "name": "Vistra" },
+    { "ticker": "APD", "name": "Air Products" }
+  ]
+}

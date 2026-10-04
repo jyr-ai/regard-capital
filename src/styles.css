@@ -1,0 +1,128 @@
+/* Afrofuturismo Digital: global layer. Component colours come from src/theme;
+   these variables mirror them for plain-CSS decoration. */
+:root {
+  --obsidian: #0d0d0d;
+  --page: #100e12;
+  --card: #17131a;
+  --border: #2c2433;
+  --hi: #f4eedf;
+  --mid: #b8ae92;
+  --low: #8f8478;
+  --gold: #e6a817;
+  --amber: #ffbf00;
+  --purple: #6a0dad;
+  --violet: #8f00ff;
+  --teal: #014d4e;
+  --sand: #c2b280;
+  --radius: 12px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-sans: 'Josefin Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--obsidian);
+  color: var(--hi);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { min-height: 100dvh; }
+
+a { color: var(--gold); }
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Kente-inspired band: interlocking stripes in gold, purple and teal. */
+.kente {
+  background-color: #120d16;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(230,168,23,.16) 0 6px, transparent 6px 22px, rgba(106,13,173,.32) 22px 30px, transparent 30px 44px),
+    repeating-linear-gradient(0deg, rgba(1,77,78,.55) 0 4px, transparent 4px 18px);
+}
+
+/* Cosmic star field for the hero band. Static: no animation on data screens. */
+.starfield {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1px 1px at 12% 30%, rgba(244,238,223,.7), transparent 60%),
+    radial-gradient(1px 1px at 38% 72%, rgba(244,238,223,.5), transparent 60%),
+    radial-gradient(1.5px 1.5px at 64% 18%, rgba(230,168,23,.8), transparent 60%),
+    radial-gradient(1px 1px at 82% 56%, rgba(244,238,223,.6), transparent 60%),
+    radial-gradient(1px 1px at 92% 12%, rgba(178,102,255,.7), transparent 60%),
+    radial-gradient(ellipse 70% 120% at 85% 0%, rgba(106,13,173,.35), transparent 70%),
+    radial-gradient(ellipse 60% 100% at 0% 100%, rgba(1,77,78,.45), transparent 70%),
+    var(--page);
+}
+
+/* Entry motion: fade + 16px rise, 540ms, staggered by --i (120ms per item). */
+.rise {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: rise 540ms var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 120ms);
+}
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+.lift { transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out); }
+.lift:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1e1924 0%, #2a2231 50%, #1e1924 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Asymmetric two-column grid (the design system rules out 3 equal columns). */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .container { padding: 0 1rem; }
+}
+
+.sticky-desktop { position: sticky; top: 84px; }
+@media (max-width: 768px) { .sticky-desktop { position: static; } }
+
+/* LiveNewsPanel (vendored) is a flex column whose video area is flex: 1; it needs a sized parent. */
+.live-panel { height: clamp(360px, 36vw, 480px); }
+.live-panel > * { height: 100%; }
+@media (max-width: 768px) { .live-panel { height: 340px; } }
+
+.main-nav { display: flex; gap: 4px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+@media (max-width: 768px) {
+  /* Nav drops to its own full-width, horizontally scrolling row under the logo. */
+  .main-nav { order: 3; flex-basis: 100%; margin: 0 -1rem; padding: 0 0.5rem; }
+  .logout { margin-left: auto; }
+}

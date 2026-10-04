@@ -1,0 +1,99 @@
+{
+  "$comment": "Whitelist of upstream files mirrored into upstream/<name>/. Only sync/pull.mjs writes there. Each transform must match exactly `count` times or the sync fails.",
+  "repos": {
+    "unredacted": {
+      "url": "https://github.com/jyr-ai/UNREDACTED",
+      "ref": "main",
+      "enabled": true,
+      "license": "AGPL-3.0",
+      "include": [
+        "LICENSE",
+        "server/services/rssFeed.js",
+        "server/routes/liveStreams.js",
+        "src/components/LiveNewsPanel.jsx",
+        "src/components/ErrorBoundary.jsx",
+        "src/components/ui/Band.jsx",
+        "src/components/ui/Card.jsx",
+        "src/components/ui/CardTitle.jsx",
+        "src/components/ui/SourceFooter.jsx",
+        "src/components/ui/Legend.jsx",
+        "src/components/ui/ChartTooltip.jsx",
+        "src/theme/index.js",
+        "src/theme/tokens.js",
+        "src/theme/dark.js"
+      ],
+      "exclude": [],
+      "transforms": [
+        {
+          "file": "src/components/LiveNewsPanel.jsx",
+          "find": "const ORANGE = '#FF8000';",
+          "replace": "const ORANGE = '#E6A817';",
+          "count": 1
+        }
+      ]
+    },
+    "ade": {
+      "url": "https://github.com/adayo22-byte/ADE-INVESTMENTS",
+      "ref": "main",
+      "tokenEnv": "ADE_READ_TOKEN",
+      "enabled": false,
+      "$enabled": "Phase 2. Waiting on the repo owner's permission (no LICENSE upstream).",
+      "include": [
+        "src/ade-portfolio-v6.jsx",
+        ".claude/skills/ade-*/**",
+        "docs/ADE-*.md",
+        "docs/METHODOLOGY.md",
+        "tools/render_check.cjs",
+        "tools/healthcheck.cjs",
+        "tools/rank.py",
+        "tools/scrub_positions.py",
+        "tools/private_terms.sha256"
+      ],
+      "exclude": [],
+      "transforms": []
+    },
+    "jians": {
+      "url": "https://github.com/jyr-ai/Jians_finance",
+      "ref": "main",
+      "enabled": false,
+      "$enabled": "Phase 3.",
+      "include": [
+        ".claude/skills/fisher-stock-screen/**",
+        ".claude/skills/swing-biotech-screen/**",
+        ".claude/agents/dd-fact-checker.md",
+        "fisher_metrics/**",
+        "stock_technicals/**",
+        "swing_trader/**",
+        "run_fisher_metrics.py",
+        "run_technicals.py",
+        "master-rankings.md",
+        "conftest.py",
+        "tests/test_fisher_metrics.py",
+        "tests/test_stock_technicals.py",
+        "tests/test_swing_*.py"
+      ],
+      "exclude": [
+        ".mcp.json",
+        "swing_trader/backtest/**",
+        "**/__pycache__/**"
+      ],
+      "transforms": []
+    },
+    "facai": {
+      "url": "https://github.com/jyr-ai/facai",
+      "ref": "feat-personal",
+      "enabled": false,
+      "$enabled": "Phase 4. The portfolio advisor lives on feat-personal, not the default branch.",
+      "license": "Apache-2.0",
+      "include": [
+        "LICENSE",
+        "NOTICE",
+        "frontend/src/lib/fidelity-csv-parser.ts",
+        "python/valuecell/agents/portfolio_advisor/prompts.py",
+        "python/valuecell/agents/portfolio_advisor/valuation.py"
+      ],
+      "exclude": [],
+      "transforms": []
+    }
+  }
+}
