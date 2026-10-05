@@ -118,6 +118,32 @@ describe('missing live values show as n/a', () => {
   }, 60_000)
 })
 
+describe('the verdict gauge points at the verdict', () => {
+  // ADE drew the needle with angle = score/200*180 - 90, so +16 (AVOID) pointed at the green end.
+  // The arc is red | yellow | pale green | green, left to right: the needle must sit in the arc zone of its own signal.
+  const ZONE = { AVOID: [120, 180], TRIM: [120, 180], HOLD: [90, 120], BUY: [60, 90], 'STRONG BUY': [0, 60] }
+
+  it('sits in the red zone for AVOID/TRIM, yellow for HOLD, green for BUY and STRONG BUY, for every ticker', async () => {
+    applyLive({ ...(await liveFor(BOOK())), refreshedAt: NOW.toISOString(), macro: null })
+    const seen = new Set()
+    const bad = []
+    for (const t of BOOK()) {
+      const view = render(React.createElement(Boundary, null, React.createElement(App)))
+      fireEvent.click(screen.getAllByText(t, { exact: true })[0])
+      const svg = [...view.container.querySelectorAll('svg')].find(s => s.getAttribute('viewBox') === '0 0 110 62')
+      const line = svg.querySelector('line')
+      const signal = svg.nextElementSibling.textContent.trim()
+      const angle = (Math.atan2(55 - Number(line.getAttribute('y2')), Number(line.getAttribute('x2')) - 55) * 180) / Math.PI
+      seen.add(signal)
+      const [lo, hi] = ZONE[signal]
+      if (!(angle >= lo - 0.5 && angle <= hi + 0.5)) bad.push(`${t} ${signal}: needle at ${angle.toFixed(0)} deg, expected ${lo}-${hi}`)
+      view.unmount()
+    }
+    expect(bad).toEqual([])
+    expect(seen.size).toBeGreaterThanOrEqual(3) // the book spans several signals, so this is not vacuous
+  }, 60_000)
+})
+
 describe('every ADE view renders', () => {
   it('for every ticker, with the data ADE published', () => {
     expect(BOOK().length).toBeGreaterThanOrEqual(10)
