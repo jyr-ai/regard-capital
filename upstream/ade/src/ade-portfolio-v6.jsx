@@ -5490,9 +5490,9 @@ portfolioView==="snapshot"&&<>
  </div>}
  </div>
  {/* WATERFALL */}
- <div style={{background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:10,overflow:"hidden"}}>
+ <div style={{gridColumn:"1 / -1",background:"#17131A",border:"1px solid #2C2433",borderRadius:6,padding:10,overflow:"hidden"}}>
  <div style={{...M,fontSize:13,textTransform:"uppercase",letterSpacing:1.5,color:"#9A8F82",fontWeight:600,marginBottom:4}}>Contributions</div>
- <div style={{maxHeight:175,overflowY:"auto"}}>
+ <div style={{maxHeight:230,overflowY:"auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(375px,1fr))",columnGap:28}}>
  {sig.contribs.map(c=>(<div key={activeTicker+"-c-"+c.id} style={{display:"flex",alignItems:"center",gap:3,marginBottom:1.5}}>
  <span style={{...M,fontSize:11,color:"#9A8F82",width:183,flexShrink:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.headline}</span>
  <div style={{flex:1,height:4,background:"#241C2B",borderRadius:2,position:"relative",overflow:"hidden"}}>
