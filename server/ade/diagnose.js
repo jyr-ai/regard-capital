@@ -15,7 +15,7 @@ const FIELDS = ['avgPT', 'highPT', 'lowPT', 'consensus', 'fwdPE', 'rateSens', 'm
 // A forward P/E that is null with a stated reason ("n/a, loss-making") is an answer, not a gap.
 const covered = (snap, f) => snap[f] != null || (f === 'fwdPE' && snap.fwdPENote != null)
 
-export async function runDiagnostics({ yahoo, store, adeTickers, published = {}, adeAsOf = null, nasdaq = null, env = process.env, now = new Date(), probe = 'AAPL', live = true }) {
+export async function runDiagnostics({ yahoo, store, adeTickers, published = {}, adeAsOf = null, nasdaq = null, intel = null, env = process.env, now = new Date(), probe = 'AAPL', live = true }) {
   const stages = []
   const stage = async (id, name, fn) => {
     const t0 = Date.now()
@@ -127,6 +127,16 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
     if (age != null && age > 5) return { warn: `macro closes are ${age.toFixed(1)} days old` }
     return { detail: `${bits.join(', ')}; closes ${m.macroDate}` }
   })
+
+  // The Claude-written intel for the 9 tabs (intel.js), refreshed by the scheduled intel job.
+  if (intel) {
+    await stage('intel', 'Intel for the 9 tabs (RSS headlines + Claude)', async () => {
+      if (!intel.llm.configured) return { warn: "no Anthropic API key (Settings, or ANTHROPIC_API_KEY): the tabs show ADE's last published text" }
+      const what = `${intel.fresh}/${intel.total} tickers written in the last 20 h (key from ${intel.llm.source === 'user' ? 'Settings' : 'ANTHROPIC_API_KEY'})`
+      if (intel.fresh === 0) return { warn: `${what}. Run the intel job: the "Refresh intel" button or .github/workflows/refresh-intel.yml` }
+      return intel.fresh < intel.total ? { warn: what } : { detail: what }
+    })
+  }
 
   // ADE's own prose (news, theses, risk cards, market themes) is not refreshed by us: it changes when ADE publishes.
   await stage('ade.text', "ADE's written analysis", async () => {

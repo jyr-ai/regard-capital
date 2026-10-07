@@ -1,21 +1,29 @@
 import express from 'express'
-import { createAdeService } from '../ade/service.js'
-import { createProse } from '../ade/prose.js'
+import { WatchlistError, createAdeService } from '../ade/service.js'
+import { createLlm } from '../ade/llm.js'
+import { createNews } from '../ade/news.js'
 import { createNasdaq } from '../ade/nasdaq.js'
 import { YahooError, createYahoo } from '../ade/yahoo.js'
 import { createStore } from '../lib/store.js'
 import { setAddedHoldings } from '../../adapters/feeds.js'
 
 let service
+let llm
+function getLlm() {
+  llm ??= createLlm({ store: createStore() })
+  return llm
+}
 export function getAdeService() {
-  service ??= createAdeService({ store: createStore(), yahoo: createYahoo(), prose: createProse(), nasdaq: createNasdaq(), fetchImpl: fetch })
+  service ??= createAdeService({ store: createStore(), yahoo: createYahoo(), nasdaq: createNasdaq(), fetchImpl: fetch, news: createNews(), llm: getLlm() })
   return service
 }
 export const setAdeService = s => { service = s } // tests
+export const setLlm = l => { llm = l } // tests
 
 const router = express.Router()
 
 function fail(res, err) {
+  if (err instanceof WatchlistError || err?.expose) return res.status(err.status ?? 500).json({ error: err.message })
   if (err instanceof YahooError) return res.status(err.status && err.status < 600 ? err.status : 502).json({ error: err.message })
   console.error('[ade]', err)
   return res.status(500).json({ error: 'internal error' })
@@ -25,9 +33,9 @@ function fail(res, err) {
 const adds = []
 const ADDS_PER_10_MIN = 12
 
-router.get('/live', async (_req, res) => {
+router.get('/live', async (req, res) => {
   try {
-    res.json(await getAdeService().live())
+    res.json(await getAdeService().live(req.profile))
   } catch (err) {
     fail(res, err)
   }
@@ -58,7 +66,7 @@ router.post('/tickers', express.json({ limit: '1kb' }), async (req, res) => {
   adds.push(Date.now())
   try {
     const svc = getAdeService()
-    const added = await svc.addTicker(req.body?.ticker)
+    const added = await svc.addTicker(req.body?.ticker, req.profile)
     setAddedHoldings(await svc.addedHoldings()) // Monitor watchlist picks it up now, not in 15 s
     res.status(201).json(added)
   } catch (err) {
@@ -69,15 +77,39 @@ router.post('/tickers', express.json({ limit: '1kb' }), async (req, res) => {
 router.delete('/tickers/:ticker', async (req, res) => {
   try {
     const svc = getAdeService()
-    await svc.removeTicker(req.params.ticker)
+    const r = await svc.removeTicker(req.params.ticker, req.profile)
     setAddedHoldings(await svc.addedHoldings())
-    res.json({ ok: true })
+    res.json({ ok: true, ...r })
   } catch (err) {
     fail(res, err)
   }
 })
 
+// Intel (Claude-written text for the 9 tabs). The page calls POST /intel/refresh in a loop until
+// `remaining` is 0; each call rewrites a few tickers so it fits one serverless invocation.
+router.get('/intel', async (_req, res) => {
+  try { res.json(await getAdeService().intelStatus()) } catch (err) { fail(res, err) }
+})
+router.post('/intel/refresh', express.json({ limit: '2kb' }), async (req, res) => {
+  try {
+    const symbols = Array.isArray(req.body?.symbols) ? req.body.symbols.slice(0, 10) : null
+    res.json(await getAdeService().refreshIntel({ limit: 3, symbols, force: Boolean(req.body?.force && symbols) }))
+  } catch (err) { fail(res, err) }
+})
+
 export default router
+
+// Settings: the Anthropic API key that powers intel. Stored encrypted; never sent back (only its last 4).
+export const settingsRouter = express.Router()
+settingsRouter.get('/', async (_req, res) => {
+  try { res.json({ anthropic: await getLlm().status() }) } catch (err) { fail(res, err) }
+})
+settingsRouter.put('/anthropic', express.json({ limit: '2kb' }), async (req, res) => {
+  try { res.json({ anthropic: await getLlm().save(req.body?.key) }) } catch (err) { fail(res, err) }
+})
+settingsRouter.delete('/anthropic', async (_req, res) => {
+  try { res.json({ anthropic: await getLlm().clear() }) } catch (err) { fail(res, err) }
+})
 
 // Vercel cron (GET, Authorization: Bearer $CRON_SECRET). Mounted outside the session gate.
 export const cronRouter = express.Router()
@@ -88,6 +120,18 @@ cronRouter.get('/refresh-ade', async (req, res) => {
     const meta = await getAdeService().refreshAll()
     // A non-2xx makes the failed run visible in Vercel's cron log instead of passing silently.
     res.status(meta.ok ? 200 : 502).json(meta)
+  } catch (err) {
+    fail(res, err)
+  }
+})
+
+// Scheduled intel job (.github/workflows/refresh-intel.yml calls this in a loop). Each call rewrites up to
+// 3 tickers' intel, stalest first, and reports how many are still due.
+cronRouter.post('/refresh-intel', async (req, res) => {
+  const secret = process.env.CRON_SECRET
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) return res.status(401).json({ error: 'unauthorized' })
+  try {
+    res.json(await getAdeService().refreshIntel({ limit: 3 }))
   } catch (err) {
     fail(res, err)
   }

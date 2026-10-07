@@ -1,9 +1,9 @@
 import express from 'express'
-import { COOKIE_NAME, SESSION_TTL_MS, createSession, passwordMatches } from '../lib/session.js'
+import { COOKIE_NAME, SESSION_TTL_MS, createSession, normalizeProfile, passwordMatches } from '../lib/session.js'
 
 const router = express.Router()
 
-// POST /api/auth/login  { password }
+// POST /api/auth/login  { password, profile? }  profile = watchlist name (default "default")
 router.post('/login', express.json({ limit: '2kb' }), async (req, res) => {
   const { APP_PASSWORD, SESSION_SECRET } = process.env
   if (!APP_PASSWORD || !SESSION_SECRET) {
@@ -12,14 +12,15 @@ router.post('/login', express.json({ limit: '2kb' }), async (req, res) => {
   if (!(await passwordMatches(req.body?.password, APP_PASSWORD))) {
     return res.status(401).json({ error: 'wrong password' })
   }
-  res.cookie(COOKIE_NAME, await createSession(SESSION_SECRET), {
+  const profile = normalizeProfile(req.body?.profile)
+  res.cookie(COOKIE_NAME, await createSession(SESSION_SECRET, Date.now(), profile), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: SESSION_TTL_MS,
     path: '/',
   })
-  res.json({ ok: true })
+  res.json({ ok: true, profile })
 })
 
 // POST /api/auth/logout

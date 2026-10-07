@@ -68,6 +68,32 @@ GET /api/ade/live → the ADE System page → adapters/ade-overlay.js writes sna
 - **Storage:** Upstash Redis when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are set. Without them it falls back to server memory, which resets on every cold start (the page says so).
 - **Yahoo has no official API.** These are the unofficial endpoints the yfinance library uses; they can change or rate-limit without notice. A failed ticker is reported on the page and keeps its previous snapshot.
 
+### Intel: the written half of the 9 tabs (news, playbooks, risks, story, catalysts)
+
+ADE no longer publishes new text, so the app writes it. Ratings (STRONG BUY to AVOID) do **not** need this: they are ADE's formula over live Yahoo data and update with the daily refresh.
+
+```
+.github/workflows/refresh-intel.yml   weekdays 22:15 UTC, after the market-data refresh (or "Refresh intel" on the page)
+  → POST /api/cron/refresh-intel  (Bearer CRON_SECRET), in a loop: each call writes up to 3 tickers, stalest first
+      server/ade/news.js    Google News + Yahoo Finance RSS for the ticker (free, no key), last 30 days, deduplicated
+      server/ade/intel.js   Claude (claude-opus-5-5, low effort, refusal fallback on) gets the live numbers + numbered headlines
+                            → structured output: news picks, story, 4 drivers, bull/bear, 4 risks, falsifier, watchlist, catalysts, 5-horizon playbook
+      → ade:intel:<SYM> → /api/ade/live → adapters/ade-overlay.js applyIntel() replaces ADE's text for that ticker
+```
+
+- **Traceable by construction.** A news item points at a headline by index; its title, source, link and date are copied from the feed, never from the model. A catalyst needs a cited headline or the Yahoo earnings date, and past dates are dropped. The prompt allows numbers only from the live data or a headline, and treats headlines as untrusted text.
+- **The key.** Settings on the ADE System page (encrypted in the store with `SESSION_SECRET`, checked against Anthropic first, only its last 4 characters are ever shown), else `ANTHROPIC_API_KEY`. Cost is roughly a few cents per ticker per run.
+- **Scheduling.** Needs repository secrets `APP_URL` and `CRON_SECRET`. Vercel's own cron is not used for this because one function call can write only about 3 tickers inside the 60-second limit.
+- **New tickers** get their intel right after they are added (when a key is set).
+
+### Watchlists
+
+The password is shared; the optional **watchlist name** typed at sign-in picks a watchlist (`ade:wl:<name>`). Each watchlist keeps the tickers it added and the ADE tickers it hid (hidden, not deleted: ADE's data is upstream and shared). The daily refresh covers every watchlist's tickers. The Monitor news watchlist is shared by everyone.
+
+### Glossary
+
+The **Glossary** button explains every metric on the page (what it is, how to use it, why it matters), with an Investopedia search link and a second source checked to resolve (SEC Investor.gov, CFI, Cboe, Wikipedia). Data: `src/data/glossary.js`.
+
 ### Is the pipeline actually working? (diagnostics)
 
 ```bash
@@ -76,7 +102,7 @@ npm run diagnose -- --no-refresh      # check only what the store already holds
 curl -H "Authorization: Bearer $CRON_SECRET" https://<your-app>/api/cron/diagnose   # 200 ok/degraded, 503 down: point an uptime monitor at it
 ```
 
-The same report is on the ADE System page under **Data pipeline**. Stages: Yahoo candles, Yahoo crumb + fundamentals, Yahoo option chains, Nasdaq consensus EPS, indicator/score build, store round-trip, environment, last refresh, macro strip (each source), age of ADE's written text, and per-ticker snapshot freshness and field coverage (individual gaps are named, e.g. `TSM.consensus`). On Vercel an in-memory store or a missing secret is a **failure**; locally it is a warning.
+The same report is on the ADE System page under **Data pipeline**. Stages: Yahoo candles, Yahoo crumb + fundamentals, Yahoo option chains, Nasdaq consensus EPS, intel freshness and key, indicator/score build, store round-trip, environment, last refresh, macro strip (each source), age of ADE's written text, and per-ticker snapshot freshness and field coverage (individual gaps are named, e.g. `TSM.consensus`). On Vercel an in-memory store or a missing secret is a **failure**; locally it is a warning.
 
 Every dashboard field is classified in `server/ade/provenance.js` as live, computed, generated, Claude-drafted, stale (ADE's published value), not shown, or placeholder. A test fails if a field exists that is not classified, or if the overlay touches a field that is not live or computed, so made-up data cannot slip in unlabelled. No placeholder numbers are left: a value no source has is n/a. A failed cron refresh answers 502, so it shows as failed in Vercel's cron log; a refresh where most tickers failed is retried on the next page load (at most every 5 minutes) instead of counting as fresh for a day.
 
@@ -98,8 +124,9 @@ node sync/pull.mjs --repo ade --from ../ADE-INVESTMENTS   # sync from a local ch
    - `APP_PASSWORD` and `SESSION_SECRET` (`openssl rand -hex 32`).
    - `CRON_SECRET` (any long random string; Vercel Cron sends it as a bearer token to the daily refresh).
    - Add the **Upstash Redis** integration (Storage tab). It sets the two `UPSTASH_REDIS_REST_*` variables for you.
-   - Optional: `ANTHROPIC_API_KEY` (narratives for added tickers), `YOUTUBE_API_KEY`.
+   - Optional: `ANTHROPIC_API_KEY` (or enter the key in the page's Settings) for the intel job, `YOUTUBE_API_KEY`.
 2. GitHub secrets:
+   - `APP_URL` and `CRON_SECRET`: for the daily intel job (`refresh-intel.yml`).
    - `SYNC_BOT_TOKEN`: a fine-grained personal access token for jyr-ai. It needs Contents read on UNREDACTED, Jians_finance and facai, plus Contents and Pull requests write on regard-capital. The default `GITHUB_TOKEN` cannot be used here, because PRs it opens do not trigger CI. ADE-INVESTMENTS is public and needs no token.
 3. GitHub settings:
    - Allow auto-merge.

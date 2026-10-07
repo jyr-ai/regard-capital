@@ -270,6 +270,34 @@
         },
         {
           "file": "src/ade-portfolio-v6.jsx",
+          "find": "{/* WATERFALL */}\n <div style={{background:\"#17131A\",border:\"1px solid #2C2433\",borderRadius:6,padding:10,overflow:\"hidden\"}}>",
+          "replace": "{/* WATERFALL */}\n <div style={{gridColumn:\"1 / -1\",background:\"#17131A\",border:\"1px solid #2C2433\",borderRadius:6,padding:10,overflow:\"hidden\"}}>",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "<div style={{maxHeight:175,overflowY:\"auto\"}}>\n {sig.contribs.map(",
+          "replace": "<div style={{maxHeight:230,overflowY:\"auto\",display:\"grid\",gridTemplateColumns:\"repeat(auto-fit,minmax(250px,1fr))\",columnGap:28}}>\n {sig.contribs.map(",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "<a href={`https://www.google.com/search?q=${encodeURIComponent(activeTicker+\" \"+n.headline+\" \"+n.source)}`}",
+          "replace": "<a href={n.url||`https://www.google.com/search?q=${encodeURIComponent(activeTicker+\" \"+n.headline+\" \"+n.source)}`}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "const[activeTicker,setActiveTicker]=useState(\"MU\");",
+          "replace": "const[activeTicker,setActiveTicker]=useState(()=>S.MU?\"MU\":Object.keys(S)[0]);",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
           "type": "fontScale",
           "sizes": {
             "5": 10,

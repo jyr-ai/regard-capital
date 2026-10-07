@@ -7,13 +7,15 @@
 //   npm run diagnose -- --json
 import { adeWatchlist } from '../adapters/ade.js'
 import { createAdeService } from '../server/ade/service.js'
+import { createLlm } from '../server/ade/llm.js'
 import { createNasdaq } from '../server/ade/nasdaq.js'
+import { createNews } from '../server/ade/news.js'
 import { createYahoo } from '../server/ade/yahoo.js'
 import { createStore } from '../server/lib/store.js'
 
 const args = new Set(process.argv.slice(2))
 const store = createStore()
-const svc = createAdeService({ store, yahoo: createYahoo(), adeTickers: adeWatchlist, nasdaq: createNasdaq(), fetchImpl: fetch })
+const svc = createAdeService({ store, yahoo: createYahoo(), adeTickers: adeWatchlist, nasdaq: createNasdaq(), fetchImpl: fetch, news: createNews(), llm: createLlm({ store }) })
 
 if (!args.has('--no-refresh')) {
   const t0 = Date.now()

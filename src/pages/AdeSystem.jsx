@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
-import { BookOpen, Plus, RefreshCw, X } from 'lucide-react'
+import { BookOpen, BookText, ListChecks, Newspaper, Plus, RefreshCw, Settings, X } from 'lucide-react'
 import { BANDS, adeAsOf } from '../../adapters/ade.js'
 import { ErrorBoundary } from '../../adapters/ui.js'
 import PipelineStatus from '../components/PipelineStatus.jsx'
@@ -8,6 +8,9 @@ import { FONT_MONO, RADIUS } from '../theme/tokens.js'
 
 // The ADE dashboard is ~6.7k lines of JSX; it and the docs drawer load only when needed.
 const AdeGuide = lazy(() => import('../components/AdeGuide.jsx'))
+const Glossary = lazy(() => import('../components/Glossary.jsx'))
+const SettingsPanel = lazy(() => import('../components/SettingsPanel.jsx'))
+const WatchlistPanel = lazy(() => import('../components/WatchlistPanel.jsx'))
 
 async function api(path, init) {
   const res = await fetch(path, init)
@@ -16,7 +19,7 @@ async function api(path, init) {
     throw new Error('signed out')
   }
   const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
+  if (!res.ok) throw Object.assign(new Error(body.error || `HTTP ${res.status}`), { status: res.status })
   return body
 }
 
@@ -49,7 +52,7 @@ function AddTicker({ onAdded, busyLabel }) {
       const r = await api('/api/ade/tickers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ticker }) })
       setValue('')
       setStatus({ kind: 'ok', r })
-      await onAdded()
+      await onAdded(r)
     } catch (err) {
       setStatus({ kind: 'error', message: err.message })
     }
@@ -99,8 +102,7 @@ function AddTicker({ onAdded, busyLabel }) {
         {status.kind === 'error' && <span style={{ color: t.down }}>{status.message}</span>}
         {status.kind === 'ok' && (
           <span style={{ color: t.mid }}>
-            <strong style={{ color: t.hi }}>{status.r.symbol}</strong> added: {status.r.band ?? 'unscored'}{status.r.score != null ? ` (${status.r.score})` : ''}.
-            {status.r.proseNote ? ` ${status.r.proseNote}` : ' Narrative drafted by Claude, unverified.'}
+            <strong style={{ color: t.hi }}>{status.r.symbol}</strong> {status.r.restored ? 'is back on your watchlist' : 'added'}: {status.r.band ?? 'unscored'}{status.r.score != null ? ` (${status.r.score})` : ''}.
           </span>
         )}
       </div>
@@ -110,7 +112,9 @@ function AddTicker({ onAdded, busyLabel }) {
 
 export default function AdeSystem() {
   const t = useTheme()
-  const [guideOpen, setGuideOpen] = useState(false)
+  const [drawer, setDrawer] = useState(null) // 'guide' | 'glossary' | 'settings' | 'watchlist'
+  const [intel, setIntel] = useState({ status: 'idle' }) // the intel job run from this page
+  const [intelInfo, setIntelInfo] = useState(null) // GET /api/ade/intel: key configured, how many tickers are fresh
   const [mod, setMod] = useState(null) // the lazily loaded dashboard module
   const [live, setLive] = useState({ status: 'loading' })
   const [version, setVersion] = useState(0) // bumped to remount the dashboard after data changes
@@ -135,6 +139,37 @@ export default function AdeSystem() {
 
   useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const loadIntelInfo = useCallback(() => api('/api/ade/intel').then(setIntelInfo, () => setIntelInfo(null)), [])
+  useEffect(() => { loadIntelInfo() }, [loadIntelInfo])
+
+  // Runs the intel job from the browser: each call rewrites up to 3 tickers (one serverless invocation),
+  // so loop until nothing is due. `symbols` limits it to tickers just added.
+  const refreshIntel = useCallback(async (symbols = null) => {
+    const label = symbols ? `Scouring news for ${symbols.join(', ')}…` : 'Reading the news and rewriting intel…'
+    setIntel({ status: 'running', message: label, done: 0 })
+    let done = 0
+    const failed = []
+    try {
+      for (let round = 0; round < 15; round++) {
+        const r = await api('/api/ade/intel/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(symbols ? { symbols, force: true } : {}) })
+        done += r.done.length
+        failed.push(...r.failed)
+        setIntel({ status: 'running', message: `${label} ${done} written${r.remaining ? `, ${r.remaining} to go` : ''}.`, done })
+        if (!r.remaining || symbols || (!r.done.length && !r.failed.length)) break
+      }
+      setIntel({ status: failed.length ? 'error' : 'ok', message: `${done} ticker${done === 1 ? '' : 's'} updated from today’s headlines.${failed.length ? ` Failed: ${failed.map(f => `${f.symbol} (${f.error})`).join('; ')}` : ''}` })
+      await load()
+    } catch (err) {
+      if (err.status === 412) { setIntel({ status: 'error', message: err.message }); setDrawer('settings') } else setIntel({ status: 'error', message: err.message })
+    }
+    loadIntelInfo()
+  }, [load, loadIntelInfo])
+
+  const onAdded = useCallback(async r => {
+    await load()
+    if (r?.intelNeeded && intelInfo?.llm?.configured) refreshIntel([r.symbol])
+  }, [load, refreshIntel, intelInfo])
+
   const data = live.data
   const AdeApp = mod?.default
   const added = data ? Object.entries(data.added) : []
@@ -146,9 +181,18 @@ export default function AdeSystem() {
     await api(`/api/ade/tickers/${encodeURIComponent(sym)}`, { method: 'DELETE' })
     await load()
   }
+  const restore = async sym => {
+    await api('/api/ade/tickers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ticker: sym }) })
+    await load()
+  }
+  const nameOf = sym => mod?.adeData.S[sym]?.name ?? data?.overlay?.[sym]?.name ?? sym
+  const bookList = mod ? Object.keys(mod.adeData.S).filter(k => !mod.adeData.S[k].userAdded).map(sym => ({ sym, name: nameOf(sym) })) : []
+  const hiddenList = (data?.hidden ?? []).map(sym => ({ sym, name: data?.overlay?.[sym]?.name ?? sym }))
+  const pill = { display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 14px', background: t.card, border: `1px solid ${t.border}`, borderRadius: 999, color: t.mid, fontFamily: 'inherit', fontSize: 16, cursor: 'pointer' }
 
   const notes = []
   if (live.status === 'error') notes.push({ key: 'err', down: true })
+  if (intel.message) notes.push({ key: 'intel', text: intel.message, tone: intel.status })
   if (data?.failed.length > 0) notes.push({ key: 'failed', text: `Could not refresh: ${data.failed.map(f => f.symbol).join(', ')}.` })
   if (data?.store === 'memory') notes.push({ key: 'memory', text: 'Added tickers are in temporary server memory and reset on restart: connect Upstash Redis to keep them.' })
 
@@ -166,9 +210,9 @@ export default function AdeSystem() {
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 12, flex: '1 1 480px', justifyContent: 'flex-end' }}>
-              <AddTicker onAdded={load} busyLabel={s => `Pulling ${s} from Yahoo, scoring it, and drafting the narrative…`} />
+              <AddTicker onAdded={onAdded} busyLabel={s => `Pulling ${s} from Yahoo and scoring it…`} />
               <button
-                onClick={() => setGuideOpen(true)}
+                onClick={() => setDrawer('guide')}
                 className="lift"
                 style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 16px', fontFamily: 'inherit', fontSize: 16, fontWeight: 600, color: t.accent, background: 'transparent', border: `1.5px solid ${t.accent}`, borderRadius: RADIUS, cursor: 'pointer', whiteSpace: 'nowrap' }}
               >
@@ -187,6 +231,14 @@ export default function AdeSystem() {
               ))}
             </ul>
             <PipelineStatus live={data} />
+            <button onClick={() => (intelInfo?.llm?.configured ? refreshIntel() : setDrawer('settings'))} disabled={intel.status === 'running'} style={pill}
+              title="Read today's headlines for every ticker and rewrite the Intel, Playbook, risks, story and catalysts">
+              <Newspaper size={16} aria-hidden="true" />
+              {intel.status === 'running' ? 'Refreshing intel…' : intelInfo?.llm?.configured ? `Intel ${intelInfo.fresh}/${intelInfo.total} fresh · Refresh` : 'Intel: add API key'}
+            </button>
+            <button onClick={() => setDrawer('watchlist')} style={pill}><ListChecks size={16} aria-hidden="true" /> Watchlist{data?.profile && data.profile !== 'default' ? `: ${data.profile}` : ''}{hiddenList.length ? ` (${hiddenList.length} hidden)` : ''}</button>
+            <button onClick={() => setDrawer('glossary')} style={pill}><BookText size={16} aria-hidden="true" /> Glossary</button>
+            <button onClick={() => setDrawer('settings')} style={{ ...pill, padding: '6px 10px' }} aria-label="Settings" title="Settings: Anthropic API key"><Settings size={18} aria-hidden="true" /></button>
             {added.map(([sym, { block }]) => (
               <span key={sym} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 4px 3px 14px', background: t.card, border: `1px solid ${t.border}`, borderRadius: 999, fontSize: 16 }}>
                 <span style={{ fontFamily: FONT_MONO, fontWeight: 700 }}>{sym}</span>
@@ -210,7 +262,7 @@ export default function AdeSystem() {
               </button>
             </div>
           ) : (
-            <p key={n.key} style={{ margin: '0 0 4px', color: t.mid, fontSize: 16 }}>{n.text}</p>
+            <p key={n.key} role={n.key === 'intel' ? 'status' : undefined} style={{ margin: '0 0 4px', color: n.tone === 'error' ? t.down : n.tone === 'ok' ? t.up : t.mid, fontSize: 16 }}>{n.text}</p>
           ))}
         </div>
       )}
@@ -223,11 +275,15 @@ export default function AdeSystem() {
         </ErrorBoundary>
       </div>
 
-      {guideOpen && (
-        <Suspense fallback={null}>
-          <AdeGuide onClose={() => setGuideOpen(false)} />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        {drawer === 'guide' && <AdeGuide onClose={() => setDrawer(null)} />}
+        {drawer === 'glossary' && <Glossary onClose={() => setDrawer(null)} onOpenMethodology={() => setDrawer('guide')} />}
+        {drawer === 'settings' && <SettingsPanel onClose={() => setDrawer(null)} onChange={loadIntelInfo} />}
+        {drawer === 'watchlist' && (
+          <WatchlistPanel profile={data?.profile ?? 'default'} book={bookList} added={added.map(([sym]) => ({ sym, name: nameOf(sym) }))} hidden={hiddenList}
+            onRemove={remove} onRestore={restore} onClose={() => setDrawer(null)} />
+        )}
+      </Suspense>
     </>
   )
 }

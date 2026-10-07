@@ -121,12 +121,13 @@ export function overlayMacro(MACRO, live) {
 
 // The line the dashboard prints above every ticker. It replaces ADE's hand-written "REFRESHED <date>" banner,
 // which describes one day's numbers and is wrong the day after.
-export function liveBanner({ refreshedAt, macroLive, adeAsOf, now = new Date() }) {
+export function liveBanner({ refreshedAt, macroLive, adeAsOf, intelAt = null, now = new Date() }) {
   const t = new Date(refreshedAt)
   const when = Number.isNaN(+t) ? 'recently' : t.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
   const days = adeAsOf ? Math.max(0, Math.round((now - new Date(`${adeAsOf}T12:00:00Z`)) / 864e5)) : null
   const written = adeAsOf ? `ADE's written analysis (news, theses, risk cards) is from ${new Date(`${adeAsOf}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}${days > 0 ? `, ${days} day${days === 1 ? '' : 's'} ago` : ''}` : "ADE's written analysis is as ADE last published it"
-  return `LIVE · Yahoo Finance · refreshed ${when}. Prices, targets, support, indicators, options and scores update every weekday after the US close${macroLive ? '; so does the macro strip' : ''}. ${written}.`
+  const intel = intelAt ? `News, playbooks, risks and catalysts written by Claude from dated headlines, ${new Date(intelAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : null
+  return `LIVE · Yahoo Finance · refreshed ${when}. Prices, targets, support, indicators, options and scores update every weekday after the US close${macroLive ? '; so does the macro strip' : ''}. ${intel ?? written}.`
 }
 
 // Replaces ADE's "WHAT'S TRUSTED / WHAT'S ESTIMATED" footer, which describes the owner's brokerage
@@ -134,11 +135,56 @@ export function liveBanner({ refreshedAt, macroLive, adeAsOf, now = new Date() }
 export const LEGEND = 'LIVE from Yahoo Finance, refreshed every weekday after the US close: prices, 52-week range, analyst targets and consensus, '
   + 'forward P/E (Nasdaq consensus when Yahoo has none), market cap, next earnings date, support levels, moving averages, RSI and MACD, volume, '
   + 'options (max pain, implied volatility, put/call, skew, implied move), rate sensitivity, verdict scores and the macro strip. IV rank and percentile fill in after 20 daily readings. '
-  + 'WRITTEN BY ADE, NOT REFRESHED HERE: news, theses, playbooks, risk cards, peer tables, catalysts, fundamentals stories and market themes. They change when ADE publishes.'
+  + 'WRITTEN BY CLAUDE from dated Google News and Yahoo Finance headlines plus the live numbers, refreshed daily: news (each item names its source and date), playbooks, risk cards, '
+  + 'the fundamentals story and catalysts. A ticker with no intel yet shows ADE\'s last published text. NOT REFRESHED: ADE\'s peer tables and market themes. '
+  + 'Ratings (STRONG BUY to AVOID) are ADE\'s formula over live data, never written by a model.'
+
+// Claude-written intel (server/ade/intel.js) replaces ADE's hand-written text for one ticker: news feed,
+// playbook, risk cards, fundamentals story and catalysts. Numbers, ratings and ADE's peer tables are untouched.
+export function applyIntel(block, rec) {
+  if (!rec?.intel) return false
+  const it = rec.intel
+  const date = stamp(rec.generatedAt)
+  block.news = it.news.map(n => ({ ...n }))
+  block.playbook = it.playbook.map(p => ({ ...p }))
+  block.catalysts = it.catalysts.map(c => ({ ...c }))
+  block.fund ??= {}
+  const f = block.fund
+  f.story = it.story
+  f.drivers = it.drivers
+  f.bull = { ...(f.bull ?? {}), path: it.bull }
+  f.bear = { ...(f.bear ?? {}), path: it.bear }
+  f.killer = it.killer
+  f.activeRisks = it.risks
+  f.watchlist = it.watchlist
+  f.thesisDate = date
+  f.riskDate = date
+  block.fundDate = date
+  block.fundVerified = false // model-written: the FUND badge stays amber
+  block.intelBy = `Claude, from ${rec.headlineCount} dated headlines, ${date}`
+  return true
+}
+
+// Tickers a profile hid are moved out of S (and back when shown again), so every view, count and the
+// catalyst calendar skip them. ADE's data itself is never changed.
+const HIDDEN = { S: {}, LC: {}, order: null }
+function applyHidden(S, LC, hidden = []) {
+  HIDDEN.order ??= Object.keys(S).filter(k => !S[k].userAdded) // ADE's own tab order, captured before anything is hidden
+  let restored = false
+  for (const k of Object.keys(HIDDEN.S)) if (!hidden.includes(k)) { S[k] = HIDDEN.S[k]; LC[k] = HIDDEN.LC[k]; delete HIDDEN.S[k]; delete HIDDEN.LC[k]; restored = true }
+  if (restored) {
+    // Re-insert in ADE's order (object keys keep insertion order, and the dashboard's tabs follow it).
+    const rank = k => { const i = HIDDEN.order.indexOf(k); return i < 0 ? Infinity : i }
+    for (const k of Object.keys(S).sort((a, b) => rank(a) - rank(b))) { const v = S[k]; delete S[k]; S[k] = v }
+  }
+  for (const k of hidden) if (S[k] && !S[k].userAdded) { HIDDEN.S[k] = S[k]; HIDDEN.LC[k] = LC[k]; delete S[k]; delete LC[k] }
+  return Object.keys(HIDDEN.S)
+}
 
 // S and LC are ADE's module-level objects (exported by a sync transform). Idempotent: tickers
 // injected by an earlier call that are no longer in `live.added` are removed first.
 export function applyLive(S, LC, live, { MACRO = null, adeAsOf = null, now = new Date() } = {}) {
+  applyHidden(S, LC, []) // restore every hidden ticker first, so it is overlaid with today's data too
   for (const k of Object.keys(S)) if (S[k].userAdded && !(k in live.added)) { delete S[k]; delete LC[k] }
   const overlaid = []
   const missing = []
@@ -155,12 +201,16 @@ export function applyLive(S, LC, live, { MACRO = null, adeAsOf = null, now = new
     LC[sym] = snapshot.price
     injected.push(sym)
   }
+  const withIntel = []
+  for (const [sym, rec] of Object.entries(live.intel ?? {})) if (S[sym] && applyIntel(S[sym], rec)) withIntel.push(sym)
+  const hidden = applyHidden(S, LC, live.hidden)
+  const intelAt = withIntel.length ? Object.values(live.intel).map(r => r.generatedAt).sort().at(-1) : null
   const macro = MACRO ? overlayMacro(MACRO, live.macro) : false
   // Read by the dashboard through a sync transform (globalThis, so the app does not import a name ADE could rename).
   globalThis.__ADE_LIVE__ = {
-    banner: liveBanner({ refreshedAt: live.refreshedAt, macroLive: macro, adeAsOf, now }),
+    banner: liveBanner({ refreshedAt: live.refreshedAt, macroLive: macro, adeAsOf, intelAt, now }),
     legend: LEGEND,
     adeDate: adeAsOf ? new Date(`${adeAsOf}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null,
   }
-  return { overlaid, missing, injected, macro }
+  return { overlaid, missing, injected, macro, hidden, withIntel }
 }

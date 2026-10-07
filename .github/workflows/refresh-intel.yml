@@ -1,0 +1,43 @@
+# Daily intel job: rewrites the Intel, Playbook, risk cards, Fundamentals story and Catalysts for every
+# ADE System ticker from that day's RSS headlines (server/ade/intel.js), using the app's Anthropic key
+# (Settings, or ANTHROPIC_API_KEY on Vercel). The app does the work; this job only calls it in batches,
+# because one serverless call can write about 3 tickers within Vercel's 60-second limit.
+#
+# Needs two repository secrets: APP_URL (https://your-app.vercel.app) and CRON_SECRET (same value as on Vercel).
+name: refresh-intel
+
+on:
+  schedule:
+    - cron: '15 22 * * 1-5' # weekdays 22:15 UTC, after the 21:30 market-data refresh
+  workflow_dispatch: {}
+
+concurrency:
+  group: refresh-intel
+  cancel-in-progress: false
+
+jobs:
+  intel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Write intel in batches until nothing is due
+        shell: bash
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${APP_URL:-}" ] || [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::Set the APP_URL and CRON_SECRET repository secrets."; exit 1
+          fi
+          total=0; failures=0
+          for round in $(seq 1 20); do
+            body=$(curl -sS --fail-with-body -X POST -H "Authorization: Bearer $CRON_SECRET" --max-time 70 "$APP_URL/api/cron/refresh-intel") || { echo "::error::$body"; exit 1; }
+            done=$(echo "$body" | jq '.done | length'); failed=$(echo "$body" | jq '.failed | length'); remaining=$(echo "$body" | jq '.remaining')
+            total=$((total + done)); failures=$((failures + failed))
+            echo "round $round: wrote $done, failed $failed, remaining $remaining"
+            echo "$body" | jq -r '.failed[] | "::warning::\(.symbol): \(.error)"'
+            if [ "$remaining" -eq 0 ] || { [ "$done" -eq 0 ] && [ "$failed" -eq 0 ]; }; then break; fi
+          done
+          echo "### Intel refresh: $total tickers written, $failures failed" >> "$GITHUB_STEP_SUMMARY"
+          [ "$failures" -eq 0 ] || exit 1
