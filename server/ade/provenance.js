@@ -43,15 +43,16 @@ export const FIELDS = {
   rateSens:        { existing: 'computed', added: 'computed',    note: 'absolute correlation of daily returns with 10-year yield changes, 2y (rates.js). ADE hand-typed it; it is display-only in ADE (never in the score). null when there is too little history' },
   rateCorr:        { existing: 'computed', added: 'computed',    note: 'the signed correlation behind rateSens' },
   rateNote:        { existing: 'computed', added: 'computed',    note: 'the label the dashboard prints ("MED (-0.13 vs 10Y yield; falls when yields rise; 2y daily)")' },
-  news:            { existing: 'stale',    added: 'empty',       note: 'no news feed: ADE\'s news is hand-written; Monitor shows live headlines separately' },
+  news:            { existing: 'ai',       added: 'ai',          note: 'intel job (intel.js): items Claude picked from dated Google News / Yahoo RSS headlines; headline, source, link and date copied from the feed. ADE\'s own items until the first intel run' },
   options:         { existing: 'computed', added: 'computed',    note: 'from Yahoo option chains; IV rank/percentile null until 20 daily IV readings exist; placeholders (spot, today) when a ticker has no listed options, flagged ESTIMATED' },
   optionsDate:     { existing: 'computed', added: 'computed' },
   optionsVerified: { existing: 'computed', added: 'computed' },
   tech:            { existing: 'computed', added: 'computed',    note: 'MAs, RSI, MACD, volume, fibs, pivots, verdict score from candles' },
-  fundVerified:    { existing: 'stale',    added: 'computed',    note: 'false for added tickers: narrative is unverified' },
-  fundDate:        { existing: 'stale',    added: 'computed' },
-  fund:            { existing: 'stale',    added: 'ai',          note: 'margins/growth/ROE are live (Yahoo financialData); story, drivers, risks are Claude-drafted and unverified, or a placeholder without an API key' },
-  catalysts:       { existing: 'stale',    added: 'live',        note: "added tickers: the next earnings date only. ADE's own: hand-written; only its earnings entry follows a changed earningsDate" },
+  fundVerified:    { existing: 'computed', added: 'computed',    note: 'false once the intel job writes the story: model-written text is unverified' },
+  fundDate:        { existing: 'computed', added: 'computed',    note: 'date of the intel run (ADE\'s date before the first run)' },
+  fund:            { existing: 'ai',       added: 'ai',          note: 'story, drivers, bull/bear paths, risk cards, falsifier and watchlist written by the intel job from headlines + live numbers. Margins/growth/ROE: ADE\'s for its tickers, Yahoo for added ones' },
+  intelBy:         { existing: 'computed', added: 'computed',    note: 'which intel run wrote the text ("Claude, from 24 dated headlines, Oct 7, 2026")' },
+  catalysts:       { existing: 'ai',       added: 'ai',          note: 'intel job: dated events cited from a headline or the Yahoo earnings date; past dates dropped. Before the first run: ADE\'s own list (earnings entry follows earningsDate), or the earnings date only for added tickers' },
   peers:           { existing: 'stale',    added: 'empty' },
   // Irregular fields that exist on only 1-3 of ADE's tickers. Hand-written, not refreshed.
   consensusNote:   { existing: 'stale',    added: 'empty' },
@@ -70,7 +71,7 @@ export const FIELDS = {
   maxPainNear:     { existing: 'stale',    added: 'empty' },
   maxPainNearExp:  { existing: 'stale',    added: 'empty' },
   maxPainNearDTE:  { existing: 'stale',    added: 'empty' },
-  playbook:        { existing: 'stale',    added: 'generated',   note: 'added tickers: text templated from live numbers; ADE\'s own playbooks quote the numbers they were written with' },
+  playbook:        { existing: 'ai',       added: 'ai',          note: 'intel job: five horizons explaining the ADE band and score with the live levels. Before the first run: templated from live numbers (added) or ADE\'s own text' },
 }
 
 // Fields overlaid onto ADE's own tickers by adapters/ade-overlay.js (everything else stays as ADE published it).

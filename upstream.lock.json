@@ -3,7 +3,7 @@
     "url": "https://github.com/adayo22-byte/ADE-INVESTMENTS",
     "ref": "main",
     "sha": "df05b9354aae1278556d7b6f8fc507c306d758c6",
-    "syncedAt": "2026-10-05T01:38:40.197Z",
+    "syncedAt": "2026-10-07T05:27:18.773Z",
     "files": {
       ".claude/skills/ade-forward-looking/SKILL.md": "3409dea67f8ad77c6aba0e09ca45e9b745cedad86ec4b3e5e7d3c3aa8ecd10b8",
       ".claude/skills/ade-fundamentals/SKILL.md": "8d9c11c276f6de9e9f6d2c63c85410697bef256cb6702731da570f2ca95bd2b1",
@@ -11,7 +11,7 @@
       "docs/ADE-DATA-STRUCTURE.md": "4a11490f979d7b6cb4125d880dff93536b05ae4daed79a80535e1c30350740c0",
       "docs/ADE-REFRESH-PROTOCOL.md": "de2529e5d89f8b794361fe3b0854856ffa56a1c550db7fbd24abc82bf70ccce8",
       "docs/METHODOLOGY.md": "5379e45d08c5f51838f4e6007ab91578e1ebdad06717a4c8de7fbd99faff0e73",
-      "src/ade-portfolio-v6.jsx": "1e92ceaa681d579f846b59bc98a291a1b7e1a424c628b4447113933a26e5091f",
+      "src/ade-portfolio-v6.jsx": "473e4c8207343a8bc15fdd53ccbfad09e87a5a30eb980a0eb81ee5b4e7b75dac",
       "tools/healthcheck.cjs": "b0ea37690909444749faa8cd60e55b385524f2fd604fe67edb4291e1cf87b12c",
       "tools/private_terms.sha256": "bd37a299a571209d7cd12e41917d36436acddf554776635b8219c6ce4a3f53ca",
       "tools/rank.py": "30a6cb6accac9ee84ff28e407f2d12ec8e14ac88b478c5f120f633d690ed1c46",

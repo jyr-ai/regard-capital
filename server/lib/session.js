@@ -1,4 +1,6 @@
-// Stateless session cookie: "<expiresAtMs>.<hmac>" signed with SESSION_SECRET.
+// Stateless session cookie: "<expiresAtMs>.<profile>.<hmac>" signed with SESSION_SECRET. The profile is
+// the watchlist name given at sign-in (one shared password, a watchlist per name). Older two-part
+// cookies ("<expiresAtMs>.<hmac>") still verify, as profile "default".
 // Uses Web Crypto so the same code runs in Node (Express) and the Edge middleware.
 
 export const COOKIE_NAME = 'rc_session'
@@ -19,16 +21,29 @@ function timingSafeEqual(a, b) {
   return diff === 0
 }
 
-export async function createSession(secret, now = Date.now()) {
-  const expires = String(now + SESSION_TTL_MS)
-  return `${expires}.${await hmac(secret, expires)}`
+const PROFILE = /^[a-z0-9-]{1,32}$/
+
+// "Jian's list" -> "jians-list": the watchlist name typed at sign-in, as a store-key-safe slug.
+export function normalizeProfile(name) {
+  const p = String(name ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32)
+  return p || 'default'
 }
 
+export async function createSession(secret, now = Date.now(), profile = 'default') {
+  const expires = String(now + SESSION_TTL_MS)
+  const p = PROFILE.test(profile) ? profile : 'default'
+  return `${expires}.${p}.${await hmac(secret, `${expires}.${p}`)}`
+}
+
+// The session's profile name when valid, false otherwise.
 export async function verifySession(token, secret, now = Date.now()) {
   if (!token || !secret) return false
-  const [expires, sig] = token.split('.')
-  if (!expires || !sig || Number(expires) < now) return false
-  return timingSafeEqual(sig, await hmac(secret, expires))
+  const parts = token.split('.')
+  const [expires, profile, sig] = parts.length === 3 ? parts : [parts[0], null, parts[1]]
+  if (parts.length > 3 || !expires || !sig || Number(expires) < now) return false
+  if (profile !== null && !PROFILE.test(profile)) return false
+  const ok = timingSafeEqual(sig, await hmac(secret, profile === null ? expires : `${expires}.${profile}`))
+  return ok ? (profile ?? 'default') : false
 }
 
 export async function passwordMatches(given, expected) {

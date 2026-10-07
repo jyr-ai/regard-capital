@@ -1,7 +1,7 @@
 import express from 'express'
 import { liveStreamsRouter } from '../adapters/server.js'
 import authRouter from './routes/auth.js'
-import adeRouter, { cronRouter } from './routes/ade.js'
+import adeRouter, { cronRouter, settingsRouter } from './routes/ade.js'
 import feedRouter from './routes/feed.js'
 import { COOKIE_NAME, readCookie, verifySession } from './lib/session.js'
 
@@ -15,12 +15,15 @@ app.use('/api/cron', cronRouter) // bearer-token auth (CRON_SECRET), not the ses
 // Second line of the auth gate (the first is middleware.js at the edge).
 app.use('/api', async (req, res, next) => {
   const token = readCookie(req.headers.cookie, COOKIE_NAME)
-  if (await verifySession(token, process.env.SESSION_SECRET)) return next()
+  const profile = await verifySession(token, process.env.SESSION_SECRET)
+  if (profile) { req.profile = profile; return next() }
   res.status(401).json({ error: 'unauthorized' })
 })
 
 app.use('/api/feed', feedRouter)
 app.use('/api/ade', adeRouter)
+app.use('/api/settings', settingsRouter)
+app.get('/api/me', (req, res) => res.json({ profile: req.profile }))
 app.use('/api/live-streams', liveStreamsRouter)
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not found' }))

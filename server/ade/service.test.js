@@ -181,24 +181,120 @@ describe('addTicker', () => {
     await expect(svc.addTicker('NET')).rejects.toMatchObject({ status: 422 })
   })
 
-  it('still adds the ticker when the narrative draft fails, and says why', async () => {
-    const prose = { draft: async () => { throw new Error('the model declined to draft this one') } }
-    const { svc } = make({ prose })
-    const r = await svc.addTicker('NET')
-    expect(r.proseNote).toMatch(/declined/)
+  it('says intel is needed for a new ticker, so the page can scour the news for it', async () => {
+    const { svc } = make()
+    expect((await svc.addTicker('NET')).intelNeeded).toBe(true)
+  })
+})
+
+describe('watchlists per profile', () => {
+  it('keeps each profile\'s added tickers separate, and refreshes all of them', async () => {
+    const { svc } = make()
+    await svc.addTicker('NET', 'jian')
+    await svc.addTicker('CRWV', 'ade')
+    expect(await svc.added('jian')).toEqual(['NET'])
+    expect(await svc.added('ade')).toEqual(['CRWV'])
+    expect(Object.keys((await svc.live('jian')).added)).toEqual(['NET'])
+    const meta = await svc.refreshAll()
+    expect(meta.count).toBe(4) // MU, NVDA + both profiles' tickers
+  })
+
+  it('reads the old single list as the default profile\'s', async () => {
+    await store.set('ade:tickers', ['NET'])
+    const { svc } = make()
     expect(await svc.added()).toEqual(['NET'])
   })
 
-  it('stores the drafted narrative and shows it in the block', async () => {
-    const prose = { draft: async () => ({ story: 'Drafted story.', drivers: [], bull: 'b', bear: 'r', risks: [], killer: 'k', watchlist: [] }) }
-    const { svc } = make({ prose })
-    await svc.addTicker('NET')
-    expect((await svc.live()).added.NET.block.fund.story).toBe('Drafted story.')
+  it('hides an ADE ticker for one profile only, and shows it again when re-added', async () => {
+    const { svc } = make()
+    await svc.refreshAll()
+    expect(await svc.removeTicker('MU', 'jian')).toMatchObject({ hidden: true })
+    expect((await svc.live('jian')).hidden).toEqual(['MU'])
+    expect((await svc.live('other')).hidden).toEqual([])
+    await expect(svc.removeTicker('MU', 'jian')).rejects.toMatchObject({ status: 404 })
+    const r = await svc.addTicker('MU', 'jian')
+    expect(r).toMatchObject({ symbol: 'MU', restored: true })
+    expect((await svc.live('jian')).hidden).toEqual([])
+    await expect(svc.addTicker('MU', 'jian')).rejects.toMatchObject({ status: 409 })
   })
 
-  it('tells the user when there is no narrative key, instead of pretending', async () => {
-    const { svc } = make({ prose: null })
-    expect((await svc.addTicker('NET')).proseNote).toMatch(/ANTHROPIC_API_KEY/)
+  it('keeps shared data while another profile still tracks the ticker', async () => {
+    const { svc } = make()
+    await svc.addTicker('NET', 'a')
+    await svc.addTicker('NET', 'b')
+    await svc.removeTicker('NET', 'a')
+    expect(await store.get('ade:snap:NET')).not.toBeNull()
+    await svc.removeTicker('NET', 'b')
+    expect(await store.get('ade:snap:NET')).toBeNull()
+  })
+
+  it('caps each profile at MAX_ADDED', async () => {
+    const { svc } = make()
+    await store.set('ade:wl:jian', { added: Array.from({ length: MAX_ADDED }, (_, i) => `T${i}`), hidden: [] })
+    await expect(svc.addTicker('NET', 'jian')).rejects.toMatchObject({ status: 422 })
+    expect((await svc.addTicker('NET', 'other')).symbol).toBe('NET')
+  })
+})
+
+describe('intel', () => {
+  const headlines = [
+    { title: 'Micron raises guidance on HBM demand', source: 'Reuters', url: 'https://example.com/a', date: '2026-10-06T12:00:00.000Z' },
+    { title: 'Nvidia unveils new chip', source: 'Bloomberg', url: 'https://example.com/b', date: '2026-10-05T12:00:00.000Z' },
+  ]
+  const news = { headlines: async () => ({ items: headlines, feeds: [{ name: 'Google News', ok: true }] }) }
+  const parsed = {
+    news: [{ i: 0, detail: 'Guidance up.', sentiment: 0.7, category: 'g', weight: 8 }],
+    story: 'Story.', drivers: [{ name: 'HBM', dir: 'up', detail: 'd' }], bull: 'b', bear: 'r', killer: 'k',
+    risks: [{ sev: 'HIGH', prob: 30, risk: 'r', trigger: 't', catalyst: 'c' }], watchlist: [{ item: 'i', d: 'Q4', why: 'w' }],
+    catalysts: [], playbook: [{ h: '1 WEEK', bias: 'BUY', thesis: 't', action: 'a' }],
+  }
+  const calls = []
+  const client = { beta: { messages: { parse: async req => { calls.push(req); return { stop_reason: 'end_turn', model: 'claude-opus-5-5', parsed_output: parsed } } } } }
+  const llm = (configured = true) => ({ status: async () => ({ configured, source: configured ? 'env' : null }), client: async () => (configured ? client : null) })
+
+  it('refuses with 412 and a clear message when there is no API key', async () => {
+    const { svc } = make({ news, llm: llm(false) })
+    await svc.refreshAll()
+    await expect(svc.refreshIntel()).rejects.toMatchObject({ status: 412, message: expect.stringMatching(/API key/) })
+  })
+
+  it('writes intel in batches, stalest first, and reports what is still due', async () => {
+    const { svc } = make({ news, llm: llm() })
+    await svc.refreshAll()
+    const r = await svc.refreshIntel({ limit: 1 })
+    expect(r.done.map(d => d.symbol)).toHaveLength(1)
+    expect(r.remaining).toBe(1)
+    const r2 = await svc.refreshIntel({ limit: 3 })
+    expect(r2).toMatchObject({ remaining: 0 })
+    expect((await svc.intelStatus()).fresh).toBe(2)
+    expect(calls.at(-1)).toMatchObject({ model: 'claude-opus-5-5', fallbacks: 'default' })
+  })
+
+  it('serves the intel with live(), with the feed\'s headline, source and link (not the model\'s)', async () => {
+    const { svc } = make({ news, llm: llm() })
+    await svc.refreshAll()
+    await svc.refreshIntel({ symbols: ['MU'] })
+    const rec = (await svc.live()).intel.MU
+    expect(rec.intel.news[0]).toMatchObject({ headline: headlines[0].title, source: 'Reuters', url: 'https://example.com/a', dateStr: '2026-10-06', category: 'g' })
+    expect(rec.headlineCount).toBe(2)
+  })
+
+  it('does not rewrite fresh intel unless forced for specific tickers', async () => {
+    const { svc } = make({ news, llm: llm() })
+    await svc.refreshAll()
+    await svc.refreshIntel({ limit: 5 })
+    expect((await svc.refreshIntel()).done).toEqual([])
+    expect((await svc.refreshIntel({ symbols: ['MU'], force: true })).done.map(d => d.symbol)).toEqual(['MU'])
+  })
+
+  it('reports a failed ticker without failing the batch, and does not count it as remaining', async () => {
+    const bad = { headlines: async sym => { if (sym === 'MU') throw new Error('feeds down'); return { items: headlines, feeds: [] } } }
+    const { svc } = make({ news: bad, llm: llm() })
+    await svc.refreshAll()
+    const r = await svc.refreshIntel({ limit: 3 })
+    expect(r.failed).toEqual([{ symbol: 'MU', error: 'feeds down' }])
+    expect(r.done.map(d => d.symbol)).toEqual(['NVDA'])
+    expect(r.remaining).toBe(0)
   })
 })
 

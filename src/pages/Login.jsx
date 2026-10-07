@@ -5,6 +5,7 @@ import { FONT_MONO, RADIUS } from '../theme/tokens.js'
 export default function Login() {
   const t = useTheme()
   const [password, setPassword] = useState('')
+  const [profile, setProfile] = useState(() => { try { return localStorage.getItem('rc_profile') ?? '' } catch { return '' } })
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
 
@@ -16,12 +17,13 @@ export default function Login() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password, profile }),
       })
       if (!res.ok) {
         setError(res.status === 401 ? 'That password is not right.' : 'Sign-in is not configured on the server.')
         return
       }
+      try { localStorage.setItem('rc_profile', profile) } catch { /* private mode */ }
       const next = new URLSearchParams(window.location.search).get('next')
       window.location.assign(next && next.startsWith('/') && !next.startsWith('//') ? next : '/')
     } catch {
@@ -59,6 +61,20 @@ export default function Login() {
             background: t.inputBg, border: `1px solid ${error ? t.down : t.border}`, borderRadius: 10,
           }}
         />
+        <label htmlFor="wl" style={{ display: 'block', fontSize: 14, fontWeight: 500, margin: '16px 0 6px' }}>Watchlist name <span style={{ color: t.mid, fontWeight: 400 }}>(optional)</span></label>
+        <input
+          id="wl"
+          autoComplete="username"
+          value={profile}
+          onChange={e => setProfile(e.target.value)}
+          placeholder="default"
+          maxLength={32}
+          style={{
+            width: '100%', padding: '10px 12px', fontSize: 16, fontFamily: FONT_MONO, color: t.hi,
+            background: t.inputBg, border: `1px solid ${t.border}`, borderRadius: 10,
+          }}
+        />
+        <p style={{ margin: '6px 0 0', color: t.mid, fontSize: 13 }}>Each name keeps its own ADE watchlist. Use the same name on any device.</p>
         {error && <div id="pw-err" role="alert" style={{ color: t.down, fontSize: 14, marginTop: 6 }}>{error}</div>}
         <button
           type="submit"

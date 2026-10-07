@@ -284,6 +284,20 @@
         },
         {
           "file": "src/ade-portfolio-v6.jsx",
+          "find": "<a href={`https://www.google.com/search?q=${encodeURIComponent(activeTicker+\" \"+n.headline+\" \"+n.source)}`}",
+          "replace": "<a href={n.url||`https://www.google.com/search?q=${encodeURIComponent(activeTicker+\" \"+n.headline+\" \"+n.source)}`}",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
+          "find": "const[activeTicker,setActiveTicker]=useState(\"MU\");",
+          "replace": "const[activeTicker,setActiveTicker]=useState(()=>S.MU?\"MU\":Object.keys(S)[0]);",
+          "count": 1,
+          "optional": true
+        },
+        {
+          "file": "src/ade-portfolio-v6.jsx",
           "type": "fontScale",
           "sizes": {
             "5": 10,

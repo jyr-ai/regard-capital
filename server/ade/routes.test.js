@@ -44,7 +44,7 @@ describe('POST /api/ade/tickers', () => {
   it('201 with the score for a valid ticker', async () => {
     const res = await authed(request(app).post('/api/ade/tickers').send({ ticker: 'NET' })).expect(201)
     expect(res.body).toMatchObject({ symbol: 'NET' })
-    expect(res.body.proseNote).toMatch(/ANTHROPIC_API_KEY/)
+    expect(res.body.intelNeeded).toBe(true) // the page then asks for intel (news + Claude) for it
   })
 
   it('400 for a malformed ticker, 404 for one Yahoo does not know, 409 for a duplicate', async () => {

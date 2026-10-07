@@ -112,7 +112,7 @@ describe('missing live values show as n/a', () => {
     // the Exit Map needs the owner's share counts, which ADE scrubs from its repo: it would show WEIGHT NaN%
     expect(text.MARKET).not.toMatch(/EXIT MAP|NaN%/i)
     expect(text.INTEL).toContain('LIVE · Yahoo Finance · refreshed')
-    expect(text.INTEL).toContain('WRITTEN BY ADE, NOT REFRESHED HERE')
+    expect(text.INTEL).toContain('WRITTEN BY CLAUDE from dated Google News and Yahoo Finance headlines')
     expect(text.INTEL).toMatch(/numbers live — Not investment advice/)
     for (const t of Object.values(text)) expect(t).not.toMatch(/BOTH CATALYSTS PAID|REFRESHED Sep 3|Fed hiked 25bp|brokerage screenshots|all estimated based on rally/i)
   }, 60_000)
@@ -154,6 +154,28 @@ describe('every ADE view renders', () => {
     applyLive(await liveFor(BOOK()))
     expect(crashes(BOOK())).toEqual([])
   }, 120_000)
+
+  it('for every ticker, with Claude-written intel applied (news, playbook, risks, story, catalysts)', async () => {
+    const { toAde } = await import('../../server/ade/intel.js')
+    const live = await liveFor(BOOK())
+    const headlines = [{ title: 'Fresh headline', source: 'Reuters', url: 'https://example.com/x', date: '2026-10-04T10:00:00.000Z' }]
+    const parsed = {
+      news: [{ i: 0, detail: 'd', sentiment: 0.4, category: 'g', weight: 6 }], story: 'Story.', drivers: [{ name: 'n', dir: 'up', detail: 'd' }],
+      bull: 'b', bear: 'r', killer: 'k', risks: [{ sev: 'MED', prob: 20, risk: 'r', trigger: 't', catalyst: 'c' }], watchlist: [{ item: 'i', d: 'Q4', why: 'w' }],
+      catalysts: [], playbook: [{ h: '1 WEEK', bias: 'b', thesis: 't', action: 'a' }],
+    }
+    const intel = Object.fromEntries(Object.entries(live.overlay).map(([sym, snap]) => [sym, { generatedAt: NOW.toISOString(), headlineCount: 1, intel: toAde(parsed, { headlines, snap, today: NOW }) }]))
+    applyLive({ ...live, refreshedAt: NOW.toISOString(), intel })
+    expect(crashes(BOOK())).toEqual([])
+  }, 120_000)
+
+  it('when a profile hides tickers, including MU (ADE opens on MU by default)', async () => {
+    applyLive({ ...(await liveFor(BOOK())), refreshedAt: NOW.toISOString(), hidden: ['MU', 'NVDA'] })
+    expect(adeData.S.MU).toBeUndefined()
+    expect(crashes(BOOK().slice(0, 3))).toEqual([])
+    applyLive({ ...(await liveFor(BOOK())), refreshedAt: NOW.toISOString(), hidden: [] })
+    expect(adeData.S.MU).toBeDefined()
+  }, 60_000)
 
   it('for a ticker the user added', async () => {
     applyLive({ overlay: {}, added: (await liveFor(['NEWCO'])).added })
