@@ -166,7 +166,7 @@ export default function SettingsPanel({ onClose, onChange }) {
           </p>
         )}
         <p style={{ marginTop: 10, color: t.low, fontSize: 13 }}>
-          Obtain an API key from Google AI Studio at <a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer">aistudio.google.com</a>.
+          Obtain an API key from Google AI Studio at <a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer">aistudio.google.com</a>. Free Tier keys have a limit of 5 requests/min; the intel job automatically paces requests and retries with backoff.
         </p>
       </div>
 

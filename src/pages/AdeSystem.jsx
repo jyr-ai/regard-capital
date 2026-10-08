@@ -156,11 +156,28 @@ export default function AdeSystem() {
         failed.push(...r.failed)
         setIntel({ status: 'running', message: `${label} ${done} written${r.remaining ? `, ${r.remaining} to go` : ''}.`, done })
         if (!r.remaining || symbols || (!r.done.length && !r.failed.length)) break
+        if (r.remaining) await new Promise(res => setTimeout(res, 2000))
       }
-      setIntel({ status: failed.length ? 'error' : 'ok', message: `${done} ticker${done === 1 ? '' : 's'} updated from today’s headlines.${failed.length ? ` Failed: ${failed.map(f => `${f.symbol} (${f.error})`).join('; ')}` : ''}` })
+      const formatErr = err => {
+        const s = String(err || '')
+        if (s.includes('RESOURCE_EXHAUSTED') || s.includes('rate limit') || s.includes('quota') || s.includes('429')) {
+          return 'Free tier quota (5 req/min)'
+        }
+        return s.length > 60 ? `${s.slice(0, 57)}…` : s
+      }
+      const failText = failed.length ? ` Failed: ${failed.map(f => `${f.symbol} (${formatErr(f.error)})`).join('; ')}` : ''
+      setIntel({ status: failed.length && !done ? 'error' : 'ok', message: `${done} ticker${done === 1 ? '' : 's'} updated from today’s headlines.${failText}` })
       await load()
     } catch (err) {
-      if (err.status === 412) { setIntel({ status: 'error', message: err.message }); setDrawer('settings') } else setIntel({ status: 'error', message: err.message })
+      const msg = String(err?.message || '')
+      if (err.status === 412) {
+        setIntel({ status: 'error', message: msg })
+        setDrawer('settings')
+      } else if (msg.includes('RESOURCE_EXHAUSTED') || msg.includes('rate limit') || msg.includes('quota') || msg.includes('429')) {
+        setIntel({ status: 'error', message: 'Gemini rate limit reached (Free tier: 5 requests/min). Please wait 30 seconds before refreshing.' })
+      } else {
+        setIntel({ status: 'error', message: msg.length > 100 ? `${msg.slice(0, 97)}…` : msg })
+      }
     }
     loadIntelInfo()
   }, [load, loadIntelInfo])

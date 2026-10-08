@@ -142,15 +142,37 @@ export async function writeIntel({ client, snap, headlines, feeds = [], today = 
 
   if (client?.provider === 'gemini' || (client?.models && !client?.beta)) {
     const prompt = `Today is ${iso(today)}.\n\nLIVE DATA:\n${JSON.stringify(factsFor(snap), null, 1)}\n\nHEADLINES (${headlines.length}):\n${list || '(none found)'}\n\nNews categories: ${Object.entries(CATEGORIES).map(([k, v]) => `${k}=${v}`).join(', ')}.\n\nGenerate structured research JSON for this company adhering strictly to the schema:\n{\n  "news": [{"i": 0, "detail": "...", "sentiment": 0.5, "category": "a", "weight": 5}],\n  "story": "...",\n  "drivers": [{"name": "...", "dir": "up", "detail": "..."}],\n  "bull": "...",\n  "bear": "...",\n  "killer": "...",\n  "risks": [{"sev": "HIGH", "prob": 50, "risk": "...", "trigger": "...", "catalyst": "..."}],\n  "watchlist": [{"item": "...", "d": "...", "why": "..."}],\n  "catalysts": [{"date": "YYYY-MM-DD", "event": "...", "impact": "high", "source": 0}],\n  "playbook": [{"h": "1 WEEK", "bias": "...", "thesis": "...", "action": "..."}]\n}`
-    const res = await client.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM,
-        responseMimeType: 'application/json',
-      },
-    })
-    const text = res.text?.trim()
+    
+    let res = null
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        res = await client.models.generateContent({
+          model: GEMINI_MODEL,
+          contents: prompt,
+          config: {
+            systemInstruction: SYSTEM,
+            responseMimeType: 'application/json',
+          },
+        })
+        break
+      } catch (err) {
+        const msg = String(err?.message || '')
+        const isRateLimit = err?.status === 429 || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('429') || msg.includes('QuotaFailure')
+        if (isRateLimit && attempt < 2) {
+          let waitMs = 12000
+          const match = msg.match(/"retryDelay":\s*"(\d+)s"/)
+          if (match) waitMs = (Number.parseInt(match[1], 10) + 1) * 1000
+          await new Promise(r => setTimeout(r, waitMs))
+          continue
+        }
+        if (isRateLimit) {
+          throw new Error('Gemini Free Tier rate limit reached (5 requests/min quota). Please wait a moment before refreshing again.')
+        }
+        throw err
+      }
+    }
+
+    const text = res?.text?.trim()
     if (!text) throw new Error('the model returned unreadable intel (empty response)')
     let parsed
     try {

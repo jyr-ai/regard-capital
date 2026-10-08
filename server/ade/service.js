@@ -275,9 +275,15 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, nasd
       .sort((a, b) => (a.generatedAt ?? '').localeCompare(b.generatedAt ?? ''))
     const batch = due.slice(0, Math.max(1, Math.min(limit, 5)))
     const done = [], failed = []
-    await Promise.all(batch.map(async t => {
-      try { const r = await intelFor(t.symbol); done.push({ symbol: t.symbol, news: r.intel.news.length, headlines: r.headlineCount }) } catch (e) { failed.push({ symbol: t.symbol, error: e.message }) }
-    }))
+    for (const t of batch) {
+      try {
+        const r = await intelFor(t.symbol)
+        done.push({ symbol: t.symbol, news: r.intel.news.length, headlines: r.headlineCount })
+        if (batch.length > 1) await new Promise(r => setTimeout(r, 1500))
+      } catch (e) {
+        failed.push({ symbol: t.symbol, error: e.message })
+      }
+    }
     // A ticker that failed stays due, but it does not count as "remaining" for this caller's loop, so one bad
     // ticker cannot keep a scheduled job spinning.
     return { done, failed, remaining: Math.max(0, due.length - batch.length) }
