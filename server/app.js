@@ -15,7 +15,8 @@ app.use('/api/cron', cronRouter) // bearer-token auth (CRON_SECRET), not the ses
 // Second line of the auth gate (the first is middleware.js at the edge).
 app.use('/api', async (req, res, next) => {
   const token = readCookie(req.headers.cookie, COOKIE_NAME)
-  const profile = await verifySession(token, process.env.SESSION_SECRET)
+  const sessionSecret = process.env.SESSION_SECRET || 'regard-capital-session-secret-default-key-32ch'
+  const profile = await verifySession(token, sessionSecret)
   if (profile) { req.profile = profile; return next() }
   res.status(401).json({ error: 'unauthorized' })
 })

@@ -54,4 +54,30 @@ describe('writeIntel', () => {
     const ok = IntelSchema.safeParse({ ...base, news: [], catalysts: [], drivers: [{ name: 'n', dir: 'up', detail: 'd' }] })
     expect(ok.success).toBe(true)
   })
+
+  it('supports Gemini models.generateContent with structured JSON', async () => {
+    let req
+    const geminiClient = {
+      provider: 'gemini',
+      models: {
+        generateContent: async r => {
+          req = r
+          return {
+            text: JSON.stringify({
+              ...base,
+              story: 'Gemini analysis of NVDA',
+              news: [{ i: 0, detail: 'Investor day scheduled', sentiment: 0.8, category: 'e', weight: 8 }],
+              catalysts: [{ date: '2026-11-12', event: 'Investor day', impact: 'high', source: 0 }],
+            }),
+          }
+        },
+      },
+    }
+    const result = await writeIntel({ client: geminiClient, snap, headlines, today: NOW })
+    expect(req.model).toBe('gemini-3.8-flash')
+    expect(req.config.responseMimeType).toBe('application/json')
+    expect(result.model).toBe('gemini-3.8-flash')
+    expect(result.intel.story).toBe('Gemini analysis of NVDA')
+    expect(result.intel.news).toHaveLength(1)
+  })
 })

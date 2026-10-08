@@ -131,3 +131,16 @@ describe('adding is rate limited', () => {
     expect(last.status).toBe(429)
   })
 })
+
+describe('settings endpoints', () => {
+  it('GET /api/settings returns anthropic and gemini statuses', async () => {
+    const res = await authed(request(app).get('/api/settings')).expect(200)
+    expect(res.body).toHaveProperty('anthropic')
+    expect(res.body).toHaveProperty('gemini')
+  })
+
+  it('rejects malformed gemini key on PUT /api/settings/gemini', async () => {
+    const res = await authed(request(app).put('/api/settings/gemini').send({ key: 'too-short' })).expect(422)
+    expect(res.body.error).toMatch(/valid Gemini API key/)
+  })
+})

@@ -100,7 +100,7 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
       if (onVercel) throw new Error(`missing ${need.join(', ')}`)
       notes.push(`not set locally: ${need.join(', ')}`)
     }
-    if (!env.ANTHROPIC_API_KEY) notes.push('no ANTHROPIC_API_KEY: added tickers get placeholder narratives')
+    if (!env.ANTHROPIC_API_KEY && !env.GEMINI_API_KEY) notes.push('no LLM API key (GEMINI_API_KEY or ANTHROPIC_API_KEY): added tickers get placeholder narratives')
     return notes.length ? { warn: notes.join('; ') } : { detail: 'all set' }
   })
 
@@ -128,11 +128,13 @@ export async function runDiagnostics({ yahoo, store, adeTickers, published = {},
     return { detail: `${bits.join(', ')}; closes ${m.macroDate}` }
   })
 
-  // The Claude-written intel for the 9 tabs (intel.js), refreshed by the scheduled intel job.
+  // The LLM-written intel for the 9 tabs (intel.js), refreshed by the scheduled intel job.
   if (intel) {
-    await stage('intel', 'Intel for the 9 tabs (RSS headlines + Claude)', async () => {
-      if (!intel.llm.configured) return { warn: "no Anthropic API key (Settings, or ANTHROPIC_API_KEY): the tabs show ADE's last published text" }
-      const what = `${intel.fresh}/${intel.total} tickers written in the last 20 h (key from ${intel.llm.source === 'user' ? 'Settings' : 'ANTHROPIC_API_KEY'})`
+    await stage('intel', 'Intel for the 9 tabs (RSS headlines + LLM)', async () => {
+      if (!intel.llm.configured) return { warn: "no LLM API key (Settings, or GEMINI_API_KEY / ANTHROPIC_API_KEY): the tabs show ADE's last published text" }
+      const providerName = intel.llm.provider === 'gemini' ? 'Gemini' : 'Claude'
+      const keySource = intel.llm.source === 'user' ? 'Settings' : (intel.llm.provider === 'gemini' ? 'GEMINI_API_KEY' : 'ANTHROPIC_API_KEY')
+      const what = `${intel.fresh}/${intel.total} tickers written in the last 20 h (${providerName} key from ${keySource})`
       if (intel.fresh === 0) return { warn: `${what}. Run the intel job: the "Refresh intel" button or .github/workflows/refresh-intel.yml` }
       return intel.fresh < intel.total ? { warn: what } : { detail: what }
     })

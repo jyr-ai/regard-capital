@@ -1,0 +1,8 @@
+{
+  "name": "Regard Capital",
+  "description": "Private research desk combining market news, live streams, and the ADE investment intelligence system with daily refreshed data.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -253,7 +253,7 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, nasd
 
   async function intelFor(sym) {
     const client = await llm?.client()
-    if (!client) throw new WatchlistError('No Anthropic API key: add one in Settings (or set ANTHROPIC_API_KEY) to write intel.', 412)
+    if (!client) throw new WatchlistError('No LLM API key: add a Gemini or Anthropic key in Settings (or set GEMINI_API_KEY / ANTHROPIC_API_KEY) to write intel.', 412)
     if (!news) throw new WatchlistError('News feeds are not configured on this server.', 503)
     const snap = await store.get(snapKey(sym))
     if (!snap) throw new WatchlistError(`${sym} has no live snapshot yet: refresh market data first.`, 409)
@@ -268,7 +268,7 @@ export function createAdeService({ store, yahoo, adeTickers = adeWatchlist, nasd
   // "Refresh intel" button both do. `symbols` restricts the run (e.g. a ticker just added).
   async function refreshIntel({ limit = 3, symbols = null, force = false } = {}) {
     const status = await intelStatus()
-    if (!status.llm.configured) throw new WatchlistError('No Anthropic API key: add one in Settings (or set ANTHROPIC_API_KEY) to write intel.', 412)
+    if (!status.llm.configured) throw new WatchlistError('No LLM API key: add a Gemini or Anthropic key in Settings (or set GEMINI_API_KEY / ANTHROPIC_API_KEY) to write intel.', 412)
     const wanted = symbols ? new Set(symbols.map(s => normalizeSymbol(s))) : null
     const due = status.tickers
       .filter(t => (!wanted || wanted.has(t.symbol)) && (force || !t.generatedAt || now() - new Date(t.generatedAt) >= INTEL_STALE_MS))

@@ -10,6 +10,7 @@ import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod'
 import { z } from 'zod'
 
 export const INTEL_MODEL = 'claude-opus-5-5'
+export const GEMINI_MODEL = 'gemini-3.8-flash'
 export const HORIZONS = ['1 WEEK', '1 MONTH', '3 MONTHS', '6 MONTHS', '1 YEAR']
 // ADE's news categories (single letters, shown as tags in its Intel tab).
 export const CATEGORIES = { a: 'analyst rating or target', e: 'earnings', g: 'guidance or management', m: 'macro or rates', p: 'product or customer', c: 'competition', v: 'valuation', t: 'price action or technicals', s: 'supply chain', k: 'legal, regulatory or other risk', x: 'other' }
@@ -135,9 +136,38 @@ export function toAde(parsed, { headlines, snap, today = new Date() }) {
   }
 }
 
-// client: an Anthropic client (llm.js). Returns the stored record, or throws.
+// client: an Anthropic or Gemini client (llm.js). Returns the stored record, or throws.
 export async function writeIntel({ client, snap, headlines, feeds = [], today = new Date() }) {
   const list = headlines.map((h, i) => `[${i}] ${h.date.slice(0, 10)} | ${h.source} | ${h.title}`).join('\n')
+
+  if (client?.provider === 'gemini' || (client?.models && !client?.beta)) {
+    const prompt = `Today is ${iso(today)}.\n\nLIVE DATA:\n${JSON.stringify(factsFor(snap), null, 1)}\n\nHEADLINES (${headlines.length}):\n${list || '(none found)'}\n\nNews categories: ${Object.entries(CATEGORIES).map(([k, v]) => `${k}=${v}`).join(', ')}.\n\nGenerate structured research JSON for this company adhering strictly to the schema:\n{\n  "news": [{"i": 0, "detail": "...", "sentiment": 0.5, "category": "a", "weight": 5}],\n  "story": "...",\n  "drivers": [{"name": "...", "dir": "up", "detail": "..."}],\n  "bull": "...",\n  "bear": "...",\n  "killer": "...",\n  "risks": [{"sev": "HIGH", "prob": 50, "risk": "...", "trigger": "...", "catalyst": "..."}],\n  "watchlist": [{"item": "...", "d": "...", "why": "..."}],\n  "catalysts": [{"date": "YYYY-MM-DD", "event": "...", "impact": "high", "source": 0}],\n  "playbook": [{"h": "1 WEEK", "bias": "...", "thesis": "...", "action": "..."}]\n}`
+    const res = await client.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+      config: {
+        systemInstruction: SYSTEM,
+        responseMimeType: 'application/json',
+      },
+    })
+    const text = res.text?.trim()
+    if (!text) throw new Error('the model returned unreadable intel (empty response)')
+    let parsed
+    try {
+      parsed = JSON.parse(text)
+    } catch (err) {
+      throw new Error(`the model returned unreadable intel: ${err.message}`)
+    }
+    return {
+      symbol: snap.symbol,
+      generatedAt: today.toISOString(),
+      model: GEMINI_MODEL,
+      headlineCount: headlines.length,
+      feeds,
+      intel: toAde(parsed, { headlines, snap, today }),
+    }
+  }
+
   const res = await client.beta.messages.parse({
     model: INTEL_MODEL,
     max_tokens: 12000,

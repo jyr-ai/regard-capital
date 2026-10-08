@@ -99,16 +99,29 @@ router.post('/intel/refresh', express.json({ limit: '2kb' }), async (req, res) =
 
 export default router
 
-// Settings: the Anthropic API key that powers intel. Stored encrypted; never sent back (only its last 4).
+// Settings: the LLM API keys (Anthropic and Gemini) that power intel. Stored encrypted; never sent back (only last 4).
 export const settingsRouter = express.Router()
 settingsRouter.get('/', async (_req, res) => {
-  try { res.json({ anthropic: await getLlm().status() }) } catch (err) { fail(res, err) }
+  try {
+    const llm = getLlm()
+    res.json({
+      anthropic: await llm.status('anthropic'),
+      gemini: await llm.status('gemini'),
+      active: await llm.status(),
+    })
+  } catch (err) { fail(res, err) }
 })
 settingsRouter.put('/anthropic', express.json({ limit: '2kb' }), async (req, res) => {
-  try { res.json({ anthropic: await getLlm().save(req.body?.key) }) } catch (err) { fail(res, err) }
+  try { res.json({ anthropic: await getLlm().saveAnthropic(req.body?.key) }) } catch (err) { fail(res, err) }
 })
 settingsRouter.delete('/anthropic', async (_req, res) => {
-  try { res.json({ anthropic: await getLlm().clear() }) } catch (err) { fail(res, err) }
+  try { res.json({ anthropic: await getLlm().clearAnthropic() }) } catch (err) { fail(res, err) }
+})
+settingsRouter.put('/gemini', express.json({ limit: '2kb' }), async (req, res) => {
+  try { res.json({ gemini: await getLlm().saveGemini(req.body?.key) }) } catch (err) { fail(res, err) }
+})
+settingsRouter.delete('/gemini', async (_req, res) => {
+  try { res.json({ gemini: await getLlm().clearGemini() }) } catch (err) { fail(res, err) }
 })
 
 // Vercel cron (GET, Authorization: Bearer $CRON_SECRET). Mounted outside the session gate.

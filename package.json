@@ -8,7 +8,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "tsx server.ts",
+    "start": "node server.ts",
     "dev:server": "node --watch server/dev.js",
     "dev:all": "concurrently -n web,api \"npm:dev\" \"npm:dev:server\"",
     "build": "vite build",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
+    "@google/genai": "^2.28.0",
     "express": "^5.2.1",
     "lucide-react": "^0.468.0",
     "react": "^19.2.0",
@@ -45,6 +47,7 @@
     "globals": "^15.14.0",
     "jsdom": "^29.1.1",
     "supertest": "^7.0.0",
+    "tsx": "^4.23.15",
     "vite": "^7.3.1",
     "vitest": "^3.2.4"
   }

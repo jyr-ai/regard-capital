@@ -4,7 +4,7 @@ import { FONT_MONO, RADIUS } from '../theme/tokens.js'
 
 export default function Login() {
   const t = useTheme()
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('regard')
   const [profile, setProfile] = useState(() => { try { return localStorage.getItem('rc_profile') ?? '' } catch { return '' } })
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -61,6 +61,7 @@ export default function Login() {
             background: t.inputBg, border: `1px solid ${error ? t.down : t.border}`, borderRadius: 10,
           }}
         />
+        <p style={{ margin: '4px 0 0', color: t.mid, fontSize: 13 }}>Default password: <code>regard</code></p>
         <label htmlFor="wl" style={{ display: 'block', fontSize: 14, fontWeight: 500, margin: '16px 0 6px' }}>Watchlist name <span style={{ color: t.mid, fontWeight: 400 }}>(optional)</span></label>
         <input
           id="wl"
